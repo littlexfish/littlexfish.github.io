@@ -11,17 +11,26 @@
 	overflow-x: hidden;
 }
 
-.out_sidebar a {
-	padding: 6px 0px 6px 8px;
+.out_sidebar button {
+	padding: 8px 4px;
 	text-decoration: none;
 	font-size: 20px;
 	color: #AAF;
 	display: block;
+	border: none;
+	width: 100%;
+	background-color: #0000;
 }
 
-.out_sidebar a.click:hover, .out_sidebar a.onClick {
+.out_sidebar button.click:hover, .out_sidebar button.onClick {
 	color: #55F;
 	background-color: #FAF;
+}
+
+.out_sidebar button.disable:hover, .out_sidebar button.disable {
+	text-decoration: line-through;
+	color: #AAF;
+	background-color: #0000;
 }
 
 .out_inside {
@@ -79,12 +88,7 @@ ul.out_horizon li a {
 	background-color: #2A0;
 }
 
-.bottom_block {
-	width: 100vw;
-	height: 200px;
-	background-color: #7AF;
-	
-}
+
 
 @media screen and (max-width: 800px) {
   .out_sidebar {

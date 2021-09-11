@@ -1,0 +1,76 @@
+
+a.text_link {
+	text-decoration: none;
+	color: #5AF;
+}
+
+a.text_link:hover {
+	background-color: #EEE;
+}
+
+.out_inside .text_frame {
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: auto;
+	height: 100vh;
+}
+
+.text_frame .text_content {
+	font-size: 18; 
+	line-height: 30px;
+	padding-top: 50;
+	padding-left: 30;
+	padding-bottom: 30;
+	margin-left: 180px;
+	
+}
+
+.text_frame .text_title {
+	font-size: 35;
+	font-weight: 700;
+}
+
+.text_frame .text_list {
+	padding-left: 30;
+	padding-top: 10;
+	line-height: 40px;
+}
+
+.bottom_block {
+	width: 100vw;
+	height: 200px;
+	background-color: #7AF;
+	
+}
+
+.out_inside .title_linker {
+	position: fixed;
+	right: 30;
+	padding: 0px 1px 1.5px 2px;
+	background-color: #BBB;
+}
+
+.title_linker button {
+	text-align: center;
+	text-decoration: none;
+	display: block;
+	background-color: #BBB;
+	border: none;
+	width: 100%;
+}
+
+.title_linker button.linker {
+	font-size: 20;
+	padding: 7px 16px;
+}
+
+.title_linker button.nolinker {
+	font-size: 17;
+	padding: 2px 19px;
+}
+
+.title_linker button.linker:hover {
+	background-color: #DDD;
+}
+
+
