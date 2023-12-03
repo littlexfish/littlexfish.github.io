@@ -1,0 +1,2 @@
+(()=>{var o={63:function(o,r){var t,e;void 0===(e="function"==typeof(t=function(o){"use strict";return console.log("Hello, world!"),document.bgColor="blue",o})?t.apply(r,[r]):t)||(o.exports=e)}},r={},t=function t(e){var n=r[e];if(void 0!==n)return n.exports;var u=r[e]={exports:{}};return o[e].call(u.exports,u,u.exports,t),u.exports}(63);module.exports.github_page=t})();
+//# sourceMappingURL=app.js.map

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="github_page-js">
+    <output-path>$PROJECT_DIR$/build/libs</output-path>
+    <root id="archive" name="github_page-js.jar">
+      <element id="module-output" name="github_page.jsMain" />
+    </root>
+  </artifact>
+</component>
