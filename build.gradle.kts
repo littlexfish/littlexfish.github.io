@@ -11,7 +11,7 @@ repositories {
 }
 
 kotlin {
-	js {
+	js(IR) {
 		moduleName = "app"
 		browser {
 			webpackTask {
@@ -23,6 +23,7 @@ kotlin {
 			}
 			distribution {
 				outputDirectory = File("$projectDir/docs/")
+
 			}
 		}
 		binaries.executable()
@@ -30,18 +31,11 @@ kotlin {
 	sourceSets {
 		val jsMain by getting {
 			dependencies {
-//				implementation("org.lf.github_page:1.0.0")
+
 				implementation(kotlin("stdlib-js"))
-			}
-		}
-		val commonTest by getting {
-			dependencies {
-				implementation(kotlin("test"))
+				implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.8.0")
 			}
 		}
 	}
 }
 
-//dependencies {
-//	implementation(kotlin("stdlib-js"))
-//}
