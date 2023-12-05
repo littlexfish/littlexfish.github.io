@@ -9,19 +9,13 @@ import org.w3c.dom.css.CSSStyleDeclaration
 
 class TerminalTunnel {
 
-	private var onPipeIn: ((Element) -> Unit)? = null
 	private var onPipeOut: ((Element) -> Unit)? = null
 
 	private val pipeOutBuffer = ArrayList<Element>()
 	private val pipeInBuffer = ArrayList<Element>()
 
 	fun pipeIn(ele: Element) {
-		if(onPipeIn != null) {
-			onPipeIn!!(ele)
-		}
-		else {
-			pipeInBuffer.add(ele)
-		}
+		pipeInBuffer.add(ele)
 	}
 
 	fun pipeOut(ele: Element) {
@@ -33,20 +27,20 @@ class TerminalTunnel {
 		}
 	}
 
-	fun registerPipeIn(onPipeIn: (Element) -> Unit) {
-		this.onPipeIn = onPipeIn
-		for(text in pipeInBuffer) {
-			onPipeIn(text)
-		}
-		pipeInBuffer.clear()
-	}
-
 	fun registerPipeOut(onPipeOut: (Element) -> Unit) {
 		this.onPipeOut = onPipeOut
 		for(text in pipeOutBuffer) {
 			onPipeOut(text)
 		}
 		pipeOutBuffer.clear()
+	}
+
+	fun readFromPipeIn(): Element? {
+		return pipeInBuffer.removeFirstOrNull()
+	}
+
+	fun hasNextRead(): Boolean {
+		return pipeInBuffer.isNotEmpty()
 	}
 
 }

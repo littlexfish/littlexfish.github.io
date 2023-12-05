@@ -1,5 +1,4 @@
-import command.Commands
-import command.Env
+import command.*
 import io.TerminalTunnel
 import kotlinx.browser.document
 import kotlinx.dom.clear
@@ -98,53 +97,119 @@ private fun init() {
 }
 
 private fun showWelcomeMessage() {
-	runCommand(Pair("welcome", arrayOf()))
+	runCommand(CommandStore("welcome", arrayOf()))
 }
 
 private fun onCommand() {
 	val input = terminalInput.value
 	terminalInput.value = ""
 	if(input.isBlank()) return
-
 	addInput(input)
 	addToHistory(input)
-	val split = splitCommand(input).let(::commandArrayToSplit)
-	val alias = getAlias(split.first)
-	if(alias != null) {
-		val newSplit = splitCommand(input.replaceFirst(split.first, alias)).let(::commandArrayToSplit)
-		runCommand(newSplit)
-	}
-	else runCommand(split)
-}
 
-private fun runCommand(split: Pair<String, Array<String>>) {
-	val cmd = split.first
-	val args = split.second
-	val command = Commands.getCommand(cmd)
-	if(command == null) {
+	val pipe = defineCommandBatch(input)
+	val errorCmd = checkPipeCommand(pipe)
+	if(errorCmd.isNotEmpty()) {
 		addOutput(createElement("span") {
-			innerText = "command not found: $cmd"
+			innerText = "command not found: ${errorCmd.joinToString(", ")}"
 			style.color = "red"
 		})
-		currentEnv["?"] = "1"
 		return
 	}
-	else {
-		val tunnel = newTerminalTunnel()
-		var currentOutput: Element? = null
-		tunnel.registerPipeOut { // TODO: pipe support
-			if(currentOutput == null) {
-				currentOutput = createOutput()
-			}
-			currentOutput!!.append(it)
-			it.scrollIntoView(mapOf("behavior" to "smooth", "block" to "end", "inline" to "start"))
+	terminalInput.disabled = true
+	var currentPipe: Pipe? = pipe
+	var currentTunnel: TerminalTunnel = newTerminalTunnel()
+	while(currentPipe != null) {
+		val nextTunnel = newTerminalTunnel()
+		if(currentPipe.type == PipeType.PIPE_NEXT) {
+			setTunnelToNextTunnel(currentTunnel, nextTunnel)
+		}
+		else {
+			setTunnelToTerminal(currentTunnel)
 		}
 		val env = Env(currentEnv)
-		command.init(tunnel, env)
-		env["CMD"] = cmd
-		val ec = command.execute(args)
-		currentEnv["?"] = ec.toString()
+		val suc = runCommand(currentPipe.current, currentTunnel, env)
+		if(currentPipe.type == PipeType.SUC_NEXT && !suc) {
+			break
+		}
+		else if(currentPipe.type == PipeType.FAIL_NEXT && suc) {
+			break
+		}
+		currentPipe = currentPipe.getNext()
+		currentTunnel = nextTunnel
 	}
+	terminalInput.disabled = false
+	terminalInput.focus()
+}
+
+private fun toAliasCommand(cmdLine: String): CommandStore {
+	val split = splitCommand(cmdLine).let(::commandArrayToSplit)
+	val alias = getAlias(split.command)
+	return if(alias != null) {
+		val newSplit = splitCommand(cmdLine.replaceFirst(split.command, alias)).let(::commandArrayToSplit)
+		CommandStore(newSplit.command, newSplit.args)
+	}
+	else CommandStore(split.command, split.args)
+}
+
+private fun runCommand(split: CommandStore, tunnel: TerminalTunnel = newTerminalTunnel().apply { setTunnelToTerminal(this) }, env: Env = Env(currentEnv)): Boolean {
+	val cmd = split.command
+	val args = split.args
+	val command = Commands.getCommand(cmd)
+	if(command == null) { // this should not happen
+		console.error("command '$cmd' not found after check")
+		return false
+	}
+	command.init(tunnel, env)
+	env["CMD"] = cmd
+	val ec = command.execute(args)
+	currentEnv["?"] = ec.toString()
+	return ec == 0
+}
+
+private fun defineCommandBatch(input: String): Pipe {
+	var remain = input
+	val pipeLine = mutableListOf<Pair<CommandStore, PipeType>>()
+	while(remain.isNotBlank()) {
+		val nextPipePos = "\\s*;|&&|\\|\\||\\|\\s*".toRegex().find(remain)
+		if(nextPipePos == null) {
+			val split = toAliasCommand(remain)
+			pipeLine.add(Pair(CommandStore(split.command, split.args), PipeType.NONE))
+			remain = ""
+		}
+		else {
+			val pipeType = when(nextPipePos.value.trim()) {
+				";" -> PipeType.EXECUTE
+				"|" -> PipeType.PIPE_NEXT
+				"&&" -> PipeType.SUC_NEXT
+				"||" -> PipeType.FAIL_NEXT
+				else -> PipeType.NONE
+			}
+			val split = toAliasCommand(remain.substring(0, nextPipePos.range.first))
+			pipeLine.add(Pair(CommandStore(split.command, split.args), pipeType))
+			remain = remain.substring(nextPipePos.range.last + 1)
+		}
+	}
+	val rootPipe = Pipe(pipeLine[0].first, pipeLine[0].second, null)
+	var currentPipe = rootPipe
+	for(i in 1..<pipeLine.size) {
+		currentPipe.addPipe(pipeLine[i].first, pipeLine[i].second)
+		currentPipe = currentPipe.getNext()!!
+	}
+	return rootPipe
+}
+
+private fun checkPipeCommand(pipe: Pipe): List<String> {
+	val noCmd = mutableListOf<String>()
+	var currentPipe: Pipe? = pipe
+	while(currentPipe != null) {
+		val cmd = currentPipe.current.command
+		if(Commands.getCommand(cmd) == null) {
+			noCmd.add(cmd)
+		}
+		currentPipe = currentPipe.getNext()
+	}
+	return noCmd
 }
 
 private fun splitCommand(line: String): Array<String> {
@@ -201,14 +266,8 @@ private fun splitCommand(line: String): Array<String> {
 	return out.toTypedArray()
 }
 
-private fun commandArrayToSplit(commandSplit: Array<String>): Pair<String, Array<String>> {
-	return Pair(commandSplit[0], commandSplit.sliceArray(1..< commandSplit.size))
-}
-
-private fun addOutput(text: String): String {
-	val span = document.createElement("span") as HTMLSpanElement
-	span.innerText = text
-	return addOutput(span)
+private fun commandArrayToSplit(commandSplit: Array<String>): CommandStore {
+	return CommandStore(commandSplit[0], commandSplit.sliceArray(1..< commandSplit.size))
 }
 
 /**
@@ -240,6 +299,27 @@ private fun addInput(cmd: String) {
 
 private fun newTerminalTunnel(): TerminalTunnel {
 	return TerminalTunnel()
+}
+
+private fun setTunnelToNextTunnel(tunnel: TerminalTunnel, next: TerminalTunnel) {
+	tunnel.registerPipeOut {
+		next.pipeIn(it)
+	}
+}
+
+private fun setTunnelToTerminal(tunnel: TerminalTunnel) {
+	var currentOutput: Element? = null
+	tunnel.registerPipeOut { // TODO: pipe support
+		if(currentOutput == null) {
+			currentOutput = createOutput()
+		}
+		currentOutput!!.append(it)
+		it.scrollIntoView(mapOf("behavior" to "smooth", "block" to "end", "inline" to "start"))
+	}
+}
+
+private fun setTunnelFromTerminal(tunnel: TerminalTunnel) {
+	// TODO: now input from terminal not supported
 }
 
 fun clearTerminal() {
