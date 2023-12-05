@@ -1,11 +1,18 @@
 package command
 
+import kotlinx.browser.document
+import org.w3c.dom.HTMLElement
+
 class Env(val baseEnv: Env? = null) {
 
+	private val root: Env = baseEnv?.root ?: this
 	private val env = HashMap<String, String>()
 
 	operator fun set(key: String, value: String) {
 		env[key] = value
+		if(key == "INPUT_BEGIN") {
+			(document.getElementById("terminal-input-prefix") as? HTMLElement)?.innerText = value
+		}
 	}
 
 	operator fun get(key: String): String? {
@@ -23,6 +30,10 @@ class Env(val baseEnv: Env? = null) {
 		}
 		out.putAll(env)
 		return out
+	}
+
+	fun getFromRoot(key: String): String? {
+		return root[key]
 	}
 
 }

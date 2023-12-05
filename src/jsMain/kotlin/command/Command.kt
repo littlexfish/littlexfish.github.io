@@ -35,11 +35,11 @@ object Commands {
 		commands["clear"] = Clear()
 		commands["lscmd"] = LsCmd()
 		commands["env"] = EnvCmd()
+		commands["info"] = Info()
+		commands["echo"] = Echo()
 	}
 
-	fun getCommand(cmd: String, tunnel: TerminalTunnel, env: Env): Command? = commands[cmd]?.apply { init(tunnel, env) }
-
-	fun getCommandWithoutInit(cmd: String): Command? = commands[cmd]
+	fun getCommand(cmd: String): Command? = commands[cmd]
 
 	fun availableCommands(): List<String> = commands.keys.toList()
 

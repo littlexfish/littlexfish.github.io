@@ -1,7 +1,8 @@
 package command.cmds
 
-import Builder
 import command.Command
+import createElement
+import io.pipeOutText
 import kotlinx.browser.document
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
@@ -19,14 +20,14 @@ class Env : Command() {
 				div.appendChild(span)
 				div.append(document.createElement("br"))
 			}
-			tunnel.outputToTerminal(div)
+			tunnel.pipeOut(div)
 			return 0
 		}
 		else {
 			var hasInvalid = false
 			for(arg in args) {
 				if(!arg.contains("=")) {
-					tunnel.outputToTerminal("Invalid setter '$arg'")
+					tunnel.pipeOutText("Invalid setter '$arg'") { style.color = "red" }
 					hasInvalid = true
 					continue
 				}
@@ -34,19 +35,18 @@ class Env : Command() {
 				val key = spl[0]
 				val value = spl[1]
 				env.baseEnv?.set(key, value)
-				tunnel.outputToTerminal(getEnvMapElement(key, value))
+				tunnel.pipeOut(getEnvMapElement(key, value))
 			}
 			return if(hasInvalid) 1 else 0
 		}
 	}
 
-	private fun getEnvMapElement(k: String, v: String): Element =
-		Builder {
-			append { text = "$k="  }
-			append { text = "\"$v\"";color="LightGreen" }
-		}.build()
+	private fun getEnvMapElement(k: String, v: String): Element = createElement("span") {
+		append("$k=")
+		append(createElement("span") { innerText = "\"$v\"";style.color = "LightGreen" })
+	}
 
-	override fun getHelp(): String = "Prints all environment variables\n" +
+	override fun getHelp(): String = "prints all environment variables\n" +
 			"Using `env [key]=[value]` to set environment variable"
 
 }

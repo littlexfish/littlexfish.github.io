@@ -14,7 +14,10 @@ fun TagConsumer<HTMLElement>.indexBuild() {
 		}
 		div {
 			id = "terminal-input-outline"
-			span { +currentEnv["INPUT_BEGIN"]!! }
+			span {
+				id = "terminal-input-prefix"
+				+currentEnv["INPUT_BEGIN"]!!
+			}
 			input {
 				id = "terminal-input"
 				autoFocus = true

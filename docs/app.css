@@ -6,15 +6,6 @@ body {
     font-family: 'JetBrains Mono', monospace;
 }
 
-pre {
-    margin: 0;
-    font-family: 'JetBrains Mono', monospace;
-}
-
-span {
-    white-space: nowrap;
-}
-
 #terminal {
     display: block;
     position: absolute;
@@ -35,14 +26,6 @@ span {
     bottom: 40px;
     right: 10px;
 
-}
-
-#terminal-output > div {
-    margin: 5px 0;
-}
-
-#terminal-output > div.ti {
-    color: steelblue;
 }
 
 #terminal-input {
@@ -85,7 +68,6 @@ span {
 
 ::-webkit-scrollbar {
     width: 5px;
-    height: 5px;
 }
 
 ::-webkit-scrollbar-track {
