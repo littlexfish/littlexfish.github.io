@@ -54,14 +54,10 @@ fun TerminalTunnel.pipeOutPre(content: String, style: (CSSStyleDeclaration.() ->
 	pipeOut(pre)
 }
 
-fun TerminalTunnel.pipeOut(tag: String, builder: HTMLElement.() -> Unit) {
-	pipeOut(createElement(tag, builder))
-}
-
-fun TerminalTunnel.pipeOutTag(tag: String, style: (CSSStyleDeclaration.() -> Unit)? = null) {
+fun TerminalTunnel.pipeOutTag(tag: String, build: (HTMLElement.() -> Unit)? = null) {
 	val ele = document.createElement(tag) as HTMLElement
-	if(style != null) {
-		ele.style.style()
+	if(build != null) {
+		ele.build()
 	}
 	pipeOut(ele)
 }
@@ -71,4 +67,21 @@ fun TerminalTunnel.pipeOutText(text: String, builder: (HTMLElement.() -> Unit)? 
 		innerText = text
 		builder?.invoke(this)
 	})
+}
+
+fun TerminalTunnel.pipeOutNewLine() {
+	pipeOutTag("br")
+}
+
+fun TerminalTunnel.pipeOutTextLn(text: String, builder: (HTMLElement.() -> Unit)? = null) {
+	pipeOutText(text, builder)
+	pipeOutNewLine()
+}
+
+fun TerminalTunnel.pipeOutLink(href: String, target: String = "_blank", builder: (HTMLElement.() -> Unit)? = null) {
+	pipeOutTag("a") {
+		asDynamic().href = href
+		asDynamic().target = target
+		builder?.invoke(this)
+	}
 }

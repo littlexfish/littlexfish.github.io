@@ -45,6 +45,15 @@ span {
     color: steelblue;
 }
 
+#terminal-output a {
+    text-decoration: none;
+    color: cornflowerblue;
+}
+
+#terminal-output a:hover {
+    text-decoration: underline;
+}
+
 #terminal-input {
     background: none;
     border: none;

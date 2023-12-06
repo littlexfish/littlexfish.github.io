@@ -16,7 +16,7 @@ fun TagConsumer<HTMLElement>.indexBuild() {
 			id = "terminal-input-outline"
 			span {
 				id = "terminal-input-prefix"
-				+currentEnv["INPUT_BEGIN"]!!
+				+currentEnv.getCommandInputPrefix()
 			}
 			input {
 				id = "terminal-input"

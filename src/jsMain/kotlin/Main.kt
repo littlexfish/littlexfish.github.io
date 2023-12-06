@@ -6,7 +6,6 @@ import kotlinx.html.dom.append
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.HTMLSpanElement
 
 private lateinit var terminalOutput: HTMLDivElement
 private lateinit var terminalInput: HTMLInputElement
@@ -81,7 +80,7 @@ fun main() {
 			terminalInput.focus()
 		}
 	}
-	showWelcomeMessage()
+	postInit()
 }
 
 private fun init() {
@@ -94,9 +93,10 @@ private fun init() {
 	rootEnv["INPUT_BEGIN"] = "> "
 	currentEnv["CREATOR"] = "LF"
 	currentEnv["PWD"] = "/"
+	currentEnv["INPUT_BEGIN"] = currentEnv.defaultCommandInputPrefix()
 }
 
-private fun showWelcomeMessage() {
+private fun postInit() {
 	runCommand(CommandStore("welcome", arrayOf()))
 }
 
@@ -291,10 +291,11 @@ fun createOutput(): Element {
 
 private fun addInput(cmd: String) {
 	val out = document.createElement("div") as HTMLDivElement
-	out.append(createElement("span") { classList.add("ti");innerText = currentEnv["INPUT_BEGIN"] + cmd })
+	out.append(createElement("span") { classList.add("ti");innerText = currentEnv.getCommandInputPrefix() + cmd })
 	out.id = "ti-$inputId"
 	out.classList.add("ti")
 	terminalOutput.append(out)
+	out.scrollToView()
 }
 
 private fun newTerminalTunnel(): TerminalTunnel {
@@ -314,7 +315,7 @@ private fun setTunnelToTerminal(tunnel: TerminalTunnel) {
 			currentOutput = createOutput()
 		}
 		currentOutput!!.append(it)
-		it.scrollIntoView(mapOf("behavior" to "smooth", "block" to "end", "inline" to "start"))
+		it.scrollToView()
 	}
 }
 
@@ -373,4 +374,8 @@ private fun getAlias(t: String): String? {
 		if(split[0] == t) return split[1]
 	}
 	return null
+}
+
+private fun Element.scrollToView() {
+	scrollIntoView(mapOf("behavior" to "smooth", "block" to "end", "inline" to "start"))
 }

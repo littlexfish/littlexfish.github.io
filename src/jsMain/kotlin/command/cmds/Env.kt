@@ -24,6 +24,10 @@ class Env : Command() {
 			return 0
 		}
 		else {
+			if(args.contains("-r") || args.contains("--reset")) {
+				env.baseEnv?.reset()
+				return 0
+			}
 			var hasInvalid = false
 			for(arg in args) {
 				if(!arg.contains("=")) {

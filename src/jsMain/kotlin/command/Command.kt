@@ -37,6 +37,11 @@ object Commands {
 		commands["env"] = EnvCmd()
 		commands["info"] = Info()
 		commands["echo"] = Echo()
+		commands["alias"] = Alias()
+		commands["set"] = Set()
+		commands["unset"] = Unset()
+		commands["unalias"] = UnAlias()
+		commands["about"] = About()
 	}
 
 	fun getCommand(cmd: String): Command? = commands[cmd]
