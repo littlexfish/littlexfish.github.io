@@ -1,5 +1,6 @@
 package command.cmds
 
+import Translation
 import clearTerminal
 import command.Command
 
@@ -10,6 +11,6 @@ class Clear : Command() {
 		return 0
 	}
 
-	override fun getHelp(): String = "Clears the terminal"
+	override fun getHelp(): String = Translation["command.clear.help"]
 
 }

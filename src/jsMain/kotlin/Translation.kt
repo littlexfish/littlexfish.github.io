@@ -56,15 +56,20 @@ object Translation {
 	}
 
 	private suspend fun loadLang(lang: String) {
-		val resLang = window.fetch("i18n/$lang.json", RequestInit("GET", headers = json("Accept" to "application/json"))).await()
-		val resDef = window.fetch("i18n/${i18n[defaultLang]}.json", RequestInit("GET", headers = json("Accept" to "application/json"))).await()
-		val jsonLang = resLang.json().await()
-		val jsonDef = resDef.json().await()
+		val dLang = i18n[defaultLang]!!
 		val entries = js("Object.entries")
-		translationMapping.clear()
-		entries(jsonDef).iterator().forEach {
-			translationMapping[it[0].toString()] = it[1].toString()
+		val langSame = lang == dLang
+		val req = RequestInit("GET", headers = json("Accept" to "application/json"))
+		if(!langSame) {
+			val resDef = window.fetch("i18n/${dLang}.json", req).await()
+			val jsonDef = resDef.json().await()
+			translationMapping.clear()
+			entries(jsonDef).iterator().forEach {
+				translationMapping[it[0].toString()] = it[1].toString()
+			}
 		}
+		val resLang = window.fetch("i18n/$lang.json", req).await()
+		val jsonLang = resLang.json().await()
 		entries(jsonLang).iterator().forEach {
 			translationMapping[it[0].toString()] = it[1].toString()
 		}
@@ -72,6 +77,10 @@ object Translation {
 
 	operator fun get(key: String): String {
 		return translationMapping[key] ?: key
+	}
+
+	operator fun get(key: String, vararg args: Pair<String, Any?>): String {
+		return this[key, mapOf(*args)]
 	}
 
 	operator fun get(key: String, args: Map<String, Any?>): String {

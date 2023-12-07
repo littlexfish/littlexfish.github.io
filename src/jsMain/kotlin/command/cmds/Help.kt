@@ -1,5 +1,6 @@
 package command.cmds
 
+import Translation
 import command.Command
 import command.Commands
 import io.pipeOutPre
@@ -10,23 +11,21 @@ class Help : Command() {
 
 	override fun execute(args: Array<String>): Int {
 		if(args.isEmpty()) {
-			tunnel.pipeOutPre("Hi, Welcome to the HELP page\n\nUsing `help [command]` to get help for a specific command\nUsing `lscmd` to list all available commands\n")
+			tunnel.pipeOutPre(Translation["command.help.text"])
 		}
 		else {
 			val cmd = args[0]
 			val command = Commands.getCommand(cmd)
 			if(command == null) {
-				tunnel.pipeOutText("Command '$cmd' not found") {
-					style.color = "red"
-				}
+				tunnel.pipeOutText(Translation["command.help.not_found", "cmd" to cmd]) { style.color = "red" }
 			}
 			else {
-				tunnel.pipeOutPre(command.getHelp() ?: "No help page for command '$cmd'")
+				tunnel.pipeOutPre(command.getHelp() ?: Translation["command.help.no_page", "cmd" to cmd])
 			}
 		}
 		return 0
 	}
 
-	override fun getHelp(): String = "Prints this help page\nUsing `help [command]` to get help for a specific command\nUsing `lscmd` to list all available commands"
+	override fun getHelp(): String = Translation["command.help.help"]
 
 }

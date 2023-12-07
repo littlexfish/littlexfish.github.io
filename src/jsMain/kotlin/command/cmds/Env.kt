@@ -1,5 +1,6 @@
 package command.cmds
 
+import Translation
 import command.Command
 import createElement
 import io.pipeOutText
@@ -31,7 +32,7 @@ class Env : Command() {
 			var hasInvalid = false
 			for(arg in args) {
 				if(!arg.contains("=")) {
-					tunnel.pipeOutText("Invalid setter '$arg'") { style.color = "red" }
+					tunnel.pipeOutText(Translation["command.env.invalid_setter", "setter" to arg]) { style.color = "red" }
 					hasInvalid = true
 					continue
 				}
@@ -50,7 +51,6 @@ class Env : Command() {
 		append(createElement("span") { innerText = "\"$v\"";style.color = "LightGreen" })
 	}
 
-	override fun getHelp(): String = "prints all environment variables\n" +
-			"Using `env [key]=[value]` to set environment variable"
+	override fun getHelp(): String = Translation["command.env.help"]
 
 }

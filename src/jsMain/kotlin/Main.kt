@@ -124,7 +124,7 @@ private fun onCommand() {
 	val errorCmd = checkPipeCommand(pipe)
 	if(errorCmd.isNotEmpty()) {
 		addOutput(createElement("span") {
-			innerText = Translation["command_not_found", mapOf("cmd" to errorCmd.joinToString(", "))]
+			innerText = Translation["command_not_found", "cmd" to errorCmd.joinToString(", ")]
 			style.color = "red"
 		})
 		return

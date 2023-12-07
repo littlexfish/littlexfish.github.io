@@ -6,6 +6,15 @@ body {
     font-family: 'JetBrains Mono', monospace;
 }
 
+pre {
+    margin: 0;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+span {
+    white-space: nowrap;
+}
+
 #terminal {
     display: block;
     position: absolute;
@@ -26,6 +35,23 @@ body {
     bottom: 40px;
     right: 10px;
 
+}
+
+#terminal-output > div {
+    margin: 5px 0;
+}
+
+#terminal-output > div.ti {
+    color: steelblue;
+}
+
+#terminal-output a, #error-frame a {
+    text-decoration: none;
+    color: cornflowerblue;
+}
+
+#terminal-output a:hover, #error-frame a:hover {
+    text-decoration: underline;
 }
 
 #terminal-input {
@@ -66,8 +92,21 @@ body {
     outline: none;
 }
 
+#error-frame {
+    display: block;
+    border: red 1px solid;
+    border-radius: 5px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 50px;
+    font-size: 30px;
+}
+
 ::-webkit-scrollbar {
     width: 5px;
+    height: 5px;
 }
 
 ::-webkit-scrollbar-track {
