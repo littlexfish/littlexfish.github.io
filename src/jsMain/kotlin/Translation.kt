@@ -1,0 +1,81 @@
+import kotlinx.browser.window
+import kotlinx.coroutines.await
+import kotlinx.html.OBJECT
+import kotlinx.html.TH
+import org.w3c.dom.url.URL
+import org.w3c.fetch.Headers
+import org.w3c.fetch.RequestInit
+import kotlin.js.Json
+import kotlin.js.Promise
+import kotlin.js.json
+
+object Translation {
+
+	private val i18n = mapOf(
+		"en" to "en_US",
+		"en-US" to "en_US",
+		"zh" to "zh_TW",
+		"zh-TW" to "zh_TW",
+	)
+	private const val defaultLang = "en"
+
+	private val translationMapping = HashMap<String, String>()
+	private val defaultMapping = HashMap<String, String>()
+
+	suspend fun init() {
+		val lang = getOverrideLang() ?: getHostLang() ?: defaultLang
+		loadLang(lang)
+	}
+
+	private fun getHostLang(): String? {
+		val hostLang = window.navigator.language
+		return if(i18n.containsKey(hostLang)) {
+			i18n[hostLang]
+		}
+		else {
+			val lang = hostLang.split("-")[0]
+			if(i18n.containsKey(lang)) {
+				i18n[lang]
+			}
+			else null
+		}
+	}
+
+	private fun getOverrideLang(): String? {
+		val overrideLang = URL(window.location.href).searchParams.get("l")
+		return if(overrideLang != null && i18n.containsKey(overrideLang)) {
+			i18n[overrideLang]
+		}
+		else {
+			val lang = overrideLang?.split("-")?.get(0)
+			if(i18n.containsKey(lang)) {
+				i18n[lang]
+			}
+			else null
+		}
+	}
+
+	private suspend fun loadLang(lang: String) {
+		val resLang = window.fetch("i18n/$lang.json", RequestInit("GET", headers = json("Accept" to "application/json"))).await()
+		val resDef = window.fetch("i18n/${i18n[defaultLang]}.json", RequestInit("GET", headers = json("Accept" to "application/json"))).await()
+		val jsonLang = resLang.json().await()
+		val jsonDef = resDef.json().await()
+		val entries = js("Object.entries")
+		translationMapping.clear()
+		entries(jsonDef).iterator().forEach {
+			translationMapping[it[0].toString()] = it[1].toString()
+		}
+		entries(jsonLang).iterator().forEach {
+			translationMapping[it[0].toString()] = it[1].toString()
+		}
+	}
+
+	operator fun get(key: String): String {
+		return translationMapping[key] ?: key
+	}
+
+	operator fun get(key: String, args: Map<String, Any?>): String {
+		return translationMapping[key]?.format(args) ?: key
+	}
+
+}

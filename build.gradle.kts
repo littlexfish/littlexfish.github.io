@@ -23,7 +23,6 @@ kotlin {
 			}
 			distribution {
 				outputDirectory = File("$projectDir/docs/")
-
 			}
 		}
 		binaries.executable()
@@ -34,6 +33,7 @@ kotlin {
 
 				implementation(kotlin("stdlib-js"))
 				implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.8.0")
+				implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC")
 			}
 		}
 	}

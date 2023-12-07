@@ -45,12 +45,12 @@ span {
     color: steelblue;
 }
 
-#terminal-output a {
+#terminal-output a, #error-frame a {
     text-decoration: none;
     color: cornflowerblue;
 }
 
-#terminal-output a:hover {
+#terminal-output a:hover, #error-frame a:hover {
     text-decoration: underline;
 }
 
@@ -90,6 +90,18 @@ span {
 
 #terminal-input:focus {
     outline: none;
+}
+
+#error-frame {
+    display: block;
+    border: red 1px solid;
+    border-radius: 5px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 50px;
+    font-size: 30px;
 }
 
 ::-webkit-scrollbar {

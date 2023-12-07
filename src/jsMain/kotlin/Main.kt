@@ -1,6 +1,8 @@
 import command.*
 import io.TerminalTunnel
 import kotlinx.browser.document
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.dom.clear
 import kotlinx.html.dom.append
 import org.w3c.dom.Element
@@ -21,66 +23,77 @@ private var outputId = -1
 		field++
 		return field
 	}
-	private set
 private var inputId = -1
 	get() {
 		field++
 		return field
 	}
-	private set
 
-fun main() {
-	init()
-	document.body!!.append {
-		indexBuild()
-	}
+suspend fun main() {
+	coroutineScope {
+		launch {
+			try {
+				Translation.init()
+			}
+			catch(e: Throwable) {
+				console.error(e)
+				document.body!!.append {
+					indexError("Failed to load translation file.")
+				}
+			}
+			init()
+			document.body!!.append {
+				indexBuild()
+			}
 
-	terminalOutput = document.getElementById("terminal-output") as HTMLDivElement
-	terminalInput = document.getElementById("terminal-input") as HTMLInputElement
-	terminalInput.onkeydown = { event ->
-		if(event.keyCode == 13) {
-			onCommand()
-		}
-		else if(event.keyCode == 9) {
-			event.preventDefault()
-			val auto = findAutoComplete(splitCommand(terminalInput.value))
-			if(auto.size == 1) {
-				terminalInput.value = auto[0]
+			terminalOutput = document.getElementById("terminal-output") as HTMLDivElement
+			terminalInput = document.getElementById("terminal-input") as HTMLInputElement
+			terminalInput.onkeydown = { event ->
+				if(event.keyCode == 13) {
+					onCommand()
+				}
+				else if(event.keyCode == 9) {
+					event.preventDefault()
+					val auto = findAutoComplete(splitCommand(terminalInput.value))
+					if(auto.size == 1) {
+						terminalInput.value = auto[0]
+					}
+					else if(auto.size > 1) {
+						// TODO: show auto complete
+						console.log("auto complete for multiple possible is not supported yet")
+					}
+				}
+				else if(event.keyCode == 38) { // up
+					event.preventDefault()
+					if(currentHistoryIndex == -1) inputTemp = terminalInput.value
+					val history = historyChange(1)
+					if(history != null) {
+						terminalInput.value = history
+					}
+				}
+				else if(event.keyCode == 40) { // down
+					event.preventDefault()
+					if(currentHistoryIndex == -1) inputTemp = terminalInput.value
+					val history = historyChange(-1)
+					if(history != null) {
+						terminalInput.value = history
+					}
+				}
 			}
-			else if(auto.size > 1) {
-				// TODO: show auto complete
-				console.log("auto complete for multiple possible is not supported yet")
+			terminalInput.onfocus = { _ ->
+				document.getElementById("terminal-input-outline")?.classList?.add("focus")
 			}
-		}
-		else if(event.keyCode == 38) { // up
-			event.preventDefault()
-			if(currentHistoryIndex == -1) inputTemp = terminalInput.value
-			val history = historyChange(1)
-			if(history != null) {
-				terminalInput.value = history
+			terminalInput.onblur = { _ ->
+				document.getElementById("terminal-input-outline")?.classList?.remove("focus")
 			}
-		}
-		else if(event.keyCode == 40) { // down
-			event.preventDefault()
-			if(currentHistoryIndex == -1) inputTemp = terminalInput.value
-			val history = historyChange(-1)
-			if(history != null) {
-				terminalInput.value = history
+			document.onkeyup = { event ->
+				if(event.keyCode == 191) { // /(slash)
+					terminalInput.focus()
+				}
 			}
+			postInit()
 		}
 	}
-	terminalInput.onfocus = { _ ->
-		document.getElementById("terminal-input-outline")?.classList?.add("focus")
-	}
-	terminalInput.onblur = { _ ->
-		document.getElementById("terminal-input-outline")?.classList?.remove("focus")
-	}
-	document.onkeyup = { event ->
-		if(event.keyCode == 191) { // /(slash)
-			terminalInput.focus()
-		}
-	}
-	postInit()
 }
 
 private fun init() {
@@ -111,7 +124,7 @@ private fun onCommand() {
 	val errorCmd = checkPipeCommand(pipe)
 	if(errorCmd.isNotEmpty()) {
 		addOutput(createElement("span") {
-			innerText = "command not found: ${errorCmd.joinToString(", ")}"
+			innerText = Translation["command_not_found", mapOf("cmd" to errorCmd.joinToString(", "))]
 			style.color = "red"
 		})
 		return
@@ -310,7 +323,7 @@ private fun setTunnelToNextTunnel(tunnel: TerminalTunnel, next: TerminalTunnel) 
 
 private fun setTunnelToTerminal(tunnel: TerminalTunnel) {
 	var currentOutput: Element? = null
-	tunnel.registerPipeOut { // TODO: pipe support
+	tunnel.registerPipeOut {
 		if(currentOutput == null) {
 			currentOutput = createOutput()
 		}

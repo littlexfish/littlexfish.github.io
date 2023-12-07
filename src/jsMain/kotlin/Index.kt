@@ -1,4 +1,6 @@
 import kotlinx.html.TagConsumer
+import kotlinx.html.a
+import kotlinx.html.br
 import kotlinx.html.id
 import kotlinx.html.js.div
 import kotlinx.html.js.input
@@ -23,5 +25,18 @@ fun TagConsumer<HTMLElement>.indexBuild() {
 				autoFocus = true
 			}
 		}
+	}
+}
+
+fun TagConsumer<HTMLElement>.indexError(msg: String) {
+	div {
+		id = "error-frame"
+		+msg
+		br
+		+"If this is a bug, please open an "
+		a("https://github.com/littlexfish/littlexfish.github.io/issues/new") {
+			+"issue"
+		}
+		+"."
 	}
 }
