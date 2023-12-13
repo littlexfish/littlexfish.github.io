@@ -1,4 +1,5 @@
 import command.*
+import fs.FS
 import io.TerminalTunnel
 import kotlinx.browser.document
 import kotlinx.coroutines.coroutineScope
@@ -40,7 +41,9 @@ suspend fun main() {
 				document.body!!.append {
 					indexError("Failed to load translation file.")
 				}
+				return@launch
 			}
+			FS.init()
 			init()
 			document.body!!.append {
 				indexBuild()
@@ -92,6 +95,13 @@ suspend fun main() {
 				}
 			}
 			postInit()
+		}.invokeOnCompletion {
+			if(it != null) {
+				console.error(it)
+				document.body!!.append {
+					indexError("Failed to start terminal.")
+				}
+			}
 		}
 	}
 }
