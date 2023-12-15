@@ -12,8 +12,8 @@ import io.TerminalTunnel
 abstract class Command {
 
 	companion object {
-		fun parseArgs(args: Array<String>): Argument {
-			return Argument(args)
+		fun parseArgs(args: Array<String>, needValue: List<String> = emptyList()): Argument {
+			return Argument(args, needValue)
 		}
 	}
 
@@ -32,7 +32,9 @@ abstract class Command {
 	 */
 	abstract suspend fun execute(args: Array<String>): Int
 
-	open fun onExecuteError(it: Throwable) {}
+	open fun onExecuteError(it: Throwable) {
+		it.printStackTrace()
+	}
 
 	open fun getHelp(): String? = null
 

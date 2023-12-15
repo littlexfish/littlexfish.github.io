@@ -45,17 +45,18 @@ class Ls : Command() {
 			pArg.has("T") -> "T"
 			else -> ""
 		}
-		val dir = "$pwd/${pArg.getStandalone().lastOrNull() ?: ""}"
+		val argDir = pArg.getStandalone().lastOrNull()
+		val dirHandle = if(argDir == null) FS.getDirectory(pwd) else FS.getDirectory(argDir, false, pwd)
 
-		val list = list(dir, listIncludeHide)
+		val list = list(dirHandle, listIncludeHide)
 		val sorted = sort(list, sortType)
 
 		out(sorted, listAsList, listShowHuman)
 		return 0
 	}
 
-	private suspend fun list(dir: String, includeHide: Boolean): List<Pair<FileSystemHandle, File?>> {
-		val iterator = FS.getDirectory(dir).getEntries()
+	private suspend fun list(dir: FileSystemDirectoryHandle, includeHide: Boolean): List<Pair<FileSystemHandle, File?>> {
+		val iterator = dir.getEntries()
 		val ret = mutableListOf<Pair<FileSystemHandle, File?>>()
 
 		for((k, v) in iterator) {
@@ -158,7 +159,7 @@ class Ls : Command() {
 			tunnel.pipeOutText("ls: No such file or directory") { style.color = "red" }
 		}
 		else {
-			console.error(it)
+			super.onExecuteError(it)
 			tunnel.pipeOutText("error on execute ls: $it") { style.color = "red" }
 		}
 	}

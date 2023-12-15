@@ -88,7 +88,7 @@ suspend fun FileSystemDirectoryHandle.getKeys(): List<String> {
 	while(true) {
 		val next = keys.next().await()
 		if(next.done.unsafeCast<Boolean>()) break
-		val key = next.value[0].unsafeCast<String>()
+		val key = next.value.unsafeCast<String>()
 		ret.add(key)
 	}
 	return ret
@@ -100,7 +100,7 @@ suspend fun FileSystemDirectoryHandle.getValues(): List<FileSystemHandle> {
 	while(true) {
 		val next = values.next().await()
 		if(next.done.unsafeCast<Boolean>()) break
-		val value = next.value[0].unsafeCast<FileSystemHandle>()
+		val value = next.value.unsafeCast<FileSystemHandle>()
 		ret.add(value)
 	}
 	return ret

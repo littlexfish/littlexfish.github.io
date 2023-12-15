@@ -12,7 +12,10 @@ class Touch : Command() {
 			tunnel.pipeOutText(Translation["command_arg.1"]) { style.color = "red" }
 			return 1
 		}
-		FS.getFile(args[0], true, FS.getDirectory(env["PWD"]!!))
+		val along = parseArgs(args).getStandalone()
+		for(a in along) {
+			FS.getFile(a, true, env["PWD"]!!)
+		}
 		return 0
 	}
 

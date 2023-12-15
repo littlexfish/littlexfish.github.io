@@ -21,7 +21,7 @@ class Rm : Command() {
 		val isSilent = pArg.has("s")
 
 		for(path in pArg.getStandalone()) {
-			val parent = FS.getDirectory(path.substringBeforeLast('/', ""), false, FS.getDirectory(env["PWD"]!!))
+			val parent = FS.getDirectory(path.substringBeforeLast('/', ""), false, env["PWD"]!!)
 			val name = path.substringAfterLast('/')
 			val contains = parent.getEntries().containsKey(name)
 			if(!contains) {

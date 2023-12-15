@@ -5,26 +5,26 @@ class Argument {
 	private val args = mutableMapOf<String, MutableList<String>>()
 	private val standalone = mutableListOf<String>()
 
-	constructor(arr: Array<String>) {
-		parse(arr)
+	constructor(arr: Array<String>, needValue: List<String> = emptyList()) {
+		parse(arr, needValue)
 	}
 
-	private fun parse(arr: Array<String>) {
+	private fun parse(arr: Array<String>, needValue: List<String>) {
+		var idx = 0
 		val addNextValue = { key: String, index: Int ->
-			if(index + 1 < arr.size && !arr[index + 1].startsWith("-")) {
+			if (needValue.contains(key) && index + 1 < arr.size && !arr[index + 1].startsWith("-")) {
 				val v = arr[index + 1]
-				if(args.containsKey(key)) {
+				if (args.containsKey(key)) {
 					args[key]!!.add(v)
-				}
-				else {
+				} else {
 					args[key] = mutableListOf(v)
 				}
+				idx++
 			}
 			else {
 				args[key] = mutableListOf()
 			}
 		}
-		var idx = 0
 		while(idx < arr.size) {
 			val current = arr[idx]
 			if(!current.startsWith("-")) {

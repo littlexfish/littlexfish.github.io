@@ -1,10 +1,8 @@
 package command.cmds.fs
 
 import command.Command
-import ext.DOMException
 import ext.DOMExceptionName
 import fs.FS
-import fs.simplifyPath
 import io.pipeOutText
 
 class Cd : Command() {
@@ -16,15 +14,9 @@ class Cd : Command() {
 		}
 		val dir = args[0]
 		val pwd = env["PWD"]!!
-		if(dir.startsWith("/")) {
-			FS.getDirectory(dir, false)
-			env.baseEnv?.set("PWD", simplifyPath(dir))
-		}
-		else {
-			val p = simplifyPath("$pwd/$dir")
-			FS.getDirectory(p, false)
-			env.baseEnv?.set("PWD", p)
-		}
+		val handle = FS.getDirectory(dir, false, pwd)
+		val path = FS.getAbsolutePath(handle)
+		env.baseEnv?.set("PWD", path)
 		return 0
 	}
 
@@ -33,7 +25,7 @@ class Cd : Command() {
 			tunnel.pipeOutText("cd: No such file or directory") { style.color = "red" }
 		}
 		else {
-			console.error(it)
+			super.onExecuteError(it)
 			tunnel.pipeOutText("error on execute cd: $it") { style.color = "red" }
 		}
 	}
