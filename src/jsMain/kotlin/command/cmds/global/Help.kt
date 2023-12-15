@@ -1,15 +1,14 @@
-package command.cmds
+package command.cmds.global
 
 import Translation
 import command.Command
 import command.Commands
 import io.pipeOutPre
-import io.pipeOutTag
 import io.pipeOutText
 
 class Help : Command() {
 
-	override fun execute(args: Array<String>): Int {
+	override suspend fun execute(args: Array<String>): Int {
 		if(args.isEmpty()) {
 			tunnel.pipeOutPre(Translation["command.help.text"])
 		}

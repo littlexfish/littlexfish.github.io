@@ -1,4 +1,4 @@
-package command.cmds
+package command.cmds.global
 
 import Translation
 import command.Command
@@ -7,7 +7,7 @@ import io.pipeOutText
 
 class Welcome : Command() {
 
-	override fun execute(args: Array<String>): Int {
+	override suspend fun execute(args: Array<String>): Int {
 		val osIcon = """ ___      _______    _______  _______ 
 |   |    |       |  |       ||       |
 |   |    |    ___|  |   _   ||  _____|

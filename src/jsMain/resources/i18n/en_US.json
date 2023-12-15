@@ -34,7 +34,8 @@
   "command.set.invalid_name": "Invalid variable name: {name}",
 
   "command.welcome.0": "Welcome to the LF OS",
-  "command.welcome.1": "Type 'help' to see the help page"
+  "command.welcome.1": "Type 'help' to see the help page",
 
+  "command.rm.not_found": "File not found: {path}"
 
 }

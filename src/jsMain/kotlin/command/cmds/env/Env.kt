@@ -1,4 +1,4 @@
-package command.cmds
+package command.cmds.env
 
 import Translation
 import command.Command
@@ -11,7 +11,7 @@ import org.w3c.dom.HTMLSpanElement
 
 class Env : Command() {
 
-	override fun execute(args: Array<String>): Int {
+	override suspend fun execute(args: Array<String>): Int {
 		if(args.isEmpty()) {
 			val envMap = env.getAllEnv()
 			val div = document.createElement("div") as HTMLDivElement

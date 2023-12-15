@@ -1,4 +1,4 @@
-package command.cmds
+package command.cmds.global
 
 import command.Command
 import createElement
@@ -6,7 +6,7 @@ import io.pipeOutTag
 
 class Info : Command() {
 
-	override fun execute(args: Array<String>): Int {
+	override suspend fun execute(args: Array<String>): Int {
 		tunnel.pipeOut(createElement("span") {
 			append(createElement("span") { innerText="OS Name: ";style.color = "LightGreen" })
 			append(env["OS"])

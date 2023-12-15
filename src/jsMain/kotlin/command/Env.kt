@@ -1,7 +1,10 @@
 package command
 
+import fs.FS
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
+
+private val INPUT_BEGIN_CHANGE_ENVS = listOf("INPUT_BEGIN", "PWD", "USER", "VERSION", "ENGINE_VERSION")
 
 class Env(val baseEnv: Env? = null) {
 
@@ -10,7 +13,7 @@ class Env(val baseEnv: Env? = null) {
 
 	operator fun set(key: String, value: String) {
 		env[key] = value
-		if(key == "INPUT_BEGIN") {
+		if(key in INPUT_BEGIN_CHANGE_ENVS) {
 			(document.getElementById("terminal-input-prefix") as? HTMLElement)?.innerText = getCommandInputPrefix()
 		}
 	}
@@ -46,6 +49,7 @@ class Env(val baseEnv: Env? = null) {
 
 	/**
 	 * %p: current path
+	 * %P: current path (full)
 	 * %u: current user
 	 * %v: current version
 	 * %e: current engine version
@@ -53,7 +57,8 @@ class Env(val baseEnv: Env? = null) {
 	fun getCommandInputPrefix(): String {
 		val pattern = get("INPUT_BEGIN") ?: return ""
 		return pattern
-			.replace("%p", get("PWD") ?: "%p")
+			.replace("%p", if(FS.isHomeDirectory(get("PWD") ?: "%p")) "~" else get("PWD") ?: "%p")
+			.replace("%P", get("PWD") ?: "%P")
 			.replace("%u", get("USER") ?: "%u")
 			.replace("%v", get("VERSION") ?: "%v")
 			.replace("%e", get("ENGINE_VERSION") ?: "%e")

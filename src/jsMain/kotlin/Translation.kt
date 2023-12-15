@@ -22,9 +22,12 @@ object Translation {
 	private val translationMapping = HashMap<String, String>()
 	private val defaultMapping = HashMap<String, String>()
 
+	private var currentLocale = defaultLang
+
 	suspend fun init() {
 		val lang = getOverrideLang() ?: getHostLang() ?: defaultLang
 		loadLang(lang)
+		currentLocale = lang
 	}
 
 	private fun getHostLang(): String? {
@@ -85,6 +88,10 @@ object Translation {
 
 	operator fun get(key: String, args: Map<String, Any?>): String {
 		return translationMapping[key]?.format(args) ?: key
+	}
+
+	fun getCurrentLocale(): String {
+		return currentLocale
 	}
 
 }

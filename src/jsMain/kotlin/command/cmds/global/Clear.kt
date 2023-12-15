@@ -1,4 +1,4 @@
-package command.cmds
+package command.cmds.global
 
 import Translation
 import clearTerminal
@@ -6,7 +6,7 @@ import command.Command
 
 class Clear : Command() {
 
-	override fun execute(args: Array<String>): Int {
+	override suspend fun execute(args: Array<String>): Int {
 		clearTerminal()
 		return 0
 	}

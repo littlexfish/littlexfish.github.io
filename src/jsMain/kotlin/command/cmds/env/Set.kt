@@ -1,4 +1,4 @@
-package command.cmds
+package command.cmds.env
 
 import Translation
 import command.Command
@@ -6,7 +6,7 @@ import io.pipeOutText
 
 class Set : Command() {
 
-	override fun execute(args: Array<String>): Int {
+	override suspend fun execute(args: Array<String>): Int {
 		if(args.size < 2) {
 			tunnel.pipeOutText(Translation["command_arg.2"]) { style.color = "red" }
 			return 1

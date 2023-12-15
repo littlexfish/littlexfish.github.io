@@ -2,13 +2,13 @@ import command.*
 import fs.FS
 import io.TerminalTunnel
 import kotlinx.browser.document
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.dom.clear
 import kotlinx.html.dom.append
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLInputElement
+import kotlin.js.Promise
 
 private lateinit var terminalOutput: HTMLDivElement
 private lateinit var terminalInput: HTMLInputElement
@@ -82,6 +82,7 @@ suspend fun main() {
 						terminalInput.value = history
 					}
 				}
+				Unit
 			}
 			terminalInput.onfocus = { _ ->
 				document.getElementById("terminal-input-outline")?.classList?.add("focus")
@@ -115,11 +116,11 @@ private fun init() {
 	rootEnv["ENGINE_LIB"] = "kotlinx-html-js:0.8.0;stdlib-js:1.9.21"
 	rootEnv["INPUT_BEGIN"] = "> "
 	currentEnv["CREATOR"] = "LF"
-	currentEnv["PWD"] = "/"
 	currentEnv["INPUT_BEGIN"] = currentEnv.defaultCommandInputPrefix()
+	currentEnv["PWD"] = FS.getHomeDirectoryPath()
 }
 
-private fun postInit() {
+private suspend fun postInit() {
 	runCommand(CommandStore("welcome", arrayOf()))
 }
 
@@ -140,29 +141,32 @@ private fun onCommand() {
 		return
 	}
 	terminalInput.disabled = true
-	var currentPipe: Pipe? = pipe
-	var currentTunnel: TerminalTunnel = newTerminalTunnel()
-	while(currentPipe != null) {
-		val nextTunnel = newTerminalTunnel()
-		if(currentPipe.type == PipeType.PIPE_NEXT) {
-			setTunnelToNextTunnel(currentTunnel, nextTunnel)
+	MainScope().launch {
+		var currentPipe: Pipe? = pipe
+		var currentTunnel: TerminalTunnel = newTerminalTunnel()
+		while(currentPipe != null) {
+			val nextTunnel = newTerminalTunnel()
+			if(currentPipe.type == PipeType.PIPE_NEXT) {
+				setTunnelToNextTunnel(currentTunnel, nextTunnel)
+			}
+			else {
+				setTunnelToTerminal(currentTunnel)
+			}
+			val env = Env(currentEnv)
+			val suc = runCommand(currentPipe.current, currentTunnel, env)
+			if(currentPipe.type == PipeType.SUC_NEXT && !suc) {
+				break
+			}
+			else if(currentPipe.type == PipeType.FAIL_NEXT && suc) {
+				break
+			}
+			currentPipe = currentPipe.getNext()
+			currentTunnel = nextTunnel
 		}
-		else {
-			setTunnelToTerminal(currentTunnel)
-		}
-		val env = Env(currentEnv)
-		val suc = runCommand(currentPipe.current, currentTunnel, env)
-		if(currentPipe.type == PipeType.SUC_NEXT && !suc) {
-			break
-		}
-		else if(currentPipe.type == PipeType.FAIL_NEXT && suc) {
-			break
-		}
-		currentPipe = currentPipe.getNext()
-		currentTunnel = nextTunnel
+	}.invokeOnCompletion {
+		terminalInput.disabled = false
+		terminalInput.focus()
 	}
-	terminalInput.disabled = false
-	terminalInput.focus()
 }
 
 private fun toAliasCommand(cmdLine: String): CommandStore {
@@ -175,7 +179,7 @@ private fun toAliasCommand(cmdLine: String): CommandStore {
 	else CommandStore(split.command, split.args)
 }
 
-private fun runCommand(split: CommandStore, tunnel: TerminalTunnel = newTerminalTunnel().apply { setTunnelToTerminal(this) }, env: Env = Env(currentEnv)): Boolean {
+private suspend fun runCommand(split: CommandStore, tunnel: TerminalTunnel = newTerminalTunnel().apply { setTunnelToTerminal(this) }, env: Env = Env(currentEnv)): Boolean {
 	val cmd = split.command
 	val args = split.args
 	val command = Commands.getCommand(cmd)
@@ -185,9 +189,19 @@ private fun runCommand(split: CommandStore, tunnel: TerminalTunnel = newTerminal
 	}
 	command.init(tunnel, env)
 	env["CMD"] = cmd
-	val ec = command.execute(args)
-	currentEnv["?"] = ec.toString()
-	return ec == 0
+	return try {
+		val ec = command.execute(args)
+		if(ec < 0) {
+			throw IllegalStateException("exit code cannot be negative")
+		}
+		currentEnv["?"] = ec.toString()
+		ec == 0
+	}
+	catch(e: Throwable) {
+		command.onExecuteError(e)
+		currentEnv["?"] = "-1"
+		false
+	}
 }
 
 private fun defineCommandBatch(input: String): Pipe {

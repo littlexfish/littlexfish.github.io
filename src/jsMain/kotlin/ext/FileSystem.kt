@@ -1,5 +1,6 @@
 package ext
 
+import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.await
 import org.w3c.dom.Navigator
 import org.w3c.files.File
@@ -11,7 +12,17 @@ inline val Navigator.storage: StorageManager
 @JsModule("StorageManager")
 @JsNonModule
 external object StorageManager {
+	fun estimate(): Promise<StorageEstimate>
 	fun getDirectory(): Promise<FileSystemDirectoryHandle>
+	fun persist(): Promise<Boolean>
+	fun persisted(): Promise<Boolean>
+}
+
+@JsModule("StorageEstimate")
+@JsNonModule
+external class StorageEstimate {
+	val quota: Int?
+	val usage: Int?
 }
 
 @JsModule("FileSystemHandle")
@@ -50,21 +61,47 @@ external class FileSystemDirectoryHandle : FileSystemHandle {
 	fun getFileHandle(name: String, options: dynamic = definedExternally): Promise<FileSystemFileHandle>
 	fun removeEntry(name: String, options: dynamic = definedExternally): Promise<Unit>
 	fun resolve(possibleDescendant: FileSystemHandle): Promise<Array<String>?>
-	fun entries(): FileSystemDirectoryIterator // TODO
-	fun keys(): FileSystemDirectoryIterator // TODO
-	fun values(): FileSystemDirectoryIterator // TODO
+	fun entries(): FileSystemDirectoryIterator
+	fun keys(): FileSystemDirectoryIterator
+	fun values(): FileSystemDirectoryIterator
 
 }
 
 suspend fun FileSystemDirectoryHandle.getEntries(): Map<String, FileSystemHandle> {
 	val ret = mutableMapOf<String, FileSystemHandle>()
 	val entries = entries()
-	while(true) {
-		val next = entries.next().await()
-		if(next.done.unsafeCast<Boolean>()) break
+	var next = entries.next().await()
+	while(!next.done.unsafeCast<Boolean>()) {
 		val key = next.value[0].unsafeCast<String>()
 		val value = next.value[1].unsafeCast<FileSystemHandle>()
 		ret[key] = value
+		next = entries.next().asDeferred().await()
+	}
+	return ret
+}
+
+//external fun getEntries(dir: FileSystemDirectoryHandle): Promise<dynamic>
+
+suspend fun FileSystemDirectoryHandle.getKeys(): List<String> {
+	val ret = mutableListOf<String>()
+	val keys = keys()
+	while(true) {
+		val next = keys.next().await()
+		if(next.done.unsafeCast<Boolean>()) break
+		val key = next.value[0].unsafeCast<String>()
+		ret.add(key)
+	}
+	return ret
+}
+
+suspend fun FileSystemDirectoryHandle.getValues(): List<FileSystemHandle> {
+	val ret = mutableListOf<FileSystemHandle>()
+	val values = values()
+	while(true) {
+		val next = values.next().await()
+		if(next.done.unsafeCast<Boolean>()) break
+		val value = next.value[0].unsafeCast<FileSystemHandle>()
+		ret.add(value)
 	}
 	return ret
 }
@@ -83,7 +120,7 @@ external class FileSystemWritableFileStream : WritableStream {
 	 *         - The file data to write. Can be an ArrayBuffer, TypedArray, DataView, Blob, or string. This property is required if type is set to "write".
 	 *
 	 *     - position
-	 *         - The byte position the current file cursor should move to if type "seek" is used. Can also be set if type is "write", in which case the write will start at the specified position.
+	 *         - The byte position the current file cursor should move to if type "seek" is used. Can also be set if type is "write", in which case to write will start at the specified position.
 	 *
 	 *     - size
 	 *         - A number representing the number of bytes the stream should contain. This property is required if type is set to "truncate".

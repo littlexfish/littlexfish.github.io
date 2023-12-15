@@ -1,14 +1,12 @@
-package command.cmds
+package command.cmds.global
 
 import Translation
 import command.Command
 import io.*
-import kotlinx.browser.document
-import org.w3c.dom.HTMLLinkElement
 
 class About : Command() {
 
-	override fun execute(args: Array<String>): Int {
+	override suspend fun execute(args: Array<String>): Int {
 		tunnel.pipeOutTextLn(tr("0"))
 		tunnel.pipeOutNewLine()
 		tunnel.pipeOutTextLn(tr("1"))
