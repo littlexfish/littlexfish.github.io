@@ -42,7 +42,6 @@ val FileSystemHandle.isFile: Boolean
 val FileSystemHandle.isDirectory: Boolean
 	get() = kind == "directory"
 
-@JsModule("FileSystemFileHandle")
 @JsNonModule
 external class FileSystemFileHandle : FileSystemHandle {
 
@@ -53,7 +52,6 @@ external class FileSystemFileHandle : FileSystemHandle {
 
 }
 
-@JsModule("FileSystemDirectoryHandle")
 @JsNonModule
 external class FileSystemDirectoryHandle : FileSystemHandle {
 

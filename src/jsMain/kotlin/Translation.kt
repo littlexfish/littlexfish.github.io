@@ -91,7 +91,7 @@ object Translation {
 	}
 
 	fun getCurrentLocale(): String {
-		return currentLocale
+		return currentLocale.replace("_", "-")
 	}
 
 }

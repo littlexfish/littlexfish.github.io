@@ -62,13 +62,14 @@ object Commands {
 		commands["touch"] = Touch()
 		commands["cd"] = Cd()
 		commands["rm"] = Rm()
-//		commands["mkdir"] = Mkdir()
-//		commands["rmdir"] = RmDir()
+		commands["mkdir"] = Mkdir()
+		commands["rmdir"] = Rmdir()
+		commands["edit"] = Edit()
 
+//		commands["chmod"] = Chmod()
 //		commands["cat"] = Cat()
 //		commands["mv"] = Mv()
 //		commands["cp"] = Cp()
-//		commands["edit"] = Edit()
 	}
 
 	fun getCommand(cmd: String): Command? = commands[cmd]

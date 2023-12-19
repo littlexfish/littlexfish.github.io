@@ -36,6 +36,12 @@
   "command.welcome.0": "Welcome to the LF OS",
   "command.welcome.1": "Type 'help' to see the help page",
 
-  "command.rm.not_found": "File not found: {path}"
+  "command.rm.not_found": "File not found: {path}",
+
+  "command.rmdir.not_found": "Directory not found: {path}",
+
+  "command.edit.not_found": "File not found: {path}",
+
+  "editor.no_permission_read": "No permission to read this file"
 
 }

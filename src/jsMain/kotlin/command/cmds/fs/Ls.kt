@@ -51,7 +51,7 @@ class Ls : Command() {
 		val list = list(dirHandle, listIncludeHide)
 		val sorted = sort(list, sortType)
 
-		out(sorted, listAsList, listShowHuman)
+		out(FS.getAbsolutePath(dirHandle), sorted, listAsList, listShowHuman, listIncludeHide)
 		return 0
 	}
 
@@ -94,10 +94,10 @@ class Ls : Command() {
 	private fun getLastModifiedUTC(f: File): String {
 		val lastModified = f.lastModified
 		val date = Date(lastModified)
-		return date.toLocaleTimeString(Translation.getCurrentLocale(), dateLocaleOptions { hour12 = false })
+		return date.toLocaleString(Translation.getCurrentLocale(), dateLocaleOptions { hour12 = false })
 	}
 
-	private fun out(list: List<Pair<FileSystemHandle, File?>>, asList: Boolean, human: Boolean) {
+	private fun out(absPath: String, list: List<Pair<FileSystemHandle, File?>>, asList: Boolean, human: Boolean, includeHide: Boolean) {
 		if(asList) {
 			val fileFilter = list.filter { it.second != null }.map { it.second!! }
 			var maxSize = 1
@@ -106,50 +106,64 @@ class Ls : Command() {
 				if(size > maxSize) maxSize = size
 			}
 			val spaceSize = log(maxSize.toDouble(), 10.0).toInt() + 1
+			val pipeOutName = { prefix: String, name: String, color: String? ->
+				tunnel.pipeOutTag("span") {
+					innerHTML = prefix
+					style.color = COLOR_LIST_PREFIX
+				}
+				tunnel.pipeOutText(name) {
+					color?.let { style.color = color }
+				}
+			}
+			val dirTimeSpace = run {
+				if(fileFilter.isEmpty()) 0
+				else {
+					val tmp = fileFilter[0]
+					getLastModifiedUTC(tmp).length
+				}
+			}
+			if(includeHide) {
+				pipeOutName("d--&nbsp;${" ".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", ".", COLOR_DIR_HIDE)
+				tunnel.pipeOutNewLine()
+				pipeOutName("d--&nbsp;${" ".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", "..", COLOR_DIR_HIDE)
+				tunnel.pipeOutNewLine()
+			}
 			for(handle in list) {
 				val name = handle.first.name
 				if(handle.second != null) {
 					val file = handle.second!!
-					val sizeSpace = log(file.size.toDouble(), 10.0).toInt() + 1
-					if(human) {
-						tunnel.pipeOutTag("span") {
-							innerHTML = "f&nbsp;${humanize(file.size.toInt())}&nbsp;${getLastModifiedUTC(file)}&nbsp;"
-							style.color = COLOR_LIST_PREFIX
-						}
-					}
-					else {
-						tunnel.pipeOutTag("span") {
-							innerHTML = "f&nbsp;${"&nbsp;".repeat(spaceSize - sizeSpace)}${file.size.toInt()}&nbsp;${getLastModifiedUTC(file)}&nbsp;"
-							style.color = COLOR_LIST_PREFIX
-						}
-					}
-					tunnel.pipeOutText(name) {
-						if(file.name.startsWith(".")) style.color = COLOR_DIR_HIDE
-					}
+					val fileSize = file.size.toInt()
+					val sizeSpace = log(if(fileSize == 0) 1.0 else fileSize.toDouble(), 10.0).toInt() + 1
+					val perm = FS.getPermission("$absPath/$name")
+					val pre = if(human) "f${perm}&nbsp;${humanize(fileSize)}&nbsp;${getLastModifiedUTC(file)}&nbsp;"
+					else "f${perm}&nbsp;${"&nbsp;".repeat(spaceSize - sizeSpace)}${file.size.toInt()}&nbsp;${getLastModifiedUTC(file)}&nbsp;"
+					pipeOutName(pre, name, if(file.name.startsWith(".")) COLOR_DIR_HIDE else null)
 				}
 				else {
-					tunnel.pipeOutTag("span") {
-						innerHTML = "d&nbsp;${" ".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(12)}&nbsp;"
-						style.color = COLOR_LIST_PREFIX
-					}
-					tunnel.pipeOutText(name) {
-						if(handle.first.name.startsWith(".")) style.color = COLOR_DIR_HIDE
-						else style.color = COLOR_DIR
-					}
+					pipeOutName("d--&nbsp;${" ".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", name, if(name.startsWith(".")) COLOR_DIR_HIDE else COLOR_DIR)
 				}
 				tunnel.pipeOutNewLine()
 			}
 		}
 		else {
-			for(handle in list) {
-				tunnel.pipeOutText(handle.first.name) {
+			val pipeOutName = { name: String, color: String? ->
+				tunnel.pipeOutText(name) {
 					style.paddingRight = "40px"
-					if(handle.first.name.startsWith(".")) {
-						if (handle.second == null) style.color = COLOR_DIR_HIDE
-						else style.color = COLOR_HIDE
-					}
-					else if(handle.second == null) style.color = COLOR_DIR
+					color?.let { style.color = color }
 				}
+			}
+			if(includeHide) {
+				pipeOutName(".", COLOR_DIR_HIDE)
+				pipeOutName("..", COLOR_DIR_HIDE)
+			}
+			for(handle in list) {
+				pipeOutName(handle.first.name,
+					if(handle.first.name.startsWith(".")) {
+						if (handle.second == null) COLOR_DIR_HIDE
+						else COLOR_HIDE
+					}
+					else if(handle.second == null) COLOR_DIR
+					else null)
 			}
 		}
 	}

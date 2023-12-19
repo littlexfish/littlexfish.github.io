@@ -14,9 +14,15 @@ object FS {
 
 	suspend fun init() {
 		val opfsRoot = fs.getDirectory().await()
+		ensureSystemDir(opfsRoot)
+		FSPermission.init(opfsRoot)
 		root = opfsRoot.getDirectoryHandle("terminal", json("create" to true)).await()
 		FSMapper.init(root!!)
 		home = getDirectory(HOME_DIRECTORY, true)
+	}
+
+	private suspend fun ensureSystemDir(opfsRoot: FileSystemDirectoryHandle) {
+		opfsRoot.getDirectoryHandle("system", json("create" to true)).await()
 	}
 
 	fun getDirectoryRoot(): FileSystemDirectoryHandle {
@@ -30,24 +36,39 @@ object FS {
 	suspend fun getDirectory(path: String, create: Boolean = false, relativeFrom: String? = null): FileSystemDirectoryHandle {
 		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
 		return if(create) {
-			val spl = FSMapper.splitPath(p)
-			FSMapper.addDirectory(getDirectoryRoot(), spl.first, spl.second)
+			FSMapper.addDirectory(getDirectoryRoot(), p)
 		}
 		else {
 			FSMapper.getDirectory(getDirectoryRoot(), p)
 		}
 	}
 
-	suspend fun getFile(path: String, create: Boolean = false, relativeFrom: String? = null): FileSystemFileHandle {
+	suspend fun getFile(path: String, create: Boolean = false, createDir: Boolean = false, relativeFrom: String? = null, defaultPermission: Permission? = null): FileSystemFileHandle {
 		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
 		return if(create) {
 			val spl = FSMapper.splitPath(p)
-			console.log(spl)
-			FSMapper.addFile(getDirectoryRoot(), spl.first, spl.second)
+			FSMapper.addFile(getDirectoryRoot(), spl.first, spl.second, createDir, defaultPermission)
 		}
 		else {
 			FSMapper.getFile(getDirectoryRoot(), p)
 		}
+	}
+
+	private fun getEntry(path: String, relativeFrom: String? = null): Boolean? {
+		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		return FSMapper.getEntry(p)
+	}
+
+	fun hasEntry(path: String, relativeFrom: String? = null): Boolean {
+		return getEntry(path, relativeFrom) != null
+	}
+
+	fun hasDirectory(path: String, relativeFrom: String? = null): Boolean {
+		return getEntry(path, relativeFrom) == true
+	}
+
+	fun hasFile(path: String, relativeFrom: String? = null): Boolean {
+		return getEntry(path, relativeFrom) == false
 	}
 
 	suspend fun move(handle: FileSystemHandle, target: String, newName: String? = null) {
@@ -70,9 +91,31 @@ object FS {
 		return "/" + getDirectoryRoot().resolve(handle).await()!!.joinToString("/")
 	}
 
-	fun simplifyPath(path: String): String {
+	private fun simplifyPath(path: String): String {
 		val spl = FSMapper.splitPath(path)
 		return "${spl.first}/${spl.second}"
+	}
+
+	fun canRead(path: String, relativeFrom: String? = null): Boolean {
+		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		if(!hasFile(p)) return false
+		return FSPermission.getPermission(p).read
+	}
+
+	fun canWrite(path: String, relativeFrom: String? = null): Boolean {
+		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		if(!hasFile(p)) return false
+		return FSPermission.getPermission(p).write
+	}
+
+	fun getPermission(path: String, relativeFrom: String? = null): Permission {
+		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		if(!hasFile(p)) return Permission.DEFAULT
+		return FSPermission.getPermission(p)
+	}
+
+	suspend fun savePermission() {
+		FSPermission.save()
 	}
 
 }

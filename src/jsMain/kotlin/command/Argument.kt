@@ -1,5 +1,8 @@
 package command
 
+/**
+ * Argument parser
+ */
 class Argument {
 
 	private val args = mutableMapOf<String, MutableList<String>>()
@@ -27,19 +30,18 @@ class Argument {
 		}
 		while(idx < arr.size) {
 			val current = arr[idx]
-			if(!current.startsWith("-")) {
-				standalone.add(current)
-				idx++
-			}
-			else {
-				if(current.startsWith("--")) {
-					val key = current.substring(2)
-					addNextValue(key, idx)
+			if(current.startsWith("-")) {
+				val key = current.substring(1)
+				if(key.startsWith("-")) {
+					val key2 = key.substring(1)
+					addNextValue(key2, idx)
 				}
 				else {
-					val key = current.substring(1)
 					addNextValue(key, idx)
 				}
+			}
+			else {
+				standalone.add(current)
 			}
 			idx++
 		}

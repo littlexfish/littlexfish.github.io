@@ -30,28 +30,31 @@ internal object FSMapper {
 		}
 	}
 
-	internal suspend fun addFile(root: FileSystemDirectoryHandle, path: String, name: String): FileSystemFileHandle {
-		val parent = ensureDirectory(root, simplifyPath(path))
+	internal suspend fun addFile(root: FileSystemDirectoryHandle, path: String, name: String, createDir: Boolean, permission: Permission? = null): FileSystemFileHandle {
+		val parent = ensureDirectory(root, simplifyPath(path), createDir)
 		if(!parent.second.hasChild(name)) {
 			parent.second.add(FSTreeNode(name, false))
 		}
+		if(permission != null) FSPermission.setPermission("/$path/$name", permission)
 		return parent.first.getFileHandle(name, json("create" to true)).await()
 	}
 
-	internal suspend fun addDirectory(root: FileSystemDirectoryHandle, path: String, name: String): FileSystemDirectoryHandle {
-		return ensureDirectory(root, simplifyPath("$path/$name")).first
+	internal suspend fun addDirectory(root: FileSystemDirectoryHandle, path: String): FileSystemDirectoryHandle {
+		return ensureDirectory(root, simplifyPath(path), true).first
 	}
 
-	private suspend fun ensureDirectory(root: FileSystemDirectoryHandle, path: String): Pair<FileSystemDirectoryHandle, FSTreeNode> {
+	private suspend fun ensureDirectory(root: FileSystemDirectoryHandle, path: String, createDir: Boolean): Pair<FileSystemDirectoryHandle, FSTreeNode> {
 		val segments = simplifyPath(path).split("/").filter { it != "" }
 		var curDir = root
 		var curNode = FSRoot
 		for(s in segments) {
-			curDir = curDir.getDirectoryHandle(s, json("create" to true)).await()
-			if(!curNode.hasChild(s)) {
+			curDir = curDir.getDirectoryHandle(s, json("create" to createDir)).await()
+			curNode = if(!curNode.hasChild(s)) {
 				val n = FSTreeNode(s, true)
 				curNode.add(n)
-				curNode = n
+				n
+			} else {
+				curNode.getChild(s)!!
 			}
 		}
 		return curDir to curNode
@@ -63,7 +66,7 @@ internal object FSMapper {
 	internal suspend fun getFile(root: FileSystemDirectoryHandle, path: String): FileSystemFileHandle {
 		val segments = simplifyPath(path).split("/")
 		val last = FSRoot.find(segments.iterator()) ?: throw NotFoundException()
-		if(!last.isDirectory) throw TypeNotMatchException(false)
+		if(last.isDirectory) throw TypeNotMatchException(false)
 		val parent = getDirectory(root, path.substringBeforeLast('/', ""))
 		return parent.getFileHandle(path.substringAfterLast('/')).await()
 	}
@@ -99,6 +102,12 @@ internal object FSMapper {
 		val left = simple.substringBeforeLast('/', "")
 		val right = simple.substringAfterLast('/')
 		return left to right
+	}
+
+	internal fun getEntry(path: String): Boolean? {
+		val segments = simplifyPath(path).split("/")
+		val last = FSRoot.find(segments.iterator()) ?: return null
+		return last.isDirectory
 	}
 
 	data class FSTreeNode(val name: String, val isDirectory: Boolean) {
