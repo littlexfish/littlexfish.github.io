@@ -42,6 +42,11 @@
 
   "command.edit.not_found": "File not found: {path}",
 
-  "editor.no_permission_read": "No permission to read this file"
+  "command.cat.not_found": "File not found: {path}",
+
+  "editor.no_permission_read": "No permission to read this file",
+
+  "command.touch.perm_error": "Invalid permission setter: {perm}",
+  "command.chmod.perm_error": "Invalid permission setter: {perm}"
 
 }

@@ -16,7 +16,7 @@ class Ls : Command() {
 
 	companion object {
 		private const val COLOR_DIR = "cornflowerblue"
-		private const val COLOR_DIR_HIDE = "mediumblue"
+		private const val COLOR_DIR_HIDE = "steelblue"
 		private const val COLOR_HIDE = "gray"
 		private const val COLOR_LIST_PREFIX = "mediumslateblue"
 	}
@@ -123,9 +123,9 @@ class Ls : Command() {
 				}
 			}
 			if(includeHide) {
-				pipeOutName("d--&nbsp;${" ".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", ".", COLOR_DIR_HIDE)
+				pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", ".", COLOR_DIR_HIDE)
 				tunnel.pipeOutNewLine()
-				pipeOutName("d--&nbsp;${" ".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", "..", COLOR_DIR_HIDE)
+				pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", "..", COLOR_DIR_HIDE)
 				tunnel.pipeOutNewLine()
 			}
 			for(handle in list) {
@@ -140,7 +140,7 @@ class Ls : Command() {
 					pipeOutName(pre, name, if(file.name.startsWith(".")) COLOR_DIR_HIDE else null)
 				}
 				else {
-					pipeOutName("d--&nbsp;${" ".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", name, if(name.startsWith(".")) COLOR_DIR_HIDE else COLOR_DIR)
+					pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", name, if(name.startsWith(".")) COLOR_DIR_HIDE else COLOR_DIR)
 				}
 				tunnel.pipeOutNewLine()
 			}

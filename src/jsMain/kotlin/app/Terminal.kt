@@ -539,6 +539,7 @@ class Terminal : App("terminal") {
 		terminalStorage.forEach { terminalOutput.append(it) }
 		terminalOutput.lastElementChild?.scrollToView()
 		terminalStorage.clear()
+		terminalInput.focus()
 	}
 
 	override fun onSuspend() {

@@ -1,5 +1,6 @@
 import app.App
 import app.Editor
+import app.HtmlViewer
 import app.Terminal
 import fs.FS
 import kotlinx.browser.document
@@ -86,6 +87,7 @@ object Application {
 		document.body?.append(appElement)
 		buildApp(Terminal())
 		buildApp(Editor())
+		buildApp(HtmlViewer())
 	}
 
 	private fun buildApp(app: App) {

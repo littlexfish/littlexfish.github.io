@@ -4,6 +4,7 @@ import Application
 import Translation
 import fs.FS
 import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
@@ -125,7 +126,7 @@ class Editor : App("editor") {
 			}
 		}
 		openedFiles.add(0, FileInfo(path))
-		return openedFiles.size - 1
+		return 0
 	}
 
 	private fun softRefreshFileList() {
@@ -146,7 +147,12 @@ class Editor : App("editor") {
 		onMouseUpFunction = {
 			if(it.asDynamic().button == 0) {
 				it.preventDefault()
-				onFileOpen(idx)
+				if(window.asDynamic().event.ctrlKey.unsafeCast<Boolean>()) {
+					onCloseFile(idx)
+				}
+				else {
+					onFileOpen(idx)
+				}
 			}
 			else if(it.asDynamic().button == 1) {
 				it.preventDefault()

@@ -47,7 +47,7 @@ external class FileSystemFileHandle : FileSystemHandle {
 
 	fun createWritable(option: dynamic = definedExternally): Promise<FileSystemWritableFileStream>
 	fun getFile(): Promise<File>
-
+//	fun createSyncAccessHandle(): Promise<FileSystemSyncAccessHandle> // may not support
 	fun move(targetDir: String, newName: String): Promise<dynamic>
 
 }
@@ -77,8 +77,6 @@ suspend fun FileSystemDirectoryHandle.getEntries(): Map<String, FileSystemHandle
 	}
 	return ret
 }
-
-//external fun getEntries(dir: FileSystemDirectoryHandle): Promise<dynamic>
 
 suspend fun FileSystemDirectoryHandle.getKeys(): List<String> {
 	val ret = mutableListOf<String>()
@@ -133,4 +131,15 @@ external class FileSystemWritableFileStream : WritableStream {
 @JsNonModule
 external class FileSystemDirectoryIterator {
 	fun next(): Promise<dynamic>
+}
+
+@JsModule("FileSystemSyncAccessHandle")
+@JsNonModule
+external class FileSystemSyncAccessHandle {
+	fun close()
+	fun flush()
+	fun getSize(): Int
+	fun read(buffer: dynamic, option: dynamic = definedExternally): Int
+	fun truncate(size: Int)
+	fun write(buffer: dynamic, option: dynamic = definedExternally): Int
 }

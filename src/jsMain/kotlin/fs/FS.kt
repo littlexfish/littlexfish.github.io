@@ -34,7 +34,7 @@ object FS {
 	}
 
 	suspend fun getDirectory(path: String, create: Boolean = false, relativeFrom: String? = null): FileSystemDirectoryHandle {
-		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		val p = toGlobalPath(path, relativeFrom)
 		return if(create) {
 			FSMapper.addDirectory(getDirectoryRoot(), p)
 		}
@@ -44,7 +44,7 @@ object FS {
 	}
 
 	suspend fun getFile(path: String, create: Boolean = false, createDir: Boolean = false, relativeFrom: String? = null, defaultPermission: Permission? = null): FileSystemFileHandle {
-		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		val p = toGlobalPath(path, relativeFrom)
 		return if(create) {
 			val spl = FSMapper.splitPath(p)
 			FSMapper.addFile(getDirectoryRoot(), spl.first, spl.second, createDir, defaultPermission)
@@ -55,7 +55,7 @@ object FS {
 	}
 
 	private fun getEntry(path: String, relativeFrom: String? = null): Boolean? {
-		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		val p = toGlobalPath(path, relativeFrom)
 		return FSMapper.getEntry(p)
 	}
 
@@ -97,25 +97,35 @@ object FS {
 	}
 
 	fun canRead(path: String, relativeFrom: String? = null): Boolean {
-		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		val p = toGlobalPath(path, relativeFrom)
 		if(!hasFile(p)) return false
 		return FSPermission.getPermission(p).read
 	}
 
 	fun canWrite(path: String, relativeFrom: String? = null): Boolean {
-		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		val p = toGlobalPath(path, relativeFrom)
 		if(!hasFile(p)) return false
 		return FSPermission.getPermission(p).write
 	}
 
 	fun getPermission(path: String, relativeFrom: String? = null): Permission {
-		val p = if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+		val p = toGlobalPath(path, relativeFrom)
 		if(!hasFile(p)) return Permission.DEFAULT
 		return FSPermission.getPermission(p)
 	}
 
+	fun setPermission(path: String, permission: Permission, relativeFrom: String? = null) {
+		val p = toGlobalPath(path, relativeFrom)
+		if(!hasFile(p)) return
+		FSPermission.setPermission(p, permission)
+	}
+
 	suspend fun savePermission() {
 		FSPermission.save()
+	}
+
+	private fun toGlobalPath(path: String, relativeFrom: String? = null): String {
+		return if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
 	}
 
 }

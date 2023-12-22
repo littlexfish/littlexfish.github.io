@@ -41,7 +41,7 @@ object FSPermission {
 		console.log(allPermissions.keys.map { "$it${allPermissions[it]}" }.toTypedArray())
 		val handle = systemDir.getFileHandle(FILENAME, json("create" to true)).await()
 		val writer = handle.createWritable().await()
-		val text = allPermissions.map { "${it.key};${it.value.read};${it.value.write}" }.joinToString("\n")
+		val text = allPermissions.map { "${it.key};${if(it.value.read) "r" else "-"};${if(it.value.write) "w" else "-"}" }.joinToString("\n")
 		writer.write(text)
 		writer.close()
 	}

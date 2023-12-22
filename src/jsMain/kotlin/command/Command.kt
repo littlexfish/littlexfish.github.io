@@ -65,9 +65,10 @@ object Commands {
 		commands["mkdir"] = Mkdir()
 		commands["rmdir"] = Rmdir()
 		commands["edit"] = Edit()
+		commands["cat"] = Cat()
+		commands["open"] = Open()
+		commands["chmod"] = Chmod()
 
-//		commands["chmod"] = Chmod()
-//		commands["cat"] = Cat()
 //		commands["mv"] = Mv()
 //		commands["cp"] = Cp()
 	}
