@@ -2,7 +2,10 @@ package fs
 
 import ext.*
 import kotlinx.browser.window
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
+import kotlinx.coroutines.launch
+import org.w3c.files.FileReader
 import kotlin.js.json
 
 object FS {
@@ -71,20 +74,67 @@ object FS {
 		return getEntry(path, relativeFrom) == false
 	}
 
-	suspend fun move(handle: FileSystemHandle, target: String, newName: String? = null) {
-		// TODO: move file or directory
+	suspend fun remove(path: String, isRecursive: Boolean, relativeFrom: String? = null): Boolean? {
+		val p = toGlobalPath(path, relativeFrom)
+		return FSMapper.removeEntry(getDirectoryRoot(), isRecursive, p)
 	}
 
-	suspend fun copy(handle: FileSystemHandle, target: String, newName: String? = null) {
-		// TODO: copy file or directory
+	suspend fun move(file: String, target: String, relativeFrom: String?) {
+		val from = toGlobalPath(file, relativeFrom)
+		val to = toGlobalPath(target, relativeFrom)
+		val (f, targetFile) = getFileRoute(file, target, relativeFrom)
+		readContent(f) {
+			val writer = targetFile.createWritable().await()
+			writer.write(it)
+			writer.close()
+			f.remove()
+			FSPermission.setPermission(to, FSPermission.getPermission(from))
+			FSPermission.removePermission(from)
+		}
+	}
+
+	suspend fun copy(file: String, target: String, relativeFrom: String?) {
+		val from = toGlobalPath(file, relativeFrom)
+		val to = toGlobalPath(target, relativeFrom)
+		val (f, targetFile) = getFileRoute(file, target, relativeFrom)
+		readContent(f) {
+			val writer = targetFile.createWritable().await()
+			writer.write(it)
+			writer.close()
+			FSPermission.setPermission(to, FSPermission.getPermission(from))
+		}
+	}
+
+	private suspend fun getFileRoute(file: String, target: String, relativeFrom: String? = null): Pair<FileSystemFileHandle, FileSystemFileHandle> {
+		val f = getFile(file, create = false, createDir = false, relativeFrom = relativeFrom)
+		val targetFile = getFile(target, create = true, createDir = true, relativeFrom = relativeFrom)
+		return f to targetFile
+	}
+
+	private suspend fun readContent(file: FileSystemFileHandle, onRead: suspend (ByteArray) -> Unit) {
+		val reader = FileReader()
+		reader.onload = {
+			val res = reader.result.unsafeCast<ByteArray>()
+			MainScope().launch { onRead(res) }
+		}
+		reader.readAsArrayBuffer(file.getFile().await())
+	}
+
+	suspend fun readContentAsText(file: FileSystemFileHandle, onRead: suspend (String) -> Unit) {
+		val reader = FileReader()
+		reader.onload = {
+			val res = reader.result.unsafeCast<String>()
+			MainScope().launch { onRead(res) }
+		}
+		reader.readAsText(file.getFile().await())
 	}
 
 	fun getHomeDirectoryPath(): String {
 		return HOME_DIRECTORY
 	}
 
-	fun isHomeDirectory(path: String): Boolean {
-		return simplifyPath(path) == HOME_DIRECTORY
+	fun replaceHomeDirectory(path: String): String {
+		return simplifyPath(path).replaceFirst(HOME_DIRECTORY, "~")
 	}
 
 	suspend fun getAbsolutePath(handle: FileSystemHandle): String {

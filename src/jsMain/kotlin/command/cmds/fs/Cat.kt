@@ -4,6 +4,7 @@ import Translation
 import command.Command
 import fs.FS
 import io.pipeOutNewLine
+import io.pipeOutPre
 import io.pipeOutText
 import io.pipeOutTextLn
 import kotlinx.coroutines.await
@@ -30,31 +31,33 @@ class Cat : Command() {
 		return 0
 	}
 
-	@Suppress("ControlFlowWithEmptyBody")
 	private suspend fun showContent(path: List<String>, withPath: Boolean) {
-		val contents = mutableMapOf<String, List<String>>()
-		for(p in path) {
-			val handler = FS.getFile(p, relativeFrom = env["PWD"])
+		val absPaths = path.map { FS.getAbsolutePath(FS.getFile(it, relativeFrom = env["PWD"])) }
+		if(absPaths.isNotEmpty()) {
+			showNextContent(absPaths, 0, withPath)
+		}
+	}
+
+	private suspend fun showNextContent(path: List<String>, index: Int, withPath: Boolean) {
+		if(index >= path.size) return
+		val p = path[index]
+		val handler = FS.getFile(p)
+		FS.readContentAsText(handler) {
 			if(withPath) {
-				val absPath = FS.getAbsolutePath(handler)
-				tunnel.pipeOutTextLn("$absPath:") {
+				tunnel.pipeOutTextLn("$p:") {
 					style.color = "cornflowerblue"
 				}
 			}
-			val reader = FileReader()
-			reader.onload = {
-				val text = reader.result.unsafeCast<String>()
-				contents[p] = text.split("\n")
-				null
+			if(it.isEmpty()) {
+				tunnel.pipeOutText("<empty>") {
+					style.color = "gray"
+				}
 			}
-			reader.readAsText(handler.getFile().await())
-		}
-		for(p in path) {
-			val content = contents[p]!!
-			for(line in content) {
-				tunnel.pipeOutTextLn(line)
+			else {
+				tunnel.pipeOutPre(it)
 			}
 			tunnel.pipeOutNewLine()
+			showNextContent(path, index + 1, withPath)
 		}
 	}
 

@@ -46,7 +46,6 @@
 
   "editor.no_permission_read": "No permission to read this file",
 
-  "command.touch.perm_error": "Invalid permission setter: {perm}",
   "command.chmod.perm_error": "Invalid permission setter: {perm}"
 
 }

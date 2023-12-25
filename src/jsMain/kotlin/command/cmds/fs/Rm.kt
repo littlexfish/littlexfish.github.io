@@ -15,16 +15,12 @@ class Rm : Command() {
 		val (pArg, isRecursive, isSilent) = getRmInfo(args, tunnel) ?: return 1
 
 		for(path in pArg.getStandalone()) {
-			val parent = FS.getDirectory(path.substringBeforeLast('/', ""), false, env["PWD"]!!)
-			val name = path.substringAfterLast('/')
-			val contains = parent.getEntries().containsKey(name)
-			if(!contains) {
+			val suc = FS.remove(path, isRecursive, env["PWD"])
+			if(suc == false) {
 				if(!isSilent) tunnel.pipeOutText(Translation["command.rm.not_found", "path" to path]) { style.color = "red" }
 				continue
 			}
-			parent.removeEntry(name, json("recursive" to isRecursive)).await()
 		}
-
 		return 0
 	}
 

@@ -68,9 +68,9 @@ object Commands {
 		commands["cat"] = Cat()
 		commands["open"] = Open()
 		commands["chmod"] = Chmod()
+		commands["mv"] = Mv()
+		commands["cp"] = Cp()
 
-//		commands["mv"] = Mv()
-//		commands["cp"] = Cp()
 	}
 
 	fun getCommand(cmd: String): Command? = commands[cmd]

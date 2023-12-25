@@ -33,7 +33,7 @@ open external class FileSystemHandle {
 	val name: String
 	fun isSameEntry(other: FileSystemHandle): Promise<Boolean>
 	fun queryPermission(fileSystemHandlePermissionDescriptor: dynamic): Promise<PermissionStatus>
-	fun remove(options: dynamic): Promise<Unit>
+	fun remove(options: dynamic = definedExternally): Promise<Unit>
 	fun requestPermission(fileSystemHandlePermissionDescriptor: dynamic): Promise<PermissionStatus>
 }
 

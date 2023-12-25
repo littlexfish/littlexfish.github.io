@@ -57,4 +57,11 @@ object FSPermission {
 		}
 	}
 
+	internal fun removePermission(path: String) {
+		allPermissions.remove(path)
+		MainScope().launch {
+			save()
+		}
+	}
+
 }

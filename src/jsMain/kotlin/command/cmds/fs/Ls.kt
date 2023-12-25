@@ -125,8 +125,10 @@ class Ls : Command() {
 			if(includeHide) {
 				pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", ".", COLOR_DIR_HIDE)
 				tunnel.pipeOutNewLine()
-				pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", "..", COLOR_DIR_HIDE)
-				tunnel.pipeOutNewLine()
+				if(absPath != "/") {
+					pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", "..", COLOR_DIR_HIDE)
+					tunnel.pipeOutNewLine()
+				}
 			}
 			for(handle in list) {
 				val name = handle.first.name
@@ -154,7 +156,9 @@ class Ls : Command() {
 			}
 			if(includeHide) {
 				pipeOutName(".", COLOR_DIR_HIDE)
-				pipeOutName("..", COLOR_DIR_HIDE)
+				if(absPath != "/") {
+					pipeOutName("..", COLOR_DIR_HIDE)
+				}
 			}
 			for(handle in list) {
 				pipeOutName(handle.first.name,

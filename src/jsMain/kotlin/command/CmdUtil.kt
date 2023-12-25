@@ -1,10 +1,10 @@
 package command
 
 import Translation
-import command.cmds.fs.Chmod
 import fs.Permission
 import io.TerminalTunnel
 import io.pipeOutText
+import kotlin.math.min
 
 /**
  * Get the argument of the command.
@@ -22,7 +22,7 @@ fun getRmInfo(args: Array<String>, tunnel: TerminalTunnel): Triple<Argument, Boo
 }
 
 fun parsePermissionChange(value: String): PermissionChange? {
-	if(!checkPermissionParam(value, true)) {
+	if("[#^]?(r|w|rw|wr)".toRegex().matches(value)) {
 		return null
 	}
 	val perm = PermissionChange()
@@ -44,7 +44,7 @@ fun parsePermissionChange(value: String): PermissionChange? {
 }
 
 fun parsePermission(value: String): Permission? {
-	if(!checkPermissionParam(value, false)) {
+	if("(r|w|rw|wr)".toRegex().matches(value)) {
 		return null
 	}
 	val read = value.contains("r")
@@ -53,10 +53,6 @@ fun parsePermission(value: String): Permission? {
 	else if(read) Permission.READ_ONLY
 	else if(write) Permission.WRITE_ONLY
 	else Permission.DEFAULT
-}
-
-private fun checkPermissionParam(value: String, containChange: Boolean): Boolean {
-	return ((if(containChange) "[#^]?" else "") + "(r|w|rw|wr)").toRegex().matches(value)
 }
 
 data class PermissionChange(var read: Boolean? = null, var write: Boolean? = null) {
@@ -69,4 +65,9 @@ data class PermissionChange(var read: Boolean? = null, var write: Boolean? = nul
 		else if(write) Permission.WRITE_ONLY
 		else Permission.DEFAULT
 	}
+}
+
+fun getStandaloneWithSize(args: Argument, maxSize: Int): List<String> {
+	val standalone = args.getStandalone()
+	return standalone.takeLast(maxSize)
 }

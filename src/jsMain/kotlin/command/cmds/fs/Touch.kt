@@ -24,11 +24,8 @@ class Touch : Command() {
 
 		val permissionChange = pArg.get("p")
 
-		val perm = permissionChange?.let(::parsePermission)
-		if(perm == null) {
-			tunnel.pipeOutText(Translation["command.touch.perm_error", "perm" to permissionChange]) { style.color = "red" }
-			return 1
-		}
+		val perm = permissionChange?.let(::parsePermission) ?: Permission.DEFAULT
+
 		for(a in pArg.getStandalone()) {
 			FS.getFile(a, create = true, createDir = false, relativeFrom = env["PWD"]!!, defaultPermission = perm)
 		}

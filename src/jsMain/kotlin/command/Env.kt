@@ -57,7 +57,7 @@ class Env(val baseEnv: Env? = null) {
 	fun getCommandInputPrefix(): String {
 		val pattern = get("INPUT_BEGIN") ?: return ""
 		return pattern
-			.replace("%p", if(FS.isHomeDirectory(get("PWD") ?: "%p")) "~" else get("PWD") ?: "%p")
+			.replace("%p", FS.replaceHomeDirectory(get("PWD") ?: "%p"))
 			.replace("%P", get("PWD") ?: "%P")
 			.replace("%u", get("USER") ?: "%u")
 			.replace("%v", get("VERSION") ?: "%v")

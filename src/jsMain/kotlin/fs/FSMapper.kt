@@ -30,6 +30,24 @@ internal object FSMapper {
 		}
 	}
 
+	internal suspend fun removeEntry(root: FileSystemDirectoryHandle, isRecursive: Boolean, path: String): Boolean? {
+		return try {
+			val isD = getEntry(path)
+			if(isD == true) {
+				getDirectory(root, path).remove(json("recursive" to isRecursive)).await()
+			}
+			else if(isD == false) {
+				getFile(root, path).remove(json("recursive" to isRecursive)).await()
+			}
+			val spl = splitPath(path)
+			val node = FSRoot.find(spl.first.split("/").iterator())
+			node?.deleteChild(spl.second, isRecursive) == true
+		}
+		catch(e: Exception) {
+			null
+		}
+	}
+
 	internal suspend fun addFile(root: FileSystemDirectoryHandle, path: String, name: String, createDir: Boolean, permission: Permission? = null): FileSystemFileHandle {
 		val parent = ensureDirectory(root, simplifyPath(path), createDir)
 		if(!parent.second.hasChild(name)) {
@@ -94,7 +112,7 @@ internal object FSMapper {
 			}
 			pathList.add(segment)
 		}
-		return pathList.joinToString("/")
+		return (if(path.startsWith("/")) "/" else "") + pathList.joinToString("/")
 	}
 
 	internal fun splitPath(path: String): Pair<String, String> {
@@ -139,6 +157,19 @@ internal object FSMapper {
 				}
 			}
 			return true to null
+		}
+		fun deleteChild(n: String, req: Boolean): Boolean {
+			for(i in children.indices) {
+				if(children[i].name == n) {
+					if(children.isEmpty() || req && children[i].children.isNotEmpty()) {
+						children[i].clear()
+						children.removeAt(i)
+						return true
+					}
+					return false
+				}
+			}
+			return false
 		}
 		fun findPath(path: Iterator<String>): String? {
 			return pFindPath(path).second
