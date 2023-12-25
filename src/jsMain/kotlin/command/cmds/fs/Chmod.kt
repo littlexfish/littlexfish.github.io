@@ -4,7 +4,6 @@ import Translation
 import command.Command
 import command.parsePermissionChange
 import fs.FS
-import fs.Permission
 import io.pipeOutText
 
 class Chmod : Command() {

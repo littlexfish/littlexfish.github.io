@@ -3,11 +3,8 @@ package command.cmds.fs
 import Translation
 import command.Command
 import command.getRmInfo
-import ext.getEntries
 import fs.FS
 import io.pipeOutText
-import kotlinx.coroutines.await
-import kotlin.js.json
 
 class Rm : Command() {
 

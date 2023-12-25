@@ -1,12 +1,7 @@
 import kotlinx.browser.window
 import kotlinx.coroutines.await
-import kotlinx.html.OBJECT
-import kotlinx.html.TH
 import org.w3c.dom.url.URL
-import org.w3c.fetch.Headers
 import org.w3c.fetch.RequestInit
-import kotlin.js.Json
-import kotlin.js.Promise
 import kotlin.js.json
 
 object Translation {
@@ -17,15 +12,14 @@ object Translation {
 		"zh" to "zh_TW",
 		"zh-TW" to "zh_TW",
 	)
-	private const val defaultLang = "en"
+	private const val DEFAULT_LANG = "en"
 
 	private val translationMapping = HashMap<String, String>()
-	private val defaultMapping = HashMap<String, String>()
 
-	private var currentLocale = defaultLang
+	private var currentLocale = DEFAULT_LANG
 
 	suspend fun init() {
-		val lang = getOverrideLang() ?: getHostLang() ?: defaultLang
+		val lang = getOverrideLang() ?: getHostLang() ?: DEFAULT_LANG
 		loadLang(lang)
 		currentLocale = lang
 	}
@@ -59,11 +53,10 @@ object Translation {
 	}
 
 	private suspend fun loadLang(lang: String) {
-		val dLang = i18n[defaultLang]!!
+		val dLang = i18n[DEFAULT_LANG]!!
 		val entries = js("Object.entries")
-		val langSame = lang == dLang
 		val req = RequestInit("GET", headers = json("Accept" to "application/json"))
-		if(!langSame) {
+		if(lang != dLang) {
 			val resDef = window.fetch("i18n/${dLang}.json", req).await()
 			val jsonDef = resDef.json().await()
 			translationMapping.clear()

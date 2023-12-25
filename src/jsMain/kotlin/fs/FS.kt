@@ -28,12 +28,8 @@ object FS {
 		opfsRoot.getDirectoryHandle("system", json("create" to true)).await()
 	}
 
-	fun getDirectoryRoot(): FileSystemDirectoryHandle {
+	private fun getDirectoryRoot(): FileSystemDirectoryHandle {
 		return root ?: throw IllegalStateException("FS not initialized")
-	}
-
-	fun getHomeDirectory(): FileSystemDirectoryHandle {
-		return home ?: throw IllegalStateException("FS not initialized")
 	}
 
 	suspend fun getDirectory(path: String, create: Boolean = false, relativeFrom: String? = null): FileSystemDirectoryHandle {
@@ -60,10 +56,6 @@ object FS {
 	private fun getEntry(path: String, relativeFrom: String? = null): Boolean? {
 		val p = toGlobalPath(path, relativeFrom)
 		return FSMapper.getEntry(p)
-	}
-
-	fun hasEntry(path: String, relativeFrom: String? = null): Boolean {
-		return getEntry(path, relativeFrom) != null
 	}
 
 	fun hasDirectory(path: String, relativeFrom: String? = null): Boolean {
@@ -168,10 +160,6 @@ object FS {
 		val p = toGlobalPath(path, relativeFrom)
 		if(!hasFile(p)) return
 		FSPermission.setPermission(p, permission)
-	}
-
-	suspend fun savePermission() {
-		FSPermission.save()
 	}
 
 	private fun toGlobalPath(path: String, relativeFrom: String? = null): String {

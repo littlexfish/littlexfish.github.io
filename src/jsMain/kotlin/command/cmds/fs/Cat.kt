@@ -7,9 +7,6 @@ import io.pipeOutNewLine
 import io.pipeOutPre
 import io.pipeOutText
 import io.pipeOutTextLn
-import kotlinx.coroutines.await
-import kotlinx.coroutines.withTimeout
-import org.w3c.files.FileReader
 
 class Cat : Command() {
 

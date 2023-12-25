@@ -4,7 +4,6 @@ import Translation
 import fs.Permission
 import io.TerminalTunnel
 import io.pipeOutText
-import kotlin.math.min
 
 /**
  * Get the argument of the command.

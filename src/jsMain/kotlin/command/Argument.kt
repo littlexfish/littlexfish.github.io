@@ -3,12 +3,12 @@ package command
 /**
  * Argument parser
  */
-class Argument {
+class Argument(arr: Array<String>, needValue: List<String> = emptyList()) {
 
 	private val args = mutableMapOf<String, MutableList<String>>()
 	private val standalone = mutableListOf<String>()
 
-	constructor(arr: Array<String>, needValue: List<String> = emptyList()) {
+	init {
 		parse(arr, needValue)
 	}
 
@@ -57,30 +57,6 @@ class Argument {
 
 	fun getStandalone(): List<String> {
 		return standalone
-	}
-
-	fun gets(key: String): List<String>? {
-		return args[key]
-	}
-
-	fun getOrDefault(key: String, default: String): String {
-		return get(key) ?: default
-	}
-
-	fun getAsInt(key: String): Int? {
-		return get(key)?.toIntOrNull()
-	}
-
-	fun getAsIntOrDefault(key: String, default: Int): Int {
-		return getAsInt(key) ?: default
-	}
-
-	fun getAsFloat(key: String): Float? {
-		return get(key)?.toFloatOrNull()
-	}
-
-	fun getAsFloatOrDefault(key: String, default: Float): Float {
-		return getAsFloat(key) ?: default
 	}
 
 }

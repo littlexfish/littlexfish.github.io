@@ -171,26 +171,6 @@ internal object FSMapper {
 			}
 			return false
 		}
-		fun findPath(path: Iterator<String>): String? {
-			return pFindPath(path).second
-		}
-		private fun pFindPath(path: Iterator<String>, begin: String = ""): Pair<Boolean, String?> {
-			if(!path.hasNext()) return true to begin
-			var next = path.next()
-			if(next == "..") return false to null
-			while(next == "." || next == "") {
-				if(!path.hasNext()) return true to begin
-				next = path.next()
-			}
-			for(child in children) {
-				if(child.name == next) {
-					val n = "$begin/${child.name}"
-					val f = child.pFindPath(path, n)
-					if(f.first) return f
-				}
-			}
-			return true to null
-		}
 		internal fun add(child: FSTreeNode) {
 			children.add(child)
 		}

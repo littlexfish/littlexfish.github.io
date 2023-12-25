@@ -31,7 +31,7 @@ class Terminal : App("terminal") {
 	/**
 	 * The max number of output element
 	 */
-	val maxOutputElement = 100
+	private val maxOutputElement = 100
 
 	/**
 	 * The root environment
@@ -410,6 +410,7 @@ class Terminal : App("terminal") {
 	/**
 	 * set tunnel input from terminal
 	 */
+	@Suppress("unused", "unused_parameter")
 	private fun setTunnelFromTerminal(tunnel: TerminalTunnel) {
 		// TODO: now input from terminal not supported
 	}
@@ -428,9 +429,9 @@ class Terminal : App("terminal") {
 		return if(array.isEmpty()) return emptyArray()
 		else if(array.size == 1) {
 			val cmd = array[0]
-			val cmds = Commands.availableCommands()
+			val commands = Commands.availableCommands()
 			val out = ArrayList<String>()
-			for(c in cmds) {
+			for(c in commands) {
 				if(c.startsWith(cmd)) {
 					out.add(c)
 				}

@@ -4,6 +4,7 @@ import kotlin.js.Promise
 
 @JsModule("WritableStream")
 @JsNonModule
+@Suppress("unused")
 open external class WritableStream {
 
 	val locked: Boolean
@@ -15,6 +16,7 @@ open external class WritableStream {
 
 @JsModule("WritableStreamDefaultWriter")
 @JsNonModule
+@Suppress("unused")
 external class WritableStreamDefaultWriter {
 
 	val closed: Promise<dynamic>

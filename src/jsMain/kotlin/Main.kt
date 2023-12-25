@@ -4,14 +4,19 @@ import app.HtmlViewer
 import app.Terminal
 import fs.FS
 import kotlinx.browser.document
-import kotlinx.browser.window
-import kotlinx.coroutines.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.dom.clear
 import kotlinx.html.*
 import kotlinx.html.dom.append
 import kotlinx.html.dom.create
 import kotlinx.html.js.div
-import org.w3c.dom.*
+import org.w3c.dom.Element
+import org.w3c.dom.HTMLElement
+import kotlin.collections.Map
+import kotlin.collections.mapOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 
 private val appElement = document.create.div {}
 

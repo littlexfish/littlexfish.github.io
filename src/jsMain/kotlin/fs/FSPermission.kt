@@ -37,7 +37,7 @@ object FSPermission {
 		reader.readAsText(file)
 	}
 
-	internal suspend fun save() {
+	private suspend fun save() {
 		console.log(allPermissions.keys.map { "$it${allPermissions[it]}" }.toTypedArray())
 		val handle = systemDir.getFileHandle(FILENAME, json("create" to true)).await()
 		val writer = handle.createWritable().await()

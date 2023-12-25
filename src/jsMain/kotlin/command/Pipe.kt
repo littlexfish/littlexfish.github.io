@@ -17,6 +17,7 @@ class Pipe(val current: CommandStore, val type: PipeType, private var next: Pipe
 
 }
 
+@Suppress("unused")
 enum class PipeType(val str: String) {
 	PIPE_NEXT("|"), EXECUTE(";"), SUC_NEXT("&&"), FAIL_NEXT("||"), NONE("")
 }

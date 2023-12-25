@@ -11,6 +11,7 @@ inline val Navigator.storage: StorageManager
 
 @JsModule("StorageManager")
 @JsNonModule
+@Suppress("unused")
 external object StorageManager {
 	fun estimate(): Promise<StorageEstimate>
 	fun getDirectory(): Promise<FileSystemDirectoryHandle>
@@ -20,6 +21,7 @@ external object StorageManager {
 
 @JsModule("StorageEstimate")
 @JsNonModule
+@Suppress("unused")
 external class StorageEstimate {
 	val quota: Int?
 	val usage: Int?
@@ -27,6 +29,7 @@ external class StorageEstimate {
 
 @JsModule("FileSystemHandle")
 @JsNonModule
+@Suppress("unused")
 open external class FileSystemHandle {
 
 	val kind: String
@@ -37,12 +40,15 @@ open external class FileSystemHandle {
 	fun requestPermission(fileSystemHandlePermissionDescriptor: dynamic): Promise<PermissionStatus>
 }
 
+@Suppress("unused")
 val FileSystemHandle.isFile: Boolean
 	get() = kind == "file"
+@Suppress("unused")
 val FileSystemHandle.isDirectory: Boolean
 	get() = kind == "directory"
 
 @JsNonModule
+@Suppress("unused")
 external class FileSystemFileHandle : FileSystemHandle {
 
 	fun createWritable(option: dynamic = definedExternally): Promise<FileSystemWritableFileStream>
@@ -53,6 +59,7 @@ external class FileSystemFileHandle : FileSystemHandle {
 }
 
 @JsNonModule
+@Suppress("unused")
 external class FileSystemDirectoryHandle : FileSystemHandle {
 
 	fun getDirectoryHandle(name: String, options: dynamic = definedExternally): Promise<FileSystemDirectoryHandle>
@@ -65,6 +72,7 @@ external class FileSystemDirectoryHandle : FileSystemHandle {
 
 }
 
+@Suppress("unused")
 suspend fun FileSystemDirectoryHandle.getEntries(): Map<String, FileSystemHandle> {
 	val ret = mutableMapOf<String, FileSystemHandle>()
 	val entries = entries()
@@ -78,6 +86,7 @@ suspend fun FileSystemDirectoryHandle.getEntries(): Map<String, FileSystemHandle
 	return ret
 }
 
+@Suppress("unused")
 suspend fun FileSystemDirectoryHandle.getKeys(): List<String> {
 	val ret = mutableListOf<String>()
 	val keys = keys()
@@ -90,6 +99,7 @@ suspend fun FileSystemDirectoryHandle.getKeys(): List<String> {
 	return ret
 }
 
+@Suppress("unused")
 suspend fun FileSystemDirectoryHandle.getValues(): List<FileSystemHandle> {
 	val ret = mutableListOf<FileSystemHandle>()
 	val values = values()
@@ -104,6 +114,7 @@ suspend fun FileSystemDirectoryHandle.getValues(): List<FileSystemHandle> {
 
 @JsModule("FileSystemWritableFileStream")
 @JsNonModule
+@Suppress("unused")
 external class FileSystemWritableFileStream : WritableStream {
 
 	/**
@@ -129,12 +140,14 @@ external class FileSystemWritableFileStream : WritableStream {
 
 @JsModule("FileSystemDirectoryIterator")
 @JsNonModule
+@Suppress("unused")
 external class FileSystemDirectoryIterator {
 	fun next(): Promise<dynamic>
 }
 
 @JsModule("FileSystemSyncAccessHandle")
 @JsNonModule
+@Suppress("unused")
 external class FileSystemSyncAccessHandle {
 	fun close()
 	fun flush()

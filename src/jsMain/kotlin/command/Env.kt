@@ -8,6 +8,7 @@ private val INPUT_BEGIN_CHANGE_ENVS = listOf("INPUT_BEGIN", "PWD", "USER", "VERS
 
 class Env(val baseEnv: Env? = null) {
 
+	@Suppress("unused")
 	private val root: Env = baseEnv?.root ?: this
 	private val env = HashMap<String, String>()
 
@@ -37,10 +38,6 @@ class Env(val baseEnv: Env? = null) {
 		}
 		out.putAll(env)
 		return out
-	}
-
-	fun getFromRoot(key: String): String? {
-		return root[key]
 	}
 
 	fun reset() {

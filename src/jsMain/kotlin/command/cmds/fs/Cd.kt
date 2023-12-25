@@ -1,7 +1,6 @@
 package command.cmds.fs
 
 import command.Command
-import ext.DOMExceptionName
 import fs.FS
 import io.pipeOutText
 

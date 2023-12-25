@@ -5,9 +5,10 @@ import fs.HTMLProcessor
 import kotlinx.browser.document
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 import kotlinx.dom.clear
-import kotlinx.html.*
+import kotlinx.html.DIV
+import kotlinx.html.div
+import kotlinx.html.id
 import org.w3c.dom.HTMLDivElement
 
 class HtmlViewer : App("html_viewer") {
