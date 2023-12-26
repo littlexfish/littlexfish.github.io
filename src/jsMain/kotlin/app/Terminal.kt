@@ -109,10 +109,8 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 	/**
 	 * On command input
 	 */
-	private fun onCommand() {
+	private fun onCommand(input: String) {
 		// input init
-		val input = terminalInput.value
-		terminalInput.value = ""
 		if(input.isBlank()) return
 		addInput(input)
 		addToHistory(input)
@@ -472,7 +470,10 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 		terminalInput = document.getElementById("terminal-input") as HTMLInputElement
 		terminalInput.onkeydown = { event ->
 			if(event.keyCode == 13) { // enter
-				onCommand()
+				event.preventDefault()
+				val value = terminalInput.value
+				terminalInput.value = ""
+				onCommand(value)
 			}
 			else if(event.keyCode == 9) { // tab
 				event.preventDefault()
@@ -532,6 +533,12 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 	override fun onReceiveMessage(msg: String, extra: Map<String, String>?) {
 		when(msg) {
 			"clear" -> clearTerminal()
+			"run" -> {
+				val cmd = extra?.get("cmd") ?: return
+				MainScope().launch {
+					onCommand(cmd)
+				}
+			}
 		}
 	}
 

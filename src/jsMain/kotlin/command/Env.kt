@@ -1,5 +1,6 @@
 package command
 
+import Application
 import fs.FS
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
@@ -7,6 +8,15 @@ import org.w3c.dom.HTMLElement
 private val INPUT_BEGIN_CHANGE_ENVS = listOf("INPUT_BEGIN", "PWD", "USER", "VERSION", "ENGINE_VERSION")
 
 class Env(val baseEnv: Env? = null) {
+
+	private companion object {
+		const val OS_NAME = "LF OS"
+		const val VERSION = "beta-0.2.0"
+		const val ENGINE = "Kotlin/JS"
+		const val ENGINE_VERSION = "1.9.21"
+		const val ENGINE_LIB = "kotlinx-html-js:0.8.0;stdlib-js:1.9.21"
+		const val CREATOR = "LF"
+	}
 
 	@Suppress("unused")
 	private val root: Env = baseEnv?.root ?: this
@@ -20,8 +30,28 @@ class Env(val baseEnv: Env? = null) {
 	}
 
 	operator fun get(key: String): String? {
-		return env[key] ?: getEnvFromBase(key)
+		return env[key] ?: getEnvFromBase(key) ?: getEnvFromDefine(key)
 	}
+
+	private fun getEnvFromDefine(key: String): String? = when(key) {
+		"APP_NAME" -> Application.getCurrentApp()?.name
+		"OS" -> OS_NAME
+		"VERSION" -> VERSION
+		"ENGINE" -> ENGINE
+		"ENGINE_VERSION" -> ENGINE_VERSION
+		"ENGINE_LIB" -> ENGINE_LIB
+		"CREATOR" -> CREATOR
+		else -> null
+	}
+
+	private fun getAllEnvDefine(): Map<String, String> = mapOf(
+		"OS" to OS_NAME,
+		"VERSION" to VERSION,
+		"ENGINE" to ENGINE,
+		"ENGINE_VERSION" to ENGINE_VERSION,
+		"ENGINE_LIB" to ENGINE_LIB,
+		"CREATOR" to CREATOR
+	)
 
 	fun remove(key: String): String? {
 		return env.remove(key)
@@ -33,11 +63,14 @@ class Env(val baseEnv: Env? = null) {
 
 	fun getAllEnv(): Map<String, String> {
 		val out = HashMap<String, String>()
-		if(baseEnv != null) {
-			out.putAll(baseEnv.getAllEnv())
-		}
-		out.putAll(env)
+		out.putAll(getAllEnvDefine())
+		pAllEnv(out)
 		return out
+	}
+
+	private fun pAllEnv(c: HashMap<String, String>) {
+		baseEnv?.pAllEnv(c)
+		c.putAll(env)
 	}
 
 	fun reset() {

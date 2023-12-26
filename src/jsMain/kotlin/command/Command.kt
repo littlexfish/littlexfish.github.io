@@ -70,6 +70,9 @@ object Commands {
 		commands["chmod"] = Chmod()
 		commands["mv"] = Mv()
 		commands["cp"] = Cp()
+		commands["terminal"] = Terminal()
+		commands["exit"] = Exit()
+
 
 	}
 

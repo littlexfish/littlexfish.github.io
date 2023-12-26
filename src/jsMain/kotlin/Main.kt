@@ -1,12 +1,13 @@
 import app.App
-import app.Editor
-import app.HtmlViewer
 import app.Terminal
 import command.Env
 import fs.FS
 import kotlinx.browser.document
+import kotlinx.browser.window
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import kotlinx.dom.clear
 import kotlinx.html.*
 import kotlinx.html.dom.append
@@ -54,14 +55,7 @@ suspend fun main() {
 
 private fun newRootEnv(): Env {
 	return Env().also {
-		it["OS"] = "LF OS"
-		it["ALIASES"] = "cls=clear;?=help"
-		it["VERSION"] = "beta-0.2.0"
-		it["ENGINE"] = "Kotlin/JS"
-		it["ENGINE_VERSION"] = "1.9.21"
-		it["ENGINE_LIB"] = "kotlinx-html-js:0.8.0;stdlib-js:1.9.21"
-		it["INPUT_BEGIN"] = "> "
-		it["CREATOR"] = "LF"
+		it["ALIASES"] = "cls=clear;?=help;shell=terminal;cmd=terminal"
 		it["INPUT_BEGIN"] = it.defaultCommandInputPrefix()
 		it["PWD"] = FS.getHomeDirectoryPath()
 	}
@@ -108,6 +102,10 @@ object Application {
 		document.body?.append(appElement)
 	}
 
+	fun nextAppId(): Int {
+		return nextAppId
+	}
+
 	fun startApp(app: App): Int {
 		if(appLayer.isNotEmpty()) {
 			val last = openedApp[appLayer.last()]
@@ -129,10 +127,10 @@ object Application {
 		return nextAppId - 1
 	}
 
-	private fun backToApp(id: Int) {
+	private fun backToApp(id: Int): Boolean {
 		val idx = appLayer.indexOf(id)
-		if(idx == -1) return
-		if(idx == appLayer.lastIndex) return
+		if(idx == -1) return false
+		if(idx == appLayer.lastIndex) return false
 		val last = openedApp[appLayer.last()]
 		last?.pause()
 		last?.suspend()
@@ -148,15 +146,30 @@ object Application {
 		}
 		openedApp[id]?.restore()
 		openedApp[id]?.resume()
+		return true
 	}
 
-	fun backToApp(app: JsClass<out App>) {
-		backToApp(findApp(app) ?: return)
+	fun backToApp(app: JsClass<out App>): Boolean {
+		return backToApp(findApp(app) ?: return false)
 	}
 
-	fun back() {
-		if(appLayer.size <= 1) return
-		backToApp(appLayer[appLayer.lastIndex - 1])
+	private fun backToClose(): Boolean {
+		return appLayer.size <= 1
+	}
+
+	fun back(): Boolean {
+		if(backToClose()) {
+			window.close()
+			return true
+		}
+		return backToApp(appLayer[appLayer.lastIndex - 1])
+	}
+
+	fun backWithTimeout(timeout: Int, beforeBack: () -> Unit, afterBack: (Boolean) -> Unit) {
+		beforeBack()
+		window.setTimeout({
+			afterBack(back())
+		}, timeout)
 	}
 
 	fun findApp(app: JsClass<out App>): Int? {
@@ -166,6 +179,10 @@ object Application {
 	fun sendMessage(to: Int?, msg: String, extra: Map<String, String>? = null) {
 		if(to == null) return
 		openedApp[to]?.receiveMessage(msg, extra)
+	}
+
+	fun getCurrentApp(): App? {
+		return openedApp[appLayer.last()]
 	}
 
 	private fun TagConsumer<HTMLElement>.rootFrame(content: (DIV.() -> Unit) = {}) {

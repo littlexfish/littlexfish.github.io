@@ -50,6 +50,10 @@
 
   "command.ls.not_found": "No such directory: {path}",
 
-  "command.cd.not_found": "No such directory: {path}"
+  "command.cd.not_found": "No such directory: {path}",
+
+  "command.terminal.start": "Start new terminal ({id})",
+  "command.exit.back_error": "Error occurred when backing to the previous app",
+  "command.exit.bye": "Bye!"
 
 }
