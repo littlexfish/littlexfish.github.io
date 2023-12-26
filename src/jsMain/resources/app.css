@@ -30,7 +30,6 @@ span {
 #terminal-output {
     overflow-y: auto;
     display: block;
-    /*margin-bottom: 30px;*/
     width: 100%;
     height: calc(100% - 30px);
 }
@@ -183,6 +182,57 @@ textarea:disabled.nowrap {
 
 #editor-files > div.opened {
     border: white 1px solid;
+}
+
+#html-viewer {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#title-bar {
+    display: flex;
+    font-size: 16px;
+    border: rgb(128, 128, 128) 1px solid;
+    padding: 5px;
+    border-radius: 5px;
+    height: 20px;
+    margin-bottom: 5px;
+}
+
+#title-bar > #title {
+    display: block;
+    width: 100%;
+    height: fit-content;
+    margin: auto;
+    white-space: pre;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+#title-bar > #close {
+    color: rgb(128, 128, 128);
+}
+
+#title-bar > #close:hover {
+    color: white;
+}
+
+#container {
+    padding: 5px;
+    border: rgb(128, 128, 128) 1px solid;
+    border-radius: 5px;
+    height: calc(100% - 45px);
+}
+
+#container > iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    overflow: auto;
 }
 
 ::-webkit-scrollbar {

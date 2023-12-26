@@ -51,8 +51,8 @@ abstract class App(val name: String) {
 		}
 	}
 
-	fun receiveMessage(to: String, msg: String, extra: Map<String, String>?) {
-		if(to == name) onReceiveMessage(msg, extra)
+	fun receiveMessage(msg: String, extra: Map<String, String>?) {
+		onReceiveMessage(msg, extra)
 	}
 
 }

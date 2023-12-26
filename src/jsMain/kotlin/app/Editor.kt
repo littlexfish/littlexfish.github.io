@@ -61,7 +61,7 @@ class Editor : App("editor") {
 		}
 		document.onkeydown = {
 			if(it.key == "Escape") {
-				Application.startApp("terminal")
+				Application.backToApp(Terminal::class.js)
 			}
 		}
 		setEditorSoftWrap(false)
@@ -176,7 +176,7 @@ class Editor : App("editor") {
 		openedFiles.removeAt(idx)
 		refreshEditor()
 		if(openedFiles.isEmpty() && closeEmpty) {
-			Application.startApp("terminal")
+			Application.back()
 			return
 		}
 		if(openedFiles.isNotEmpty()) {

@@ -2,6 +2,7 @@ import app.App
 import app.Editor
 import app.HtmlViewer
 import app.Terminal
+import command.Env
 import fs.FS
 import kotlinx.browser.document
 import kotlinx.coroutines.coroutineScope
@@ -41,13 +42,28 @@ suspend fun main() {
 			// init applications
 			Application.init()
 			// start terminal
-			Application.startApp("terminal")
+			Application.startApp(Terminal(newRootEnv()))
 		}.invokeOnCompletion {
 			if(it != null) { // on terminal start with error
 				it.printStackTrace()
 				showInitError("Failed to start terminal.")
 			}
 		}
+	}
+}
+
+private fun newRootEnv(): Env {
+	return Env().also {
+		it["OS"] = "LF OS"
+		it["ALIASES"] = "cls=clear;?=help"
+		it["VERSION"] = "beta-0.2.0"
+		it["ENGINE"] = "Kotlin/JS"
+		it["ENGINE_VERSION"] = "1.9.21"
+		it["ENGINE_LIB"] = "kotlinx-html-js:0.8.0;stdlib-js:1.9.21"
+		it["INPUT_BEGIN"] = "> "
+		it["CREATOR"] = "LF"
+		it["INPUT_BEGIN"] = it.defaultCommandInputPrefix()
+		it["PWD"] = FS.getHomeDirectoryPath()
 	}
 }
 
@@ -80,9 +96,9 @@ fun Element.scrollToView() {
 
 object Application {
 
-	private val apps = mutableMapOf<String, App>()
-
-	private var currentApp: App? = null
+	private val appLayer = mutableListOf<Int>()
+	private val openedApp = mutableMapOf<Int, App>()
+	private var nextAppId = 0
 
 	private fun cleanBody() {
 		appElement.clear()
@@ -90,37 +106,66 @@ object Application {
 
 	fun init() {
 		document.body?.append(appElement)
-		buildApp(Terminal())
-		buildApp(Editor())
-		buildApp(HtmlViewer())
 	}
 
-	private fun buildApp(app: App) {
-		apps[app.name] = app
-	}
-
-	fun startApp(name: String) {
-		currentApp?.let {
-			it.pause()
-			it.suspend()
+	fun startApp(app: App): Int {
+		if(appLayer.isNotEmpty()) {
+			val last = openedApp[appLayer.last()]
+			last?.pause()
+			last?.suspend()
 		}
-		currentApp = apps[name] ?: throw IllegalArgumentException("App $name not found")
-		currentApp?.let {
-			cleanBody()
-			it.init()
-			// build app ui
-			appElement.append {
-				rootFrame {
-					it.buildGUI()()
-				}
+		cleanBody()
+		appLayer.add(nextAppId)
+		openedApp[nextAppId] = app
+		app.init()
+		appElement.append {
+			rootFrame {
+				app.buildGUI()()
 			}
-			it.restore()
-			it.resume()
 		}
+		app.restore()
+		app.resume()
+		nextAppId++
+		return nextAppId - 1
 	}
 
-	fun sendMessage(to: String, msg: String, extra: Map<String, String>? = null) {
-		currentApp?.receiveMessage(to, msg, extra)
+	private fun backToApp(id: Int) {
+		val idx = appLayer.indexOf(id)
+		if(idx == -1) return
+		if(idx == appLayer.lastIndex) return
+		val last = openedApp[appLayer.last()]
+		last?.pause()
+		last?.suspend()
+		cleanBody()
+		appLayer.subList(idx + 1, appLayer.size).forEach {
+			openedApp.remove(it)
+		}
+		appLayer.removeAll(appLayer.subList(idx + 1, appLayer.size))
+		appElement.append {
+			rootFrame {
+				openedApp[id]?.buildGUI()?.invoke(this)
+			}
+		}
+		openedApp[id]?.restore()
+		openedApp[id]?.resume()
+	}
+
+	fun backToApp(app: JsClass<out App>) {
+		backToApp(findApp(app) ?: return)
+	}
+
+	fun back() {
+		if(appLayer.size <= 1) return
+		backToApp(appLayer[appLayer.lastIndex - 1])
+	}
+
+	fun findApp(app: JsClass<out App>): Int? {
+		return appLayer.findLast { openedApp[it]!!::class.js == app }
+	}
+
+	fun sendMessage(to: Int?, msg: String, extra: Map<String, String>? = null) {
+		if(to == null) return
+		openedApp[to]?.receiveMessage(msg, extra)
 	}
 
 	private fun TagConsumer<HTMLElement>.rootFrame(content: (DIV.() -> Unit) = {}) {

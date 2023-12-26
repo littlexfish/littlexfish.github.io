@@ -2,6 +2,7 @@ package command.cmds.fs
 
 import Application
 import Translation
+import app.Editor
 import command.Command
 import fs.FS
 import io.pipeOutText
@@ -12,7 +13,7 @@ class Edit : Command() {
 		val pArg = parseArgs(args)
 		val openedFile = pArg.getStandalone()
 		if(openedFile.isEmpty()) {
-			Application.startApp("editor")
+			Application.startApp(Editor())
 			return 0
 		}
 		var errorCount = 0
@@ -29,10 +30,10 @@ class Edit : Command() {
 		if(errorCount >= openedFile.size) {
 			return 1
 		}
-		Application.startApp("editor")
+		val id = Application.startApp(Editor())
 		for(o in actOpened) {
 			val obs = FS.getAbsolutePath(FS.getFile(o, relativeFrom = env["PWD"]))
-			Application.sendMessage("editor", "open", mapOf("file" to obs))
+			Application.sendMessage(id, "open", mapOf("file" to obs))
 		}
 		return 0
 	}

@@ -46,6 +46,12 @@ class Ls : Command() {
 			else -> ""
 		}
 		val argDir = pArg.getStandalone().lastOrNull()
+		if(!FS.hasDirectory(argDir ?: pwd, pwd)) {
+			tunnel.pipeOutText(Translation["command.ls.not_found", "path" to (argDir ?: pwd)]) {
+				style.color = "red"
+			}
+			return 1
+		}
 		val dirHandle = if(argDir == null) FS.getDirectory(pwd) else FS.getDirectory(argDir, false, pwd)
 
 		val list = list(dirHandle, listIncludeHide)
@@ -169,16 +175,6 @@ class Ls : Command() {
 					else if(handle.second == null) COLOR_DIR
 					else null)
 			}
-		}
-	}
-
-	override fun onExecuteError(it: Throwable) {
-		if(it::class.js.name == "TypeError" || it.asDynamic().name == DOMExceptionName.NOT_FOUND_ERR) {
-			tunnel.pipeOutText("ls: No such file or directory") { style.color = "red" }
-		}
-		else {
-			super.onExecuteError(it)
-			tunnel.pipeOutText("error on execute ls: $it") { style.color = "red" }
 		}
 	}
 

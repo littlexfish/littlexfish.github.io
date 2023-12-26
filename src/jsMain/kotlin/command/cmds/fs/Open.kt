@@ -2,7 +2,9 @@ package command.cmds.fs
 
 import Application
 import Translation
+import app.HtmlViewer
 import command.Command
+import fs.FS
 import io.pipeOutText
 
 class Open : Command() {
@@ -15,8 +17,8 @@ class Open : Command() {
 			return 1
 		}
 		val open = openedFile.last()
-		Application.startApp("html_viewer")
-		Application.sendMessage("html_viewer", "open", mapOf("file" to open))
+		val id = Application.startApp(HtmlViewer())
+		Application.sendMessage(id, "open", mapOf("file" to FS.getAbsolutePath(FS.getFile(open, relativeFrom = env["PWD"]))))
 		return 0
 	}
 

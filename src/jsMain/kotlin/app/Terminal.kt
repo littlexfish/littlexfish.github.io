@@ -3,7 +3,6 @@ package app
 import Translation
 import command.*
 import createElement
-import fs.FS
 import io.TerminalTunnel
 import kotlinx.browser.document
 import kotlinx.coroutines.MainScope
@@ -16,7 +15,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.asList
 import scrollToView
 
-class Terminal : App("terminal") {
+class Terminal(rootEnv: Env? = null) : App("terminal") {
 
 	/**
 	 * The element contains terminal output
@@ -36,12 +35,12 @@ class Terminal : App("terminal") {
 	/**
 	 * The root environment
 	 */
-	private val rootEnv = Env()
+	private val rootEnv = rootEnv ?: Env()
 
 	/**
 	 * The current environment
 	 */
-	private var currentEnv = Env(rootEnv)
+	private var currentEnv = this.rootEnv
 
 	/**
 	 * The command history
@@ -78,22 +77,6 @@ class Terminal : App("terminal") {
 
 	private val terminalStorage = mutableListOf<Element>()
 
-	/**
-	 * Init the terminal environment
-	 */
-	private fun initTerminalEnv() {
-		rootEnv["OS"] = "LF OS"
-		rootEnv["ALIASES"] = "cls=clear;?=help"
-		rootEnv["VERSION"] = "beta-0.1.0"
-		rootEnv["ENGINE"] = "Kotlin/JS"
-		rootEnv["ENGINE_VERSION"] = "1.9.21"
-		rootEnv["ENGINE_LIB"] = "kotlinx-html-js:0.8.0;stdlib-js:1.9.21"
-		rootEnv["INPUT_BEGIN"] = "> "
-		currentEnv["CREATOR"] = "LF"
-		currentEnv["INPUT_BEGIN"] = currentEnv.defaultCommandInputPrefix()
-		currentEnv["PWD"] = FS.getHomeDirectoryPath()
-	}
-
 	override fun buildGUI(): DIV.() -> Unit = {
 		div {
 			id = "terminal-output"
@@ -111,9 +94,7 @@ class Terminal : App("terminal") {
 		}
 	}
 
-	override fun onInit() {
-		initTerminalEnv()
-	}
+	override fun onInit() {}
 
 	/**
 	 * Post init the terminal

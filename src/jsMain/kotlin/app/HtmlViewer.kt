@@ -6,10 +6,11 @@ import kotlinx.browser.document
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.dom.clear
-import kotlinx.html.DIV
-import kotlinx.html.div
-import kotlinx.html.id
+import kotlinx.html.*
+import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLFrameElement
+import org.w3c.dom.HTMLIFrameElement
 
 class HtmlViewer : App("html_viewer") {
 
@@ -18,7 +19,25 @@ class HtmlViewer : App("html_viewer") {
 
 	override fun buildGUI(): DIV.() -> Unit = {
 		div {
-			id = "container"
+			id = "html-viewer"
+			div {
+				id = "title-bar"
+				div {
+					id = "title"
+				}
+				div {
+					id = "close"
+					i {
+						classes = setOf("fa", "fa-regular", "fa-circle-xmark")
+					}
+					onClickFunction = {
+						Application.back()
+					}
+				}
+			}
+			div {
+				id = "container"
+			}
 		}
 	}
 
@@ -33,9 +52,12 @@ class HtmlViewer : App("html_viewer") {
 		val file = extra["file"] ?: return
 		MainScope().launch {
 			val handle = FS.getFile(file)
-			HTMLProcessor.openHtml(handle) { doc ->
+			HTMLProcessor.openHtml(handle) { t, it ->
 				containerElement.clear()
-				containerElement.append(doc)
+				val frame = document.createElement("iframe") as HTMLIFrameElement
+				containerElement.append(frame)
+				frame.srcdoc = it
+				document.getElementById("title")?.textContent = t.ifEmpty { file.substringAfterLast("/") }
 			}
 		}
 	}
