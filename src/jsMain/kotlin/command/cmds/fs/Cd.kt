@@ -24,4 +24,6 @@ class Cd : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.cd.help"]
+
 }

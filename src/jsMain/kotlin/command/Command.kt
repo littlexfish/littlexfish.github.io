@@ -78,6 +78,6 @@ object Commands {
 
 	fun getCommand(cmd: String): Command? = commands[cmd]
 
-	fun availableCommands(): List<String> = commands.keys.toList()
+	fun availableCommands(): List<String> = commands.keys.toList().sorted()
 
 }

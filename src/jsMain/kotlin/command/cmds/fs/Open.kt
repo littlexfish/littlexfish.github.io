@@ -22,4 +22,6 @@ class Open : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.open.help"]
+
 }

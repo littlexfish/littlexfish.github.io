@@ -34,4 +34,6 @@ class About : Command() {
 		return Translation["command.about.$key"]
 	}
 
+	override fun getHelp(): String = Translation["command.about.help"]
+
 }

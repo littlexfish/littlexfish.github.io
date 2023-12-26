@@ -27,4 +27,6 @@ class Rmdir : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.rmdir.help"]
+
 }

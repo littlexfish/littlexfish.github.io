@@ -21,4 +21,6 @@ class Mv : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.mv.help"]
+
 }

@@ -18,4 +18,6 @@ class Exit : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.exit.help"]
+
 }

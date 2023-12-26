@@ -20,4 +20,6 @@ class Terminal : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.terminal.help"]
+
 }

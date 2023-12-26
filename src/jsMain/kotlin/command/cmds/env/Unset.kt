@@ -16,4 +16,7 @@ class Unset : Command() {
 		}
 		return 0
 	}
+
+	override fun getHelp(): String = Translation["command.unset.help"]
+
 }

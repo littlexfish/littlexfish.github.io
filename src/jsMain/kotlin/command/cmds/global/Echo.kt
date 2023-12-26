@@ -1,5 +1,6 @@
 package command.cmds.global
 
+import Translation
 import command.Command
 import io.pipeOutText
 
@@ -19,4 +20,7 @@ class Echo : Command() {
 		}
 		return 0
 	}
+
+	override fun getHelp(): String = Translation["command.echo.help"]
+
 }

@@ -21,4 +21,6 @@ class Cp : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.cp.help"]
+
 }

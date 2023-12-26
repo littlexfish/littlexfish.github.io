@@ -1,5 +1,6 @@
 package command.cmds.global
 
+import Translation
 import command.Command
 import command.Commands
 import kotlinx.browser.document
@@ -35,5 +36,7 @@ class LsCmd : Command() {
 			}
 		}
 	}
+
+	override fun getHelp(): String = Translation["command.lscmd.help"]
 
 }

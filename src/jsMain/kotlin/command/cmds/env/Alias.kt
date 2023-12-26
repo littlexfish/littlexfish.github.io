@@ -28,4 +28,6 @@ class Alias : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.alias.help"]
+
 }

@@ -36,4 +36,6 @@ class Chmod : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.chmod.help"]
+
 }

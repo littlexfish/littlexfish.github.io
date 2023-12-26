@@ -23,4 +23,6 @@ class Welcome : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.welcome.help"]
+
 }

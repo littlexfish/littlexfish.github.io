@@ -24,4 +24,6 @@ class UnAlias : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.unalias.help"]
+
 }

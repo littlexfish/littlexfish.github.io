@@ -8,6 +8,7 @@ import io.pipeOutNewLine
 import io.pipeOutTag
 import io.pipeOutText
 import kotlinx.coroutines.await
+import kotlinx.html.*
 import org.w3c.files.File
 import kotlin.js.Date
 import kotlin.math.log
@@ -166,6 +167,7 @@ class Ls : Command() {
 					pipeOutName("..", COLOR_DIR_HIDE)
 				}
 			}
+			var idx = 0
 			for(handle in list) {
 				pipeOutName(handle.first.name,
 					if(handle.first.name.startsWith(".")) {
@@ -174,8 +176,12 @@ class Ls : Command() {
 					}
 					else if(handle.second == null) COLOR_DIR
 					else null)
+				if(idx % 5 == 4) tunnel.pipeOutNewLine()
+				idx++
 			}
 		}
 	}
+
+	override fun getHelp(): String = Translation["command.ls.help"]
 
 }

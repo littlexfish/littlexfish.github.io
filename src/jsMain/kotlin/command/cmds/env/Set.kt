@@ -21,4 +21,6 @@ class Set : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.set.help"]
+
 }

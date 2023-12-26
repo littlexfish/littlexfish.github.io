@@ -15,7 +15,14 @@ class Cat : Command() {
 		val path = mutableListOf<String>()
 		for(p in pArg.getStandalone()) {
 			if(FS.hasFile(p, relativeFrom = env["PWD"])) {
-				path.add(p)
+				if(FS.canRead(p, relativeFrom = env["PWD"])) {
+					path.add(p)
+				}
+				else {
+					tunnel.pipeOutText(Translation["command.cat.no_permission", "path" to p]) {
+						style.color = "red"
+					}
+				}
 			}
 			else {
 				tunnel.pipeOutText(Translation["command.cat.not_found", "path" to p]) {
@@ -57,5 +64,7 @@ class Cat : Command() {
 			showNextContent(path, index + 1, withPath)
 		}
 	}
+
+	override fun getHelp(): String = Translation["command.cat.help"]
 
 }

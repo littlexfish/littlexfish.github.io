@@ -38,4 +38,6 @@ class Edit : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.edit.help"]
+
 }

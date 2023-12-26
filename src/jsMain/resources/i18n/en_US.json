@@ -17,9 +17,13 @@
   "command.about.5_1": "Github",
   "command.about.6": "Best regards,",
   "command.about.7": "LF",
+  "command.about.help": "Prints some information about me",
 
   "command.alias.invalid_setter": "Invalid alias setter: {setter}",
   "command.alias.invalid_name": "Invalid alias name: {name}",
+  "command.alias.help": "Set alias by using `alias [name]=[command]`",
+
+  "command.unalias.help": "Remove alias by using `unalias [name1] ([name2] ([name3] (...)))`",
 
   "command.clear.help": "Clear the terminal",
 
@@ -32,28 +36,63 @@
   "command.help.help": "Prints this help page\nUsing `help [command]` to get help for a specific command",
 
   "command.set.invalid_name": "Invalid variable name: {name}",
+  "command.set.help": "Set variable by using `set [name] [value]`",
+
+  "command.unset.help": "Remove variable by using `unset [name1] ([name2] ([name3] (...)))`",
 
   "command.welcome.0": "Welcome to the LF OS",
   "command.welcome.1": "Type 'help' to see the help page",
 
   "command.rm.not_found": "File not found: {path}",
+  "command.rm.help": "Remove file by using `rm [path1] ([path2] ([path3] (...)))`",
 
   "command.rmdir.not_found": "Directory not found: {path}",
+  "command.rmdir.help": "Remove directory by using `rm [path1] ([path2] ([path3] (...)))`",
 
   "command.edit.not_found": "File not found: {path}",
+  "command.edit.help": "Edit a file\nUsing `edit ([path1] ([path2] ([path3] (...))))` to open editor and edit files",
 
   "command.cat.not_found": "File not found: {path}",
+  "command.cat.no_permission": "No permission to read the file: {path}",
+  "command.cat.help": "Prints the content of a file\nUsing `cat [path1] ([path2] ([path3] (...)))` to print the content of a file",
 
   "editor.no_permission_read": "No permission to read this file",
 
   "command.chmod.perm_error": "Invalid permission setter: {perm}",
+  "command.chmod.help": "Change permission by using `chmod [perm] [path1] ([path2] ([path3] (...)))`\nperm: 'r' for read, 'w' for write,\n    use '#' as prefix to set the specific permission\n    use '^' as prefix to remove the specific permission",
 
   "command.ls.not_found": "No such directory: {path}",
+  "command.ls.help": "List files in a directory\nUsing `ls [path]` to list files in a directory",
 
   "command.cd.not_found": "No such directory: {path}",
+  "command.cd.help": "Change current directory by using `cd [path]`,\nor `cd` to change to the home directory",
 
   "command.terminal.start": "Start new terminal ({id})",
   "command.exit.back_error": "Error occurred when backing to the previous app",
-  "command.exit.bye": "Bye!"
+  "command.exit.bye": "Bye!",
+
+  "command.cp.help": "Copy file by using `cp [src] [dest]`",
+
+  "command.mv.help": "Move file by using `mv [src] [dest]`",
+
+  "command.mkdir.help": "Create directory by using `mkdir [path1] ([path2] ([path3] (...)))`",
+
+  "command.open.help": "Open file as html by using `open [path]`",
+
+  "command.pwd.help": "Print current directory",
+
+  "command.touch.help": "Create file by using `touch [path1] ([path2] ([path3] (...)))`\nArguments:\n    -p [perm]: set permission to the files\n        'r' for read, 'w' for write, default is none",
+
+  "command.echo.help": "Print text by using `echo [text]`",
+
+  "command.exit.help": "Exit the current app",
+
+  "command.info.help": "Print information about the current app",
+
+  "command.lscmd.help": "List all available commands",
+
+  "command.terminal.help": "Start a new terminal",
+
+  "command.welcome.help": "Print welcome message"
 
 }

@@ -1,5 +1,6 @@
 package command.cmds.global
 
+import Translation
 import command.Command
 import createElement
 import io.pipeOutTag
@@ -45,5 +46,7 @@ class Info : Command() {
 		}
 		return 0
 	}
+
+	override fun getHelp(): String = Translation["command.info.help"]
 
 }

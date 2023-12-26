@@ -21,4 +21,6 @@ class Rm : Command() {
 		return 0
 	}
 
+	override fun getHelp(): String = Translation["command.rm.help"]
+
 }

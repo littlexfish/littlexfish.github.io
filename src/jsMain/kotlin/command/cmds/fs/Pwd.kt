@@ -1,5 +1,6 @@
 package command.cmds.fs
 
+import Translation
 import command.Command
 import io.pipeOutText
 
@@ -9,5 +10,7 @@ class Pwd : Command() {
 		tunnel.pipeOutText(env["PWD"] ?: "")
 		return 0
 	}
+
+	override fun getHelp(): String = Translation["command.pwd.help"]
 
 }
