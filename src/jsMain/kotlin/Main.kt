@@ -4,10 +4,8 @@ import command.Env
 import fs.FS
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 import kotlinx.dom.clear
 import kotlinx.html.*
 import kotlinx.html.dom.append

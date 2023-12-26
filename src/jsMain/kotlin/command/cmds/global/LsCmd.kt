@@ -2,8 +2,6 @@ package command.cmds.global
 
 import command.Command
 import command.Commands
-import io.pipeOutNewLine
-import io.pipeOutText
 import kotlinx.browser.document
 import kotlinx.html.*
 import kotlinx.html.dom.create

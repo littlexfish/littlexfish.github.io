@@ -2,8 +2,10 @@ package fs
 
 import ext.FileSystemFileHandle
 import kotlinx.coroutines.await
-import kotlinx.dom.clear
-import org.w3c.dom.*
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import org.w3c.dom.HTMLLinkElement
+import org.w3c.dom.asList
 import org.w3c.dom.parsing.DOMParser
 import org.w3c.files.FileReader
 

@@ -34,7 +34,26 @@
   "command.set.invalid_name": "Invalid variable name: {name}",
 
   "command.welcome.0": "Welcome to the LF OS",
-  "command.welcome.1": "Type 'help' to see the help page"
+  "command.welcome.1": "Type 'help' to see the help page",
 
+  "command.rm.not_found": "File not found: {path}",
+
+  "command.rmdir.not_found": "Directory not found: {path}",
+
+  "command.edit.not_found": "File not found: {path}",
+
+  "command.cat.not_found": "File not found: {path}",
+
+  "editor.no_permission_read": "No permission to read this file",
+
+  "command.chmod.perm_error": "Invalid permission setter: {perm}",
+
+  "command.ls.not_found": "No such directory: {path}",
+
+  "command.cd.not_found": "No such directory: {path}",
+
+  "command.terminal.start": "Start new terminal ({id})",
+  "command.exit.back_error": "Error occurred when backing to the previous app",
+  "command.exit.bye": "Bye!"
 
 }

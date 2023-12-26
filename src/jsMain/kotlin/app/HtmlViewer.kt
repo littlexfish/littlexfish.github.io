@@ -1,5 +1,6 @@
 package app
 
+import Application
 import fs.FS
 import fs.HTMLProcessor
 import kotlinx.browser.document
@@ -9,7 +10,6 @@ import kotlinx.dom.clear
 import kotlinx.html.*
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLFrameElement
 import org.w3c.dom.HTMLIFrameElement
 
 class HtmlViewer : App("html_viewer") {
