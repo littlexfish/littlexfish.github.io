@@ -160,14 +160,39 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 	/**
 	 * Replace alias to the correct command
 	 */
-	private fun toAliasCommand(cmdLine: String): CommandStore {
-		val split = splitCommand(cmdLine).let(::commandArrayToSplit)
-		val alias = getAlias(split.command)
-		return if(alias != null) {
-			val newSplit = splitCommand(cmdLine.replaceFirst(split.command, alias)).let(::commandArrayToSplit)
-			CommandStore(newSplit.command, newSplit.args)
+	private fun toAliasCommand(cmdLine: String): String {
+		val aliases = getAliases()
+		val aliasesRegex = aliases.map {
+			val reg = it.first
+				.replace("\\", "\\\\")
+				.replace(".", "\\.")
+				.replace("*", "\\*")
+				.replace("+", "\\+")
+				.replace("?", "\\?")
+				.replace("(", "\\(")
+				.replace(")", "\\)")
+				.replace("[", "\\[")
+				.replace("]", "\\]")
+				.replace("{", "\\{")
+				.replace("}", "\\}")
+				.replace("|", "\\|")
+				.replace("^", "\\^")
+				.replace("$", "\\$")
+				.replace("-", "\\-")
+				.replace(":", "\\:")
+			"(\\s*)($reg)(\\s*)".toRegex() to it.second
 		}
-		else CommandStore(split.command, split.args)
+		var out = cmdLine
+		aliasesRegex.forEach {
+			val matches = it.first.findAll(out)
+			for(m in matches) {
+				val prefix = m.groupValues[1]
+				val alias = m.groupValues[2]
+				val suffix = m.groupValues[3]
+				out = out.replace("$prefix$alias$suffix", "$prefix${it.second}$suffix")
+			}
+		} // TODO: to prevent alias loop
+		return out
 	}
 
 	/**
@@ -204,28 +229,22 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 	 * Define the command batch with pipe
 	 */
 	private fun defineCommandBatch(input: String): Pipe {
-		var remain = input
 		val pipeLine = mutableListOf<Pair<CommandStore, PipeType>>()
-		while(remain.isNotBlank()) {
-			val nextPipePos = "\\s*;|&&|\\|\\||\\|\\s*".toRegex().find(remain)
-			if(nextPipePos == null) {
-				val split = toAliasCommand(remain)
-				pipeLine.add(Pair(CommandStore(split.command, split.args), PipeType.NONE))
-				remain = ""
+		var split = splitCommand(toAliasCommand(input))
+		while(split.isNotEmpty()) {
+			val idx = split.indexOfFirst { it in listOf(";", "&&", "||", "|") }
+			if(idx == -1) {
+				pipeLine.add(Pair(commandArrayToSplit(split), PipeType.NONE))
+				split = emptyArray()
 			}
 			else {
-				val pipeType = when(nextPipePos.value.trim()) {
-					";" -> PipeType.EXECUTE
-					"|" -> PipeType.PIPE_NEXT
-					"&&" -> PipeType.SUC_NEXT
-					"||" -> PipeType.FAIL_NEXT
-					else -> PipeType.NONE
-				}
-				val split = toAliasCommand(remain.substring(0, nextPipePos.range.first))
-				pipeLine.add(Pair(CommandStore(split.command, split.args), pipeType))
-				remain = remain.substring(nextPipePos.range.last + 1)
+				val pipeType = PipeType.entries.find { it.str == split[idx] } ?: PipeType.NONE
+				val sub = split.sliceArray(0..<idx)
+				pipeLine.add(Pair(commandArrayToSplit(sub), pipeType))
+				split = split.sliceArray(idx + 1..<split.size)
 			}
 		}
+
 		val rootPipe = Pipe(pipeLine[0].first, pipeLine[0].second, null)
 		var currentPipe = rootPipe
 		for(i in 1..<pipeLine.size) {
@@ -263,6 +282,10 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 				if(s.startsWith("$")) { // find environment variable
 					val env = currentEnv[s.substring(1)] ?: ""
 					out.add(env)
+				}
+				else if(s.contains(";|&&|\\|".toRegex())) {
+					val seg = splitPipeInSegment(s)
+					out.addAll(seg)
 				}
 				else if(s.startsWith("\"")) { // find quote
 					if(s.endsWith("\"")) {
@@ -306,6 +329,43 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 			}
 		}
 		return out.toTypedArray()
+	}
+
+	private fun splitPipeInSegment(seg: String): List<String> {
+		val out = mutableListOf<String>()
+		var idx = 0
+		while(idx < seg.length) {
+			when(val curChar = seg[idx]) {
+				';' -> {
+					out.add(";")
+				}
+				'&' -> {
+					if(idx + 1 < seg.length && seg[idx + 1] == '&') {
+						out.add("&&")
+						idx++
+					}
+					else {
+						if(out.isEmpty()) out.add("&")
+						else out[out.lastIndex] += "&"
+					}
+				}
+				'|' -> {
+					if(idx + 1 < seg.length && seg[idx + 1] == '|') {
+						out.add("||")
+						idx++
+					}
+					else {
+						out.add("|")
+					}
+				}
+				else -> {
+					if(out.isEmpty()) out.add(curChar.toString())
+					else out[out.lastIndex] += curChar.toString()
+				}
+			}
+			idx++
+		}
+		return out.filter { it.isNotBlank() }
 	}
 
 	/**
@@ -453,13 +513,11 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 	/**
 	 * get alias for command
 	 */
-	private fun getAlias(t: String): String? {
-		val aliases = currentEnv["ALIASES"]!!.split(";")
-		for(a in aliases) {
-			val split = a.split("=", limit = 2)
-			if(split[0] == t) return split[1]
+	private fun getAliases(): List<Pair<String, String>> {
+		return currentEnv["ALIASES"]!!.split(";").map {
+			val split = it.split("=", limit = 2)
+			split[0] to split[1]
 		}
-		return null
 	}
 
 
