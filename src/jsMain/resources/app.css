@@ -2,6 +2,7 @@
     font-family: 'Iosevka Term SS14 Web', monospace;
     font-weight: 400;
     font-feature-settings: "calt" 0;
+    white-space: nowrap;
 }
 
 .ligatures {
@@ -21,10 +22,75 @@ body {
 
 pre {
     margin: 0;
+    white-space: pre;
 }
 
-span {
-    white-space: nowrap;
+#setting-btn-outline {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: black;
+    border-radius: 30px;
+    width: 30px;
+    height: 30px;
+    border: rgb(128, 128, 128) 1px solid;
+    color: rgb(128, 128, 128);
+}
+
+#setting-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#setting-btn-outline:hover {
+    color: rgb(200, 200, 200);
+    border: rgb(200, 200, 200) 1px solid;
+}
+
+#setting-btn-outline:active {
+    color: white;
+    border: white 1px solid;
+}
+
+#setting-panel-outline {
+    display: none;
+    position: absolute;
+    width: 720px;
+    height: 480px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: rgb(128, 128, 128) 1px solid;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-radius: 5px;
+    overflow: hidden;
+    padding: 5px 7px 7px 5px;
+}
+
+#setting-panel-outline.open {
+    display: block;
+}
+
+#setting-panel-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: rgb(128, 128, 128);
+}
+
+#setting-panel-close:hover {
+    color: rgb(200, 200, 200);
+}
+
+#setting-panel-close:active {
+    color: white;
+}
+
+#setting-panel {
+    overflow: auto;
 }
 
 #frame {
@@ -227,6 +293,10 @@ textarea:disabled.nowrap {
 }
 
 #title-bar > #close:hover {
+    color: rgb(200, 200, 200);
+}
+
+#title-bar > #close:active {
     color: white;
 }
 

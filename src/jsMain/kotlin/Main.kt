@@ -11,6 +11,7 @@ import kotlinx.html.*
 import kotlinx.html.dom.append
 import kotlinx.html.dom.create
 import kotlinx.html.js.div
+import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import kotlin.collections.Map
@@ -188,6 +189,38 @@ object Application {
 			id = "frame"
 			content()
 		}
+		div {
+			id = "setting-btn-outline"
+			div {
+				id = "setting-btn"
+				i {
+					classes = setOf("fa", "fa-xl", "fa-cog")
+				}
+				onClickFunction = {
+					document.getElementById("setting-panel-outline")?.classList?.add("open")
+				}
+			}
+		}
+		div {
+			id = "setting-panel-outline"
+			div {
+				id = "setting-panel"
+				settingPanel()
+			}
+			div {
+				id = "setting-panel-close"
+				i {
+					classes = setOf("fa", "fa-regular", "fa-circle-xmark")
+				}
+				onClickFunction = {
+					document.getElementById("setting-panel-outline")?.classList?.remove("open")
+				}
+			}
+		}
+	}
+
+	private fun DIV.settingPanel() {
+		+"something here"
 	}
 
 }
