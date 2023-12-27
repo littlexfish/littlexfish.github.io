@@ -51,6 +51,10 @@ class Argument(arr: Array<String>, needValue: List<String> = emptyList()) {
 		return args[key]?.lastOrNull()
 	}
 
+	fun getAll(key: String): List<String>? {
+		return args[key]
+	}
+
 	fun has(key: String): Boolean {
 		return args.containsKey(key)
 	}
