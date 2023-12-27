@@ -28,7 +28,25 @@ class Grep : Command() {
 		}
 
 		if(useFile == null) { // read from pipe input
-
+			if(!tunnel.hasNextRead()) {
+				// TODO: read from stdin by user
+				return 0
+			}
+			val contents = mutableListOf<String>()
+			while(tunnel.hasNextRead()) {
+				val ele = tunnel.readFromPipeIn()!!
+				val html = ele.innerHTML
+				val brk = html.replace("</?br>|</?p>|</?div>|</?tr>".toRegex(), "\n")
+				val noTag = brk.replace("<[^>]+?>".toRegex(), " ")
+				val noEmpty = noTag.split("\n").filter { it.isNotBlank() }.joinToString("\n")
+				contents.add(noEmpty)
+			}
+			val allResult = mutableListOf<Pair<String, List<Pair<Int, Int>>>>()
+			for(content in contents) {
+				val result = grep(pattern.toRegex(), content, matchType)
+				allResult.addAll(result)
+			}
+			pipeOutGrepResult(allResult)
 		}
 		else { // read from file
 			val actFile = mutableListOf<String>()
@@ -37,30 +55,31 @@ class Grep : Command() {
 					actFile.add(file)
 				}
 			}
-			// TODO: highlight matched text
 			grepFile(pattern.toRegex(), matchType, actFile, 0, mutableListOf()) {
-				it.forEach { (line, matches) ->
-					// TODO highlight
-					var lastNormalEnd = 0
-					for((start, end) in matches) {
-						if(start > lastNormalEnd) {
-							tunnel.pipeOutText(line.substring(lastNormalEnd, start))
-						}
-						tunnel.pipeOutText(line.substring(start, end + 1)) {
-							style.color = "cornflowerblue"
-						}
-						lastNormalEnd = end + 1
-					}
-					if(lastNormalEnd < line.length) {
-						tunnel.pipeOutText(line.substring(lastNormalEnd))
-					}
-					tunnel.pipeOutNewLine()
-				}
+				pipeOutGrepResult(it)
 			}
-
 		}
 
 		return 0
+	}
+
+	private fun pipeOutGrepResult(results: List<Pair<String, List<Pair<Int, Int>>>>) {
+		results.forEach { (line, matches) ->
+			var lastNormalEnd = 0
+			for((start, end) in matches) {
+				if(start > lastNormalEnd) {
+					tunnel.pipeOutText(line.substring(lastNormalEnd, start))
+				}
+				tunnel.pipeOutText(line.substring(start, end + 1)) {
+					style.color = "cornflowerblue"
+				}
+				lastNormalEnd = end + 1
+			}
+			if(lastNormalEnd < line.length) {
+				tunnel.pipeOutText(line.substring(lastNormalEnd))
+			}
+			tunnel.pipeOutNewLine()
+		}
 	}
 
 	private suspend fun grepFile(pattern: Regex, matchType: Int, files: List<String>, index: Int, out: MutableList<Pair<String, List<Pair<Int, Int>>>>, func: (List<Pair<String, List<Pair<Int, Int>>>>) -> Unit) {
