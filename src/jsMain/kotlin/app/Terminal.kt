@@ -180,7 +180,8 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 				.replace("$", "\\$")
 				.replace("-", "\\-")
 				.replace(":", "\\:")
-			"(\\s*)($reg)(\\s*)".toRegex() to it.second
+			val notWords = "\\W"
+			"($notWords)($reg)($notWords)".toRegex() to it.second
 		}
 		var out = cmdLine
 		aliasesRegex.forEach {
