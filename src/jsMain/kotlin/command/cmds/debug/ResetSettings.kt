@@ -18,4 +18,6 @@ class ResetSettings : Command() {
 		return 0
 	}
 
+	override fun getHelp() = "Reset settings file and reload the page."
+
 }

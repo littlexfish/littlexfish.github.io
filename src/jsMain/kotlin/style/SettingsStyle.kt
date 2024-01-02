@@ -17,23 +17,23 @@ private fun settingsButton() = """
 		position: absolute;
 		bottom: 5px;
 		right: 5px;
-		background: ${Settings.getSettings(SettKeys.Theme.BACKGROUND)};
+		background: ${Settings[SettKeys.Theme.BACKGROUND]};
 		border-radius: 30px;
 		width: 30px;
 		height: 30px;
-		border: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR)} 1px solid;
-		color: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR)};
+		border: ${Settings[SettKeys.Theme.BUTTON_COLOR]} 1px solid;
+		color: ${Settings[SettKeys.Theme.BUTTON_COLOR]};
 	}
 	#setting-btn {
 		${centerElement()}
 	}
 	#setting-btn-outline:hover {
-		color: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR_HOVER)};
-		border: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR_HOVER)} 1px solid;
+		color: ${Settings[SettKeys.Theme.BUTTON_COLOR_HOVER]};
+		border: ${Settings[SettKeys.Theme.BUTTON_COLOR_HOVER]} 1px solid;
 	}
 	#setting-btn-outline:active {
-		color: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR_ACTIVE)};
-		border: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR_ACTIVE)} 1px solid;
+		color: ${Settings[SettKeys.Theme.BUTTON_COLOR_ACTIVE]};
+		border: ${Settings[SettKeys.Theme.BUTTON_COLOR_ACTIVE]} 1px solid;
 	}
 """.replace("[\\t\\n\\r]+".toRegex(), "")
 
@@ -43,7 +43,8 @@ private fun settingsPanel() = """
 		${centerElement()}
 		width: 720px;
 		height: 480px;
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME)} 1px solid;
+		border: ${Settings[SettKeys.Theme.FRAME]} 1px solid;
+		background: ${Settings[SettKeys.Theme.BACKGROUND]}dd;
 		border-right-width: 3px;
 		border-bottom-width: 3px;
 		border-radius: 5px;
@@ -57,13 +58,13 @@ private fun settingsPanel() = """
 		position: absolute;
 		top: -20px;
 		right: -20px;
-		color: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR)};
+		color: ${Settings[SettKeys.Theme.BUTTON_COLOR]};
 	}
 	#setting-panel-close:hover {
-		color: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR_HOVER)};
+		color: ${Settings[SettKeys.Theme.BUTTON_COLOR_HOVER]};
 	}
 	#setting-panel-close:active {
-		color: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR_ACTIVE)}
+		color: ${Settings[SettKeys.Theme.BUTTON_COLOR_ACTIVE]}
 	}
 	#setting-panel {
 		overflow: hidden;
@@ -75,7 +76,7 @@ private fun settingsPanel() = """
 
 private fun settingsCategory() = """
 	.setting-category {
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME_LIGHT)} 1px dashed;
+		border: ${Settings[SettKeys.Theme.FRAME_LIGHT]} 1px dashed;
 		border-radius: 5px;
 		margin: 5px;
 		padding: 5px;
@@ -108,8 +109,9 @@ private fun settingsItem() = """
 		overflow: clip;
 		margin: 5px 0;
 		border-radius: 5px;
-		background: ${Settings.getSettings(SettKeys.Theme.FOREGROUND_DARK)};
+		background: ${Settings[SettKeys.Theme.FOREGROUND_DARK]};
 		padding: 5px;
+		${noSelection()}
 	}
 	.setting-item {
 		display: flex;

@@ -44,12 +44,12 @@ class Cat : Command() {
 		FS.readContentAsText(handler) {
 			if(withPath) {
 				tunnel.pipeOutTextLn("$p:") {
-					style.color = Settings.getSettings(SettKeys.Theme.COLOR_1)
+					style.color = Settings[SettKeys.Theme.COLOR_1]
 				}
 			}
 			if(it.isEmpty()) {
 				tunnel.pipeOutText("<empty>") {
-					style.color = Settings.getSettings(SettKeys.Theme.FOREGROUND_DARK)
+					style.color = Settings[SettKeys.Theme.FOREGROUND_DARK]
 				}
 			}
 			else {

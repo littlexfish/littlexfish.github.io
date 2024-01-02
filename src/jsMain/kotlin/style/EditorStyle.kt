@@ -19,7 +19,7 @@ private fun editorFileList() = """
 		height: 100%;
 		width: auto;
 		min-width: 100px;
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME)} 1px solid;
+		border: ${Settings[SettKeys.Theme.FRAME]} 1px solid;
 		border-radius: 5px;
 		overflow: hidden auto;
 	}
@@ -31,7 +31,7 @@ private fun editorFileList() = """
 		width: auto;
 		max-width: 300px;
 		padding: 5px;
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME)} 1px dashed;
+		border: ${Settings[SettKeys.Theme.FRAME]} 1px dashed;
 		cursor: pointer;
 		text-overflow: ellipsis;
 		margin: 5px;
@@ -39,7 +39,7 @@ private fun editorFileList() = """
 		${noSelection()}
 	}
 	#editor-files > div.opened {
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME_LIGHT)} 1px solid;
+		border: ${Settings[SettKeys.Theme.FRAME_LIGHT]} 1px solid;
 	}
 """.replace("[\\t\\n\\r]+".toRegex(), "")
 
@@ -47,19 +47,19 @@ private fun editor() = """
 	#editor {
 		display: block;
 		padding: 5px;
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME)} 1px solid;
+		border: ${Settings[SettKeys.Theme.FRAME]} 1px solid;
 		border-radius: 5px;
 		outline: none;
 		height: calc(100% - 10px);
 		width: 100%;
 	}
 	#editor:focus {
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME_LIGHT)} 1px solid;
+		border: ${Settings[SettKeys.Theme.FRAME_LIGHT]} 1px solid;
 	}
 	#editor.nowrap {
 		white-space: pre;
 	}
 	#editor.no-perm {
-		color: ${Settings.getSettings(SettKeys.Theme.COLOR_ERROR)};
+		color: ${Settings[SettKeys.Theme.COLOR_ERROR]};
 	}
 """.replace("[\\t\\n\\r]+".toRegex(), "")

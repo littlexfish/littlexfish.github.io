@@ -52,7 +52,7 @@ class Env : Command() {
 		append("$k=")
 		append(createElement("span") {
 			innerText = "\"$v\"";
-			style.color = Settings.getSettings(SettKeys.Theme.COLOR_3)
+			style.color = Settings[SettKeys.Theme.COLOR_3]
 		})
 	}
 

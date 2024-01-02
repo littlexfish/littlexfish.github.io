@@ -16,7 +16,7 @@ private fun title() = """
 	#title-bar {
 		display: flex;
 		font-size: 16px;
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME)} 1px solid;
+		border: ${Settings[SettKeys.Theme.FRAME]} 1px solid;
 		padding: 5px;
 		border-radius: 5px;
 		height: 20px;
@@ -35,20 +35,20 @@ private fun title() = """
 
 private fun titleCloseButton() = """
 	#title-bar > #close {
-		color: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR)};
+		color: ${Settings[SettKeys.Theme.BUTTON_COLOR]};
 	}
 	#title-bar > #close:hover {
-		color: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR_HOVER)};
+		color: ${Settings[SettKeys.Theme.BUTTON_COLOR_HOVER]};
 	}
 	#title-bar > #close:active {
-		color: ${Settings.getSettings(SettKeys.Theme.BUTTON_COLOR_ACTIVE)};
+		color: ${Settings[SettKeys.Theme.BUTTON_COLOR_ACTIVE]};
 	}
 """.replace("[\\t\\n\\r]+".toRegex(), "")
 
 private fun container() = """
 	#container {
 		padding: 5px;
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME)} 1px solid;
+		border: ${Settings[SettKeys.Theme.FRAME]} 1px solid;
 		border-radius: 5px;
 		height: calc(100% - 45px);
 	}

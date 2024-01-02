@@ -1,8 +1,5 @@
 package style
 
-import fs.SettKeys
-import fs.Settings
-
 fun monoFont() = """
 	font-family: 'Iosevka Term SS14 Web', monospace;
 	font-weight: 400;

@@ -14,7 +14,7 @@ class Exit : Command() {
 			tunnel.pipeOutText(Translation["command.exit.bye"])
 		}, {
 			tunnel.pipeOutText(Translation["command.exit.back_error"]) {
-				style.color = Settings.getSettings(SettKeys.Theme.COLOR_ERROR)
+				style.color = Settings[SettKeys.Theme.COLOR_ERROR]
 			}
 		})
 		return 0

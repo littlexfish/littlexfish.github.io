@@ -4,7 +4,6 @@ import Translation
 import command.Command
 import fs.SettKeys
 import fs.Settings
-import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 class Set : Command() {
@@ -18,7 +17,7 @@ class Set : Command() {
 		val value = args[1]
 		if(!"[a-zA-Z0-9_]+".toRegex().matches(name)) {
 			tunnel.pipeOutText(Translation["command.set.invalid_name", "name" to name]) {
-				style.color = Settings.getSettings(SettKeys.Theme.COLOR_ERROR)
+				style.color = Settings[SettKeys.Theme.COLOR_ERROR]
 			}
 			return 2
 		}

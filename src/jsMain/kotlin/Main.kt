@@ -103,8 +103,8 @@ object Application {
 		document.head?.append { appStyle() }
 		document.body?.let {
 			it.append(appElement)
-			it.style.background = Settings.getSettings(SettKeys.Theme.BACKGROUND)
-			it.style.color = Settings.getSettings(SettKeys.Theme.FOREGROUND)
+			it.style.background = Settings[SettKeys.Theme.BACKGROUND]
+			it.style.color = Settings[SettKeys.Theme.FOREGROUND]
 		}
 	}
 
@@ -210,7 +210,7 @@ object Application {
 		}
 		div {
 			id = "setting-btn-outline"
-			style = "background-color: ${Settings.getSettings(SettKeys.Theme.BACKGROUND)}"
+			style = "background-color: ${Settings[SettKeys.Theme.BACKGROUND]}"
 			div {
 				id = "setting-btn"
 				i {
@@ -311,9 +311,9 @@ object Application {
 			settingItemName(name)
 			input {
 				type = InputType.color
-				value = Settings.getSettings(settingsId)
+				value = Settings[settingsId]
 				onChangeFunction = {
-					Settings.setSettings(settingsId, it.target.asDynamic().value.unsafeCast<String>())
+					Settings[settingsId] = it.target.asDynamic().value.unsafeCast<String>()
 				}
 			}
 		}
@@ -324,9 +324,9 @@ object Application {
 			settingItemName(name)
 			input {
 				type = InputType.checkBox
-				checked = Settings.getSettings(settingsId) == "true"
+				checked = Settings.getAsBoolean(settingsId)
 				onChangeFunction = {
-					Settings.setSettings(settingsId, if(it.target.asDynamic().checked.unsafeCast<Boolean>()) "true" else "false")
+					Settings[settingsId] = it.target.asDynamic().checked.unsafeCast<Boolean>()
 				}
 			}
 		}

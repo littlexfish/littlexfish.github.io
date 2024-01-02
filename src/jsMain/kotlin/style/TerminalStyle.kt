@@ -20,7 +20,7 @@ private fun terminalOutput() = """
 	}
 	#terminal-output a {
 		text-decoration: none;
-		color: ${Settings.getSettings(SettKeys.Theme.COLOR_1)};
+		color: ${Settings[SettKeys.Theme.COLOR_1]};
 	}
 	#terminal-output a:hover {
 		text-decoration: underline;
@@ -31,10 +31,10 @@ private fun terminalInput() = """
 	#terminal-input-outline {
 		display: flex;
 		width: 100%;
-		border-bottom: ${Settings.getSettings(SettKeys.Theme.FRAME)} 2px solid;
+		border-bottom: ${Settings[SettKeys.Theme.FRAME]} 2px solid;
 	}
 	#terminal-input-outline.focus {
-		border-bottom-color: ${Settings.getSettings(SettKeys.Theme.FRAME_LIGHT)};
+		border-bottom-color: ${Settings[SettKeys.Theme.FRAME_LIGHT]};
 	}
 	#terminal-input-outline > span {
 		display: block;
@@ -48,8 +48,8 @@ private fun terminalInput() = """
 		display: block;
 		background: none;
 		border: none;
-		color: ${Settings.getSettings(SettKeys.Theme.FOREGROUND)};
-		caret-color: ${Settings.getSettings(SettKeys.Theme.FOREGROUND)};
+		color: ${Settings[SettKeys.Theme.FOREGROUND]};
+		caret-color: ${Settings[SettKeys.Theme.FOREGROUND]};
 		${fullWH()}
 		font-size: 16px;
 	}

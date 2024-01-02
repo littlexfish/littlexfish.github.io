@@ -109,7 +109,7 @@ class Ls : Command() {
 			val pipeOutName = { prefix: String, name: String, color: String? ->
 				tunnel.pipeOutTag("span") {
 					innerHTML = prefix
-					style.color = Settings.getSettings(SettKeys.Theme.COLOR_2)
+					style.color = Settings[SettKeys.Theme.COLOR_2]
 				}
 				tunnel.pipeOutText(name) {
 					color?.let { style.color = color }
@@ -123,10 +123,10 @@ class Ls : Command() {
 				}
 			}
 			if(includeHide) {
-				pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", ".", Settings.getSettings(SettKeys.Theme.COLOR_1_DARK))
+				pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", ".", Settings[SettKeys.Theme.COLOR_1_DARK])
 				tunnel.pipeOutNewLine()
 				if(absPath != "/") {
-					pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", "..", Settings.getSettings(SettKeys.Theme.COLOR_1_DARK))
+					pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", "..", Settings[SettKeys.Theme.COLOR_1_DARK])
 					tunnel.pipeOutNewLine()
 				}
 			}
@@ -139,11 +139,11 @@ class Ls : Command() {
 					val perm = FS.getPermission("$absPath/$name")
 					val pre = if(human) "f${perm}&nbsp;${humanize(fileSize)}&nbsp;${getLastModifiedUTC(file)}&nbsp;"
 					else "f${perm}&nbsp;${"&nbsp;".repeat(spaceSize - sizeSpace)}${file.size.toInt()}&nbsp;${getLastModifiedUTC(file)}&nbsp;"
-					pipeOutName(pre, name, if(file.name.startsWith(".")) Settings.getSettings(SettKeys.Theme.COLOR_1_DARK) else null)
+					pipeOutName(pre, name, if(file.name.startsWith(".")) Settings[SettKeys.Theme.COLOR_1_DARK] else null)
 				}
 				else {
 					pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", name,
-						if(name.startsWith(".")) Settings.getSettings(SettKeys.Theme.COLOR_1_DARK) else Settings.getSettings(SettKeys.Theme.COLOR_1))
+						if(name.startsWith(".")) Settings[SettKeys.Theme.COLOR_1_DARK] else Settings[SettKeys.Theme.COLOR_1])
 				}
 				tunnel.pipeOutNewLine()
 			}
@@ -156,19 +156,19 @@ class Ls : Command() {
 				}
 			}
 			if(includeHide) {
-				pipeOutName(".", Settings.getSettings(SettKeys.Theme.COLOR_1_DARK))
+				pipeOutName(".", Settings[SettKeys.Theme.COLOR_1_DARK])
 				if(absPath != "/") {
-					pipeOutName("..", Settings.getSettings(SettKeys.Theme.COLOR_1_DARK))
+					pipeOutName("..", Settings[SettKeys.Theme.COLOR_1_DARK])
 				}
 			}
 			var idx = 0
 			for(handle in list) {
 				pipeOutName(handle.first.name,
 					if(handle.first.name.startsWith(".")) {
-						if (handle.second == null) Settings.getSettings(SettKeys.Theme.COLOR_1_DARK)
-						else Settings.getSettings(SettKeys.Theme.FOREGROUND_DARK)
+						if (handle.second == null) Settings[SettKeys.Theme.COLOR_1_DARK]
+						else Settings[SettKeys.Theme.FOREGROUND_DARK]
 					}
-					else if(handle.second == null) Settings.getSettings(SettKeys.Theme.COLOR_1)
+					else if(handle.second == null) Settings[SettKeys.Theme.COLOR_1]
 					else null)
 				if(idx % 5 == 4) tunnel.pipeOutNewLine()
 				idx++

@@ -45,16 +45,22 @@ object Settings {
 		writer.close()
 	}
 
-	fun getSettings(key: String): String {
-		return allSettings[key] ?: ""
+	private fun getSettings(key: String): String? {
+		return allSettings[key]
 	}
 
-	fun setSettings(key: String, sett: Any) {
+	operator fun get(key: String) = getSettings(key) ?: ""
+
+	fun getAsBoolean(key: String) = get(key).toBoolean()
+
+	private fun setSettings(key: String, sett: Any) {
 		allSettings[key] = sett.toString()
 		MainScope().launch {
 			save()
 		}
 	}
+
+	operator fun set(key: String, sett: Any) = setSettings(key, sett)
 
 	private fun getDefaultSettings(): Map<String, String> {
 		return mapOf(

@@ -7,8 +7,8 @@ fun rootStyle(): String = """
 	${globalStyle()}
 	${defaultInput()}
 	body {
-		background-color: ${Settings.getSettings(SettKeys.Theme.BACKGROUND)};
-		color: ${Settings.getSettings(SettKeys.Theme.FOREGROUND)};
+		background-color: ${Settings[SettKeys.Theme.BACKGROUND]};
+		color: ${Settings[SettKeys.Theme.FOREGROUND]};
 		margin: 0;
 		padding: 0;
 	}
@@ -23,7 +23,7 @@ fun rootStyle(): String = """
 		left: 20px;
 		bottom: 20px;
 		right: 20px;
-		border: ${Settings.getSettings(SettKeys.Theme.FRAME)} 1px solid;
+		border: ${Settings[SettKeys.Theme.FRAME]} 1px solid;
 		border-radius: 5px;
 		padding: 10px;
 	}
@@ -62,9 +62,9 @@ private fun defaultInput() = """
 """.replace("[\\t\\n\\r]+".toRegex(), "")
 
 private fun errorFrame(): String {
-	var error = Settings.getSettings(SettKeys.Theme.COLOR_ERROR)
+	var error = Settings[SettKeys.Theme.COLOR_ERROR]
 	if(error.isBlank()) error = "#ff0000"
-	var color1 = Settings.getSettings(SettKeys.Theme.COLOR_1)
+	var color1 = Settings[SettKeys.Theme.COLOR_1]
 	if(color1.isBlank()) color1 = "#6495ed"
 	return """
 	#error-frame {
@@ -89,7 +89,7 @@ private fun textArea() = """
 	textArea {
 		background: none;
 		border: none;
-		color: ${Settings.getSettings(SettKeys.Theme.FOREGROUND)};
+		color: ${Settings[SettKeys.Theme.FOREGROUND]};
 		caret-color: white;
 		${fullWH()}
 		font-size: 16px;

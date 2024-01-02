@@ -91,7 +91,7 @@ fun TerminalTunnel.pipeOutLink(href: String, target: String = "_blank", builder:
 
 fun TerminalTunnel.pipeOutErrorText(error: String) {
 	pipeOutText(error) {
-		style.color = Settings.getSettings(SettKeys.Theme.COLOR_ERROR)
+		style.color = Settings[SettKeys.Theme.COLOR_ERROR]
 	}
 }
 

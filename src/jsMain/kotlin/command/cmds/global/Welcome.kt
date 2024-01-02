@@ -19,7 +19,7 @@ class Welcome : Command() {
 |_______||___|      |_______||_______|
 """
 		tunnel.pipeOutPre(osIcon) {
-			color = Settings.getSettings(SettKeys.Theme.COLOR_3_DARK)
+			color = Settings[SettKeys.Theme.COLOR_3_DARK]
 		}
 		tunnel.pipeOutNewLine()
 		tunnel.pipeOutTextLn(Translation["command.welcome.0"])

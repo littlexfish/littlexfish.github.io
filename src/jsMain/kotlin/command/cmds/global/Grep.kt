@@ -72,7 +72,7 @@ class Grep : Command() {
 					tunnel.pipeOutText(line.substring(lastNormalEnd, start))
 				}
 				tunnel.pipeOutText(line.substring(start, end + 1)) {
-					style.color = Settings.getSettings(SettKeys.Theme.COLOR_1)
+					style.color = Settings[SettKeys.Theme.COLOR_1]
 				}
 				lastNormalEnd = end + 1
 			}
