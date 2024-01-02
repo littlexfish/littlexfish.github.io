@@ -4,23 +4,18 @@ import Translation
 import command.Command
 import ext.*
 import fs.FS
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutNewLine
 import io.pipeOutTag
 import io.pipeOutText
 import kotlinx.coroutines.await
-import kotlinx.html.*
 import org.w3c.files.File
 import kotlin.js.Date
 import kotlin.math.log
 
 class Ls : Command() {
-
-	companion object {
-		private const val COLOR_DIR = "cornflowerblue"
-		private const val COLOR_DIR_HIDE = "steelblue"
-		private const val COLOR_HIDE = "gray"
-		private const val COLOR_LIST_PREFIX = "mediumslateblue"
-	}
 
 	/**
 	 * Arguments:
@@ -48,9 +43,7 @@ class Ls : Command() {
 		}
 		val argDir = pArg.getStandalone().lastOrNull()
 		if(!FS.hasDirectory(argDir ?: pwd, pwd)) {
-			tunnel.pipeOutText(Translation["command.ls.not_found", "path" to (argDir ?: pwd)]) {
-				style.color = "red"
-			}
+			tunnel.pipeOutErrorTextTr("command.ls.not_found", "path" to (argDir ?: pwd))
 			return 1
 		}
 		val dirHandle = if(argDir == null) FS.getDirectory(pwd) else FS.getDirectory(argDir, false, pwd)
@@ -116,7 +109,7 @@ class Ls : Command() {
 			val pipeOutName = { prefix: String, name: String, color: String? ->
 				tunnel.pipeOutTag("span") {
 					innerHTML = prefix
-					style.color = COLOR_LIST_PREFIX
+					style.color = Settings.getSettings(SettKeys.Theme.COLOR_2)
 				}
 				tunnel.pipeOutText(name) {
 					color?.let { style.color = color }
@@ -130,10 +123,10 @@ class Ls : Command() {
 				}
 			}
 			if(includeHide) {
-				pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", ".", COLOR_DIR_HIDE)
+				pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", ".", Settings.getSettings(SettKeys.Theme.COLOR_1_DARK))
 				tunnel.pipeOutNewLine()
 				if(absPath != "/") {
-					pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", "..", COLOR_DIR_HIDE)
+					pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", "..", Settings.getSettings(SettKeys.Theme.COLOR_1_DARK))
 					tunnel.pipeOutNewLine()
 				}
 			}
@@ -146,10 +139,11 @@ class Ls : Command() {
 					val perm = FS.getPermission("$absPath/$name")
 					val pre = if(human) "f${perm}&nbsp;${humanize(fileSize)}&nbsp;${getLastModifiedUTC(file)}&nbsp;"
 					else "f${perm}&nbsp;${"&nbsp;".repeat(spaceSize - sizeSpace)}${file.size.toInt()}&nbsp;${getLastModifiedUTC(file)}&nbsp;"
-					pipeOutName(pre, name, if(file.name.startsWith(".")) COLOR_DIR_HIDE else null)
+					pipeOutName(pre, name, if(file.name.startsWith(".")) Settings.getSettings(SettKeys.Theme.COLOR_1_DARK) else null)
 				}
 				else {
-					pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", name, if(name.startsWith(".")) COLOR_DIR_HIDE else COLOR_DIR)
+					pipeOutName("d--&nbsp;${"&nbsp;".repeat(spaceSize)}&nbsp;${"&nbsp;".repeat(dirTimeSpace)}&nbsp;", name,
+						if(name.startsWith(".")) Settings.getSettings(SettKeys.Theme.COLOR_1_DARK) else Settings.getSettings(SettKeys.Theme.COLOR_1))
 				}
 				tunnel.pipeOutNewLine()
 			}
@@ -162,19 +156,19 @@ class Ls : Command() {
 				}
 			}
 			if(includeHide) {
-				pipeOutName(".", COLOR_DIR_HIDE)
+				pipeOutName(".", Settings.getSettings(SettKeys.Theme.COLOR_1_DARK))
 				if(absPath != "/") {
-					pipeOutName("..", COLOR_DIR_HIDE)
+					pipeOutName("..", Settings.getSettings(SettKeys.Theme.COLOR_1_DARK))
 				}
 			}
 			var idx = 0
 			for(handle in list) {
 				pipeOutName(handle.first.name,
 					if(handle.first.name.startsWith(".")) {
-						if (handle.second == null) COLOR_DIR_HIDE
-						else COLOR_HIDE
+						if (handle.second == null) Settings.getSettings(SettKeys.Theme.COLOR_1_DARK)
+						else Settings.getSettings(SettKeys.Theme.FOREGROUND_DARK)
 					}
-					else if(handle.second == null) COLOR_DIR
+					else if(handle.second == null) Settings.getSettings(SettKeys.Theme.COLOR_1)
 					else null)
 				if(idx % 5 == 4) tunnel.pipeOutNewLine()
 				idx++

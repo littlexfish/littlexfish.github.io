@@ -3,6 +3,9 @@ package command.cmds.global
 import Translation
 import command.Command
 import command.Commands
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutPre
 import io.pipeOutText
 
@@ -16,7 +19,7 @@ class Help : Command() {
 			val cmd = args[0]
 			val command = Commands.getCommand(cmd)
 			if(command == null) {
-				tunnel.pipeOutText(Translation["command.help.not_found", "cmd" to cmd]) { style.color = "red" }
+				tunnel.pipeOutErrorTextTr("command.help.not_found", "cmd" to cmd)
 			}
 			else {
 				tunnel.pipeOutPre(command.getHelp() ?: Translation["command.help.no_page", "cmd" to cmd])

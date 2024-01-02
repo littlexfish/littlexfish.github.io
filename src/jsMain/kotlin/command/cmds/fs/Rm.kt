@@ -4,6 +4,9 @@ import Translation
 import command.Command
 import command.getRmInfo
 import fs.FS
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 class Rm : Command() {
@@ -14,7 +17,7 @@ class Rm : Command() {
 		for(path in pArg.getStandalone()) {
 			val suc = FS.remove(path, isRecursive, env["PWD"])
 			if(suc == false) {
-				if(!isSilent) tunnel.pipeOutText(Translation["command.rm.not_found", "path" to path]) { style.color = "red" }
+				if(isSilent) tunnel.pipeOutErrorTextTr("command.rm.not_found", "path" to path)
 				continue
 			}
 		}

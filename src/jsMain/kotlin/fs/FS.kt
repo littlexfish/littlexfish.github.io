@@ -18,6 +18,7 @@ object FS {
 	suspend fun init() {
 		val opfsRoot = fs.getDirectory().await()
 		ensureSystemDir(opfsRoot)
+		Settings.init(opfsRoot)
 		FSPermission.init(opfsRoot)
 		root = opfsRoot.getDirectoryHandle("terminal", json("create" to true)).await()
 		FSMapper.init(root!!)

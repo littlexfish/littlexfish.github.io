@@ -5,6 +5,9 @@ import Translation
 import app.Editor
 import command.Command
 import fs.FS
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 class Edit : Command() {
@@ -20,7 +23,7 @@ class Edit : Command() {
 		val actOpened = mutableListOf<String>()
 		for(o in openedFile) {
 			if(!FS.hasFile(o, env["PWD"])) {
-				tunnel.pipeOutText(Translation["command.edit.not_found", "path" to o]) { style.color = "red" }
+				tunnel.pipeOutErrorTextTr("command.edit.not_found", "path" to o)
 				errorCount++
 			}
 			else {

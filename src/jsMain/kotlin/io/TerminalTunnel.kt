@@ -1,6 +1,9 @@
 package io
 
+import Translation
 import createElement
+import fs.SettKeys
+import fs.Settings
 import kotlinx.browser.document
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
@@ -84,4 +87,14 @@ fun TerminalTunnel.pipeOutLink(href: String, target: String = "_blank", builder:
 		asDynamic().target = target
 		builder?.invoke(this)
 	}
+}
+
+fun TerminalTunnel.pipeOutErrorText(error: String) {
+	pipeOutText(error) {
+		style.color = Settings.getSettings(SettKeys.Theme.COLOR_ERROR)
+	}
+}
+
+fun TerminalTunnel.pipeOutErrorTextTr(id: String, vararg args: Pair<String, Any?>) {
+	pipeOutErrorText(Translation[id, mapOf(*args)])
 }

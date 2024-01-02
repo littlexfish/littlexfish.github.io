@@ -3,10 +3,9 @@ package command.cmds.fs
 import Translation
 import command.Command
 import fs.FS
-import io.pipeOutNewLine
-import io.pipeOutPre
-import io.pipeOutText
-import io.pipeOutTextLn
+import fs.SettKeys
+import fs.Settings
+import io.*
 
 class Cat : Command() {
 
@@ -19,15 +18,11 @@ class Cat : Command() {
 					path.add(p)
 				}
 				else {
-					tunnel.pipeOutText(Translation["command.cat.no_permission", "path" to p]) {
-						style.color = "red"
-					}
+					tunnel.pipeOutErrorTextTr("command.cat.no_permission", "path" to p)
 				}
 			}
 			else {
-				tunnel.pipeOutText(Translation["command.cat.not_found", "path" to p]) {
-					style.color = "red"
-				}
+				tunnel.pipeOutErrorTextTr("command.cat.not_found", "path" to p)
 			}
 		}
 		if(path.isEmpty()) return 1
@@ -49,12 +44,12 @@ class Cat : Command() {
 		FS.readContentAsText(handler) {
 			if(withPath) {
 				tunnel.pipeOutTextLn("$p:") {
-					style.color = "cornflowerblue"
+					style.color = Settings.getSettings(SettKeys.Theme.COLOR_1)
 				}
 			}
 			if(it.isEmpty()) {
 				tunnel.pipeOutText("<empty>") {
-					style.color = "gray"
+					style.color = Settings.getSettings(SettKeys.Theme.FOREGROUND_DARK)
 				}
 			}
 			else {

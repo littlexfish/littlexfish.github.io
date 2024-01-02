@@ -3,6 +3,9 @@ package command.cmds.fs
 import Translation
 import command.Command
 import fs.FS
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 class Cd : Command() {
@@ -15,7 +18,7 @@ class Cd : Command() {
 		val dir = args[0]
 		val pwd = env["PWD"]!!
 		if(!FS.hasDirectory(dir, pwd)) {
-			tunnel.pipeOutText(Translation["command.cd.not_found", "path" to dir]) { style.color = "red" }
+			tunnel.pipeOutErrorTextTr("command.cd.not_found", "path" to dir)
 			return 1
 		}
 		val handle = FS.getDirectory(dir, false, pwd)

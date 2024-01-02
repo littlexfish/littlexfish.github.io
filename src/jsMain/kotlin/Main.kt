@@ -2,6 +2,8 @@ import app.App
 import app.Terminal
 import command.Env
 import fs.FS
+import fs.SettKeys
+import fs.Settings
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.coroutineScope
@@ -10,10 +12,9 @@ import kotlinx.dom.clear
 import kotlinx.html.*
 import kotlinx.html.dom.append
 import kotlinx.html.dom.create
-import kotlinx.html.js.div
-import kotlinx.html.js.onClickFunction
-import org.w3c.dom.Element
-import org.w3c.dom.HTMLElement
+import kotlinx.html.js.*
+import org.w3c.dom.*
+import style.*
 import kotlin.collections.Map
 import kotlin.collections.mapOf
 import kotlin.collections.mutableMapOf
@@ -89,6 +90,7 @@ fun Element.scrollToView() {
 
 object Application {
 
+	const val DEBUG = true
 	private val appLayer = mutableListOf<Int>()
 	private val openedApp = mutableMapOf<Int, App>()
 	private var nextAppId = 0
@@ -98,7 +100,12 @@ object Application {
 	}
 
 	fun init() {
-		document.body?.append(appElement)
+		document.head?.append { appStyle() }
+		document.body?.let {
+			it.append(appElement)
+			it.style.background = Settings.getSettings(SettKeys.Theme.BACKGROUND)
+			it.style.color = Settings.getSettings(SettKeys.Theme.FOREGROUND)
+		}
 	}
 
 	fun nextAppId(): Int {
@@ -184,6 +191,18 @@ object Application {
 		return openedApp[appLayer.last()]
 	}
 
+	private fun TagConsumer<HTMLElement>.appStyle() {
+		style {
+			unsafe {
+				+rootStyle()
+				+settingsStyle()
+				+terminalStyle()
+				+editorStyle()
+				+htmlViewerStyle()
+			}
+		}
+	}
+
 	private fun TagConsumer<HTMLElement>.rootFrame(content: (DIV.() -> Unit) = {}) {
 		div {
 			id = "frame"
@@ -191,6 +210,7 @@ object Application {
 		}
 		div {
 			id = "setting-btn-outline"
+			style = "background-color: ${Settings.getSettings(SettKeys.Theme.BACKGROUND)}"
 			div {
 				id = "setting-btn"
 				i {
@@ -220,7 +240,108 @@ object Application {
 	}
 
 	private fun DIV.settingPanel() {
-		+"something here"
+		val cate = listOf("theme", "editor")
+		div {
+			id = "setting-category-list"
+			for(c in cate) {
+				div {
+					id = "setting-category-$c"
+					classes = if(c == "theme") setOf("setting-category", "active") else setOf("setting-category")
+					+Translation["settings.category.$c"]
+					onClickFunction = {
+						onSettingCategoryClick(c)
+					}
+				}
+			}
+		}
+		div {
+			id = "setting-content"
+			div {
+				id = "setting-content-theme"
+				classes = setOf("setting-content", "active")
+				subGroup(Translation["settings.theme_group.frame"])
+				colorSelector(Translation["settings.theme.frame"], SettKeys.Theme.FRAME)
+				colorSelector(Translation["settings.theme.frame_light"], SettKeys.Theme.FRAME_LIGHT)
+
+				subGroup(Translation["settings.theme_group.color"])
+				colorSelector(Translation["settings.theme.background"], SettKeys.Theme.BACKGROUND)
+				colorSelector(Translation["settings.theme.foreground"], SettKeys.Theme.FOREGROUND)
+				colorSelector(Translation["settings.theme.foreground_dark"], SettKeys.Theme.FOREGROUND_DARK)
+				colorSelector(Translation["settings.theme.color_error"], SettKeys.Theme.COLOR_ERROR)
+				colorSelector(Translation["settings.theme.color_cmd_input"], SettKeys.Theme.COLOR_CMD_INPUT)
+				colorSelector(Translation["settings.theme.color_1"], SettKeys.Theme.COLOR_1)
+				colorSelector(Translation["settings.theme.color_1_dark"], SettKeys.Theme.COLOR_1_DARK)
+				colorSelector(Translation["settings.theme.color_2"], SettKeys.Theme.COLOR_2)
+				colorSelector(Translation["settings.theme.color_2_dark"], SettKeys.Theme.COLOR_2_DARK)
+				colorSelector(Translation["settings.theme.color_3"], SettKeys.Theme.COLOR_3)
+				colorSelector(Translation["settings.theme.color_3_dark"], SettKeys.Theme.COLOR_3_DARK)
+
+				subGroup(Translation["settings.theme_group.button"])
+				colorSelector(Translation["settings.theme.button.color"], SettKeys.Theme.BUTTON_COLOR)
+				colorSelector(Translation["settings.theme.button.hover"], SettKeys.Theme.BUTTON_COLOR_HOVER)
+				colorSelector(Translation["settings.theme.button.active"], SettKeys.Theme.BUTTON_COLOR_ACTIVE)
+			}
+			div {
+				id = "setting-content-editor"
+				classes = setOf("setting-content")
+				booleanSelector(Translation["settings.editor.ligatures"], SettKeys.Editor.LIGATURES)
+				booleanSelector(Translation["settings.editor.auto_save"], SettKeys.Editor.AUTO_SAVE)
+			}
+		}
+	}
+
+	private fun DIV.settingItemName(name: String) {
+		classes = setOf("setting-item")
+		span {
+			+name
+		}
+	}
+
+	private fun DIV.subGroup(name: String) {
+		div {
+			classes = setOf("setting-group")
+			span {
+				+name
+			}
+		}
+	}
+
+	private fun DIV.colorSelector(name: String, settingsId: String) {
+		div {
+			settingItemName(name)
+			input {
+				type = InputType.color
+				value = Settings.getSettings(settingsId)
+				onChangeFunction = {
+					Settings.setSettings(settingsId, it.target.asDynamic().value.unsafeCast<String>())
+				}
+			}
+		}
+	}
+
+	private fun DIV.booleanSelector(name: String, settingsId: String) {
+		div {
+			settingItemName(name)
+			input {
+				type = InputType.checkBox
+				checked = Settings.getSettings(settingsId) == "true"
+				onChangeFunction = {
+					Settings.setSettings(settingsId, if(it.target.asDynamic().checked.unsafeCast<Boolean>()) "true" else "false")
+				}
+			}
+		}
+	}
+
+	private fun onSettingCategoryClick(cate: String) {
+		document.getElementById("setting-category-list")?.children?.asList()?.forEach {
+			it.classList.remove("active")
+		}
+		document.getElementById("setting-category-$cate")?.classList?.add("active")
+
+		document.getElementById("setting-content")?.children?.asList()?.forEach {
+			it.classList.remove("active")
+		}
+		document.getElementById("setting-content-$cate")?.classList?.add("active")
 	}
 
 }

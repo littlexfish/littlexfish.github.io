@@ -3,6 +3,8 @@ package command.cmds.global
 import Application
 import Translation
 import command.Command
+import fs.SettKeys
+import fs.Settings
 import io.pipeOutText
 
 class Exit : Command() {
@@ -12,7 +14,7 @@ class Exit : Command() {
 			tunnel.pipeOutText(Translation["command.exit.bye"])
 		}, {
 			tunnel.pipeOutText(Translation["command.exit.back_error"]) {
-				style.color = "red"
+				style.color = Settings.getSettings(SettKeys.Theme.COLOR_ERROR)
 			}
 		})
 		return 0

@@ -2,6 +2,8 @@ package command.cmds.global
 
 import Translation
 import command.Command
+import fs.SettKeys
+import fs.Settings
 import io.*
 import io.pipeOutText
 
@@ -16,7 +18,9 @@ class Welcome : Command() {
 |       ||   |      |       | _____| |
 |_______||___|      |_______||_______|
 """
-		tunnel.pipeOutPre(osIcon) { color = "green"	}
+		tunnel.pipeOutPre(osIcon) {
+			color = Settings.getSettings(SettKeys.Theme.COLOR_3_DARK)
+		}
 		tunnel.pipeOutNewLine()
 		tunnel.pipeOutTextLn(Translation["command.welcome.0"])
 		tunnel.pipeOutText(Translation["command.welcome.1"])

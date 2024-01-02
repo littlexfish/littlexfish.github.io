@@ -3,6 +3,9 @@ package command.cmds.fs
 import Translation
 import command.Command
 import fs.FS
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 class Mkdir : Command() {
@@ -10,7 +13,7 @@ class Mkdir : Command() {
 	override suspend fun execute(args: Array<String>): Int {
 		val pArg = parseArgs(args)
 		if(pArg.getStandalone().isEmpty()) {
-			tunnel.pipeOutText(Translation["command_arg.1"]) { style.color = "red" }
+			pipeNeedArgs(tunnel, 1)
 			return 1
 		}
 

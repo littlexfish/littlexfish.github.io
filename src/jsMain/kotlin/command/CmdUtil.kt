@@ -2,7 +2,10 @@ package command
 
 import Translation
 import fs.Permission
+import fs.SettKeys
+import fs.Settings
 import io.TerminalTunnel
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 /**
@@ -11,7 +14,8 @@ import io.pipeOutText
 fun getRmInfo(args: Array<String>, tunnel: TerminalTunnel): Triple<Argument, Boolean, Boolean>? {
 	val pArg = Command.parseArgs(args)
 	if(pArg.getStandalone().isEmpty()) {
-		tunnel.pipeOutText(Translation["command_arg.1"]) { style.color = "red" }
+		Command.pipeNeedArgs(tunnel, 1)
+		tunnel.pipeOutErrorTextTr("command_arg.1")
 		return null
 	}
 

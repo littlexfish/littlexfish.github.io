@@ -5,6 +5,9 @@ import Translation
 import app.HtmlViewer
 import command.Command
 import fs.FS
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 class Open : Command() {
@@ -13,7 +16,7 @@ class Open : Command() {
 		val pArg = parseArgs(args)
 		val openedFile = pArg.getStandalone()
 		if(openedFile.isEmpty()) {
-			tunnel.pipeOutText(Translation["command_arg.1"]) { style.color = "red" }
+			pipeNeedArgs(tunnel, 1)
 			return 1
 		}
 		val open = openedFile.last()

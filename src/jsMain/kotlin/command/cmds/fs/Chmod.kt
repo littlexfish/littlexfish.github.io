@@ -4,6 +4,9 @@ import Translation
 import command.Command
 import command.parsePermissionChange
 import fs.FS
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 class Chmod : Command() {
@@ -19,14 +22,14 @@ class Chmod : Command() {
 	override suspend fun execute(args: Array<String>): Int {
 		val pArg = parseArgs(args)
 		if(pArg.getStandalone().size < 2) {
-			tunnel.pipeOutText(Translation["command_arg.2"]) { style.color = "red" }
+			pipeNeedArgs(tunnel, 2)
 			return 1
 		}
 
 		val permissionChange = pArg.getStandalone().first()
 		val perm = parsePermissionChange(permissionChange)
 		if(perm == null) {
-			tunnel.pipeOutText(Translation["command.chmod.perm_error", "perm" to permissionChange]) { style.color = "red" }
+			tunnel.pipeOutErrorTextTr("command.chmod.perm_error", "perm" to permissionChange)
 			return 1
 		}
 

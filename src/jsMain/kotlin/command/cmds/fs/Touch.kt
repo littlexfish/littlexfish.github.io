@@ -5,6 +5,9 @@ import command.Command
 import command.parsePermission
 import fs.FS
 import fs.Permission
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 class Touch : Command() {
@@ -18,7 +21,7 @@ class Touch : Command() {
 	override suspend fun execute(args: Array<String>): Int {
 		val pArg = parseArgs(args, listOf("p"))
 		if(pArg.getStandalone().isEmpty()) {
-			tunnel.pipeOutText(Translation["command_arg.1"]) { style.color = "red" }
+			pipeNeedArgs(tunnel, 1)
 			return 1
 		}
 

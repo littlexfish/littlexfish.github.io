@@ -2,13 +2,16 @@ package command.cmds.env
 
 import Translation
 import command.Command
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 
 class Unset : Command() {
 
 	override suspend fun execute(args: Array<String>): Int {
 		if(args.isEmpty()) {
-			tunnel.pipeOutText(Translation["command_arg.1"]) { style.color = "red" }
+			pipeNeedArgs(tunnel, 1)
 			return 1
 		}
 		for(a in args) {

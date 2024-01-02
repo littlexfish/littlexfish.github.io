@@ -1,5 +1,6 @@
 package command
 
+import command.cmds.debug.*
 import command.cmds.env.Alias
 import command.cmds.env.Set
 import command.cmds.env.UnAlias
@@ -8,12 +9,24 @@ import command.cmds.fs.*
 import command.cmds.global.*
 import command.cmds.env.Env as EnvCmd
 import io.TerminalTunnel
+import io.pipeOutErrorTextTr
 
 abstract class Command {
 
 	companion object {
 		fun parseArgs(args: Array<String>, needValue: List<String> = emptyList()): Argument {
 			return Argument(args, needValue)
+		}
+		fun pipeNeedArgs(tunnel: TerminalTunnel, num: Int) {
+			if(num < 0) {
+				throw IllegalArgumentException("num must >= 0")
+			}
+			if(num == 1) {
+				tunnel.pipeOutErrorTextTr("command_arg.1")
+			}
+			else {
+				tunnel.pipeOutErrorTextTr("command_arg.2+", "num" to num)
+			}
 		}
 	}
 
@@ -73,6 +86,10 @@ object Commands {
 		commands["terminal"] = Terminal()
 		commands["exit"] = Exit()
 		commands["grep"] = Grep()
+
+		if(Application.DEBUG) {
+			commands["debug:rs"] = ResetSettings()
+		}
 
 	}
 

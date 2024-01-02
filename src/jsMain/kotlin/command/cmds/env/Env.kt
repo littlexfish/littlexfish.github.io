@@ -3,7 +3,9 @@ package command.cmds.env
 import Translation
 import command.Command
 import createElement
-import io.pipeOutText
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import kotlinx.browser.document
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
@@ -32,7 +34,7 @@ class Env : Command() {
 			var hasInvalid = false
 			for(arg in args) {
 				if(!arg.contains("=")) {
-					tunnel.pipeOutText(Translation["command.env.invalid_setter", "setter" to arg]) { style.color = "red" }
+					tunnel.pipeOutErrorTextTr("command.env.invalid_setter", "setter" to arg)
 					hasInvalid = true
 					continue
 				}
@@ -48,7 +50,10 @@ class Env : Command() {
 
 	private fun getEnvMapElement(k: String, v: String): Element = createElement("span") {
 		append("$k=")
-		append(createElement("span") { innerText = "\"$v\"";style.color = "LightGreen" })
+		append(createElement("span") {
+			innerText = "\"$v\"";
+			style.color = Settings.getSettings(SettKeys.Theme.COLOR_3)
+		})
 	}
 
 	override fun getHelp(): String = Translation["command.env.help"]

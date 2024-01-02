@@ -3,6 +3,8 @@ package app
 import Translation
 import command.*
 import createElement
+import fs.SettKeys
+import fs.Settings
 import io.TerminalTunnel
 import kotlinx.browser.document
 import kotlinx.coroutines.MainScope
@@ -121,7 +123,7 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 		if(errorCmd.isNotEmpty()) {
 			addOutput(createElement("span") {
 				innerText = Translation["command_not_found", "cmd" to errorCmd.joinToString(", ")]
-				style.color = "red"
+				style.color = Settings.getSettings(SettKeys.Theme.COLOR_ERROR)
 			})
 			currentEnv["?"] = "-1"
 			return
@@ -409,7 +411,7 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 		val out = document.createElement("div") as HTMLDivElement
 		out.append(createElement("span") { classList.add("ti");innerText = currentEnv.getCommandInputPrefix() + cmd })
 		out.id = "ti-$inputId"
-		out.classList.add("ti")
+		out.style.color = Settings.getSettings(SettKeys.Theme.COLOR_CMD_INPUT)
 		terminalOutput.append(out)
 		if(terminalOutput.childElementCount > maxOutputElement) {
 			terminalOutput.removeChild(terminalOutput.firstChild!!)

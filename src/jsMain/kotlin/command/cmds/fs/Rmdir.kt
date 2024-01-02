@@ -4,6 +4,9 @@ import Translation
 import command.Command
 import command.getRmInfo
 import fs.FS
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutText
 import kotlinx.coroutines.await
 import kotlin.js.json
@@ -16,7 +19,7 @@ class Rmdir : Command() {
 		for(path in pArg.getStandalone()) {
 			val hasDir = FS.hasDirectory(path, env["PWD"]!!)
 			if(!hasDir) {
-				if(!isSilent) tunnel.pipeOutText(Translation["command.rmdir.not_found", "path" to path]) { style.color = "red" }
+				tunnel.pipeOutErrorTextTr("command.rmdir.not_found", "path" to path)
 				continue
 			}
 			val parent = FS.getDirectory(path.substringBeforeLast('/', ""), false, env["PWD"]!!)

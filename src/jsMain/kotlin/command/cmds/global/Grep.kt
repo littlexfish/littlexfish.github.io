@@ -3,6 +3,9 @@ package command.cmds.global
 import Translation
 import command.Command
 import fs.FS
+import fs.SettKeys
+import fs.Settings
+import io.pipeOutErrorTextTr
 import io.pipeOutNewLine
 import io.pipeOutText
 
@@ -13,9 +16,7 @@ class Grep : Command() {
 
 		val pattern = pArg.getStandalone().lastOrNull()
 		if(pattern == null) {
-			tunnel.pipeOutText(Translation["command_arg.1"]) {
-				style.color = "red"
-			}
+			pipeNeedArgs(tunnel, 1)
 			return 1
 		}
 		val useFile = pArg.getAll("f")
@@ -71,7 +72,7 @@ class Grep : Command() {
 					tunnel.pipeOutText(line.substring(lastNormalEnd, start))
 				}
 				tunnel.pipeOutText(line.substring(start, end + 1)) {
-					style.color = "cornflowerblue"
+					style.color = Settings.getSettings(SettKeys.Theme.COLOR_1)
 				}
 				lastNormalEnd = end + 1
 			}
