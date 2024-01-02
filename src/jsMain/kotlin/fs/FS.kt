@@ -11,12 +11,13 @@ import kotlin.js.json
 object FS {
 
 	private const val HOME_DIRECTORY = "/home"
-	private var fs: StorageManager = window.navigator.storage
+	private var fs: StorageManager? = window.navigator.storage
 	private var root: FileSystemDirectoryHandle? = null
 	private var home: FileSystemDirectoryHandle? = null
 
 	suspend fun init() {
-		val opfsRoot = fs.getDirectory().await()
+		if(fs == null) return
+		val opfsRoot = fs!!.getDirectory().await()
 		ensureSystemDir(opfsRoot)
 		Settings.init(opfsRoot)
 		FSPermission.init(opfsRoot)

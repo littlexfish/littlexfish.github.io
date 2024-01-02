@@ -74,6 +74,9 @@ private fun errorFrame(): String {
 		${centerElement()}
 		padding: 20px 50px;
 		font-size: 30px;
+		max-width: 80%;
+		max-height: 80%;
+		overflow: auto;
 	}
 	#error-frame a {
 		text-decoration: none;

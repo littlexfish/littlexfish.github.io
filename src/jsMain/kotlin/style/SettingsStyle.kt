@@ -41,8 +41,10 @@ private fun settingsPanel() = """
 	#setting-panel-outline {
 		display: none;
 		${centerElement()}
-		width: 720px;
-		height: 480px;
+		width: 80%;
+		height: 80%;
+		max-width: 720px;
+		max-height: 480px;
 		border: ${Settings[SettKeys.Theme.FRAME]} 1px solid;
 		background: ${Settings[SettKeys.Theme.BACKGROUND]}dd;
 		border-right-width: 3px;
@@ -122,12 +124,14 @@ private fun settingsItem() = """
 	.setting-item > input {
 		width: 20%;
 		max-width: 100px;
-		min-width: 10px;
+		min-width: 20px;
 		height: 25px;
 		margin: auto;
 	}
 	.setting-item > span {
 		width: 100%;
 		height: fit-content;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 """.replace("[\\t\\n\\r]+".toRegex(), "")

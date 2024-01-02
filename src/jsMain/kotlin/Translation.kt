@@ -6,13 +6,15 @@ import kotlin.js.json
 
 object Translation {
 
+	val allLanguage = listOf("en-US", "zh-TW")
+
 	private val i18n = mapOf(
 		"en" to "en_US",
 		"en-US" to "en_US",
 		"zh" to "zh_TW",
 		"zh-TW" to "zh_TW",
 	)
-	private const val DEFAULT_LANG = "en"
+	const val DEFAULT_LANG = "en"
 
 	private val translationMapping = HashMap<String, String>()
 

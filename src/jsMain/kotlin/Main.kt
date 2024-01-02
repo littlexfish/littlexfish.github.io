@@ -47,7 +47,7 @@ suspend fun main() {
 		}.invokeOnCompletion {
 			if(it != null) { // on terminal start with error
 				it.printStackTrace()
-				showInitError("Failed to start terminal.")
+				showInitError("Failed to start terminal.", "Failed", it)
 			}
 		}
 	}
@@ -64,9 +64,18 @@ private fun newRootEnv(): Env {
 /**
  * Show error
  */
-private fun showInitError(msg: String, title: String? = null) {
+private fun showInitError(msg: String, title: String? = null, thr: Throwable? = null) {
 	appElement.clear()
-	document.head?.title = "Error" + if(title != null) ": $title" else ""
+	document.head?.let {
+		it.title = "Error" + if(title != null) ": $title" else ""
+		it.append {
+			style {
+				unsafe {
+					+rootStyle()
+				}
+			}
+		}
+	}
 	appElement.append {
 		div {
 			id = "error-frame"
@@ -77,6 +86,13 @@ private fun showInitError(msg: String, title: String? = null) {
 				+"issue"
 			}
 			+"."
+			if(thr != null) {
+				div {
+					pre {
+						+thr.stackTraceToString()
+					}
+				}
+			}
 		}
 	}
 }
@@ -240,7 +256,7 @@ object Application {
 	}
 
 	private fun DIV.settingPanel() {
-		val cate = listOf("theme", "editor")
+		val cate = listOf("theme", "editor", "locale")
 		div {
 			id = "setting-category-list"
 			for(c in cate) {
@@ -287,6 +303,11 @@ object Application {
 				booleanSelector(Translation["settings.editor.ligatures"], SettKeys.Editor.LIGATURES)
 				booleanSelector(Translation["settings.editor.auto_save"], SettKeys.Editor.AUTO_SAVE)
 			}
+			div {
+				id = "setting-content-locale"
+				classes = setOf("setting-content")
+				optionSelector(Translation["settings.locale.language"], SettKeys.Locale.LANGUAGE, Translation.allLanguage)
+			}
 		}
 	}
 
@@ -327,6 +348,26 @@ object Application {
 				checked = Settings.getAsBoolean(settingsId)
 				onChangeFunction = {
 					Settings[settingsId] = it.target.asDynamic().checked.unsafeCast<Boolean>()
+				}
+			}
+		}
+	}
+
+	private fun DIV.optionSelector(name: String, settingsId: String, options: List<String>) {
+		div {
+			settingItemName(name)
+			select {
+				options.forEach {
+					option {
+						value = it
+						if(Settings[settingsId] == it) {
+							selected = true
+						}
+						+it
+					}
+				}
+				onChangeFunction = {
+					Settings[settingsId] = it.target.asDynamic().value.unsafeCast<String>()
 				}
 			}
 		}

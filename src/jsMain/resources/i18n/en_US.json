@@ -1,6 +1,7 @@
 {
   "settings.category.theme": "Theme",
   "settings.category.editor": "Editor",
+  "settings.category.locale": "Locale",
 
   "settings.theme_group.frame": "Frame",
   "settings.theme.frame": "Frame",
@@ -25,6 +26,7 @@
   "settings.editor.ligatures":  "Enable Ligatures",
   "settings.editor.auto_save": "Enable Auto Save",
 
+  "settings.locale.language": "Language",
 
   "command_not_found": "Command not found: {cmd}",
   "command_arg.empty": "Argument cannot be empty.",

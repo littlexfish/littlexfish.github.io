@@ -1,6 +1,7 @@
 package fs
 
 import ext.FileSystemDirectoryHandle
+import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
@@ -86,8 +87,9 @@ object Settings {
 			SettKeys.Theme.BUTTON_COLOR_ACTIVE to "#ffffff", // white
 
 			SettKeys.Editor.LIGATURES to "false",
-			SettKeys.Editor.AUTO_SAVE to "false"
+			SettKeys.Editor.AUTO_SAVE to "false",
 
+			SettKeys.Locale.LANGUAGE to if(window.navigator.language in Translation.allLanguage) window.navigator.language else Translation.DEFAULT_LANG
 		)
 	}
 
@@ -124,6 +126,8 @@ object SettKeys {
 		const val AUTO_SAVE = "editor.auto_save"
 	}
 
-
+	object Locale {
+		const val LANGUAGE = "locale.language"
+	}
 
 }
