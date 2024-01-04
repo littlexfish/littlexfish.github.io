@@ -1,10 +1,11 @@
 package app
 
-import kotlinx.html.DIV
+import kotlinx.html.TagConsumer
+import org.w3c.dom.HTMLElement
 
 abstract class App(val name: String) {
 
-	abstract fun buildGUI(): DIV.() -> Unit
+	abstract fun buildGUI(): TagConsumer<HTMLElement>.() -> Unit
 
 	protected abstract fun onInit()
 

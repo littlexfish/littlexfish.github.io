@@ -25,7 +25,7 @@ class Editor : App("editor") {
 
 	private val openedFiles = mutableListOf<FileInfo>()
 
-	override fun buildGUI(): DIV.() -> Unit = {
+	override fun buildGUI(): TagConsumer<HTMLElement>.() -> Unit = {
 		div {
 			id = "editor-frame"
 			div {

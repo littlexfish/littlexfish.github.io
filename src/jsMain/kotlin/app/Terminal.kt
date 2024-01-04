@@ -11,10 +11,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.dom.clear
 import kotlinx.html.*
-import org.w3c.dom.Element
-import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.asList
+import org.w3c.dom.*
 import scrollToView
 
 class Terminal(rootEnv: Env? = null) : App("terminal") {
@@ -79,7 +76,7 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 
 	private val terminalStorage = mutableListOf<Element>()
 
-	override fun buildGUI(): DIV.() -> Unit = {
+	override fun buildGUI(): TagConsumer<HTMLElement>.() -> Unit = {
 		div {
 			id = "terminal-output"
 		}
