@@ -21,7 +21,9 @@ class Editor : App("editor") {
 	private val fileListElement: HTMLDivElement
 		get() = document.getElementById("editor-files") as HTMLDivElement
 	private val fileEditorElement: HTMLTextAreaElement
-		get() = document.getElementById("editor") as HTMLTextAreaElement
+		get() = document.getElementById("editor-textarea") as HTMLTextAreaElement
+	private val editorHighlightElement: HTMLElement
+		get() = document.getElementById("editor-code") as HTMLElement
 
 	private val openedFiles = mutableListOf<FileInfo>()
 
@@ -31,9 +33,22 @@ class Editor : App("editor") {
 			div {
 				id = "editor-files"
 			}
-			textArea {
+			div {
 				id = "editor"
-				wrap = TextAreaWrap.soft
+				pre {
+					code {
+						id = "editor-code"
+						classes = setOf("editor")
+					}
+				}
+				textArea {
+					id = "editor-textarea"
+					classes = setOf("editor")
+					autoFocus = true
+					attributes["autocorrect"] = "off"
+					attributes["autocapitalize"] = "off"
+					spellCheck = false
+				}
 			}
 		}
 	}
@@ -51,6 +66,8 @@ class Editor : App("editor") {
 					fileEditorElement.value = fileEditorElement.value.substring(0, start) + "\t" + fileEditorElement.value.substring(end)
 					fileEditorElement.selectionStart = start + 1
 					fileEditorElement.selectionEnd = start + 1
+					editorHighlightElement.innerHTML = fileEditorElement.value
+					refreshHighlight()
 				}
 			}
 			else if(it.ctrlKey && it.key == "s") {
@@ -64,7 +81,11 @@ class Editor : App("editor") {
 				Application.backToApp(Terminal::class.js)
 			}
 		}
-		setEditorSoftWrap(false)
+		fileEditorElement.oninput = {
+			editorHighlightElement.innerHTML = fileEditorElement.value
+			refreshHighlight()
+			null
+		}
 		setTabSize(4)
 		refreshEditor()
 	}
@@ -85,13 +106,9 @@ class Editor : App("editor") {
 		}
 	}
 
-	private fun setEditorSoftWrap(wrap: Boolean) {
-		if(wrap) fileEditorElement.classList.remove("nowrap")
-		else fileEditorElement.classList.add("nowrap")
-	}
-
 	private fun setTabSize(size: Int) {
 		fileEditorElement.style.tabSize = size.toString()
+		editorHighlightElement.style.tabSize = size.toString()
 	}
 
 	private fun fileTitleSimplify() {
@@ -210,7 +227,11 @@ class Editor : App("editor") {
 				val reader = FileReader()
 				reader.onload = {
 					val content = reader.result.unsafeCast<String>()
-					content.also { fileEditorElement.value = it }
+					content.also {
+						fileEditorElement.value = it
+						editorHighlightElement.innerHTML = fileEditorElement.value
+						refreshHighlight()
+					}
 				}
 				reader.readAsText(file.getFile().await())
 			}
@@ -245,9 +266,24 @@ class Editor : App("editor") {
 		}
 	}
 
+	private fun setCurrentLanguage(lang: String) {
+		val classes = editorHighlightElement.classList
+		val currentLang = classes.asList().filter { it.startsWith("language-") }
+		currentLang.forEach { classes.remove(it) }
+		classes.add("language-$lang")
+	}
+
+	private fun refreshHighlight() {
+		setCurrentLanguage(openedFiles[getOpenedFile()].getExtension())
+		editorHighlightElement.removeAttribute("data-highlighted")
+		val hljs = js("hljs")
+		hljs.highlightAll()
+	}
+
 	private data class FileInfo(val path: String) {
 		private val spl = path.split("/")
 		private var displayLength = 1
+		private var forceExt: String? = null
 		fun addDisplayLength() {
 			if(displayLength < spl.size) displayLength++
 		}
@@ -257,6 +293,14 @@ class Editor : App("editor") {
 		}
 		fun resetDisplay() {
 			displayLength = 1
+		}
+		fun setForceExt(ext: String?) {
+			forceExt = ext
+		}
+		fun getExtension(): String {
+			if(forceExt != null) return forceExt!!
+			val ext = path.substringAfterLast(".", "")
+			return if(ext.contains("/")) "" else ext
 		}
 	}
 

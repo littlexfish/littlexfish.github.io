@@ -120,8 +120,8 @@ object Application {
 		document.head?.append { Style.style()() }
 		document.body?.let {
 			it.append(appElement)
-			it.style.background = Settings[SettKeys.Theme.BACKGROUND]
-			it.style.color = Settings[SettKeys.Theme.FOREGROUND]
+//			it.style.background = Settings[SettKeys.Theme.BACKGROUND]
+//			it.style.color = Settings[SettKeys.Theme.FOREGROUND]
 		}
 		appElement.append {
 			rootFrame()
