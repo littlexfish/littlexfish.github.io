@@ -118,6 +118,10 @@ object Commands {
 		}
 	}
 
+	fun currentModule(): List<CommandType> {
+		return enabledTypes.toList()
+	}
+
 	fun availableCommands(): List<String> = commands.keys.toList().filter {
 		commands[it]!!.hasAllTypeOf(enabledTypes.toList())
 	}.sorted()
