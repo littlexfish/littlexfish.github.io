@@ -95,6 +95,7 @@ private fun editor() = """
 """.replace("[\\t\\n\\r]+".toRegex(), "")
 
 // FIXME: in editor, the first line always has a margin at left
+// official style: https://github.com/highlightjs/highlight.js/tree/main/src/styles
 private fun codeHighlight() = """
 	.hljs > span {
 		white-space: pre;
