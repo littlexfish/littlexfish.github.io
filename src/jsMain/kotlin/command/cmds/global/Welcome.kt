@@ -2,12 +2,13 @@ package command.cmds.global
 
 import Translation
 import command.Command
+import command.CommandType
 import fs.SettKeys
 import fs.Settings
 import io.*
 import io.pipeOutText
 
-class Welcome : Command() {
+class Welcome : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		val osIcon = """ ___      _______    _______  _______ 

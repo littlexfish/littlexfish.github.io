@@ -2,6 +2,7 @@ package command.cmds.fs
 
 import Translation
 import command.Command
+import command.CommandType
 import ext.*
 import fs.FS
 import fs.SettKeys
@@ -15,7 +16,7 @@ import org.w3c.files.File
 import kotlin.js.Date
 import kotlin.math.log
 
-class Ls : Command() {
+class Ls : Command(CommandType.FS) {
 
 	/**
 	 * Arguments:

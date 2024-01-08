@@ -2,9 +2,10 @@ package command.cmds.global
 
 import Translation
 import command.Command
+import command.CommandType
 import io.*
 
-class About : Command() {
+class About : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		tunnel.pipeOutTextLn(tr("0"))

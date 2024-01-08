@@ -4,10 +4,11 @@ import Application
 import Translation
 import command.Command
 import app.Terminal
+import command.CommandType
 import io.pipeOutText
 import kotlinx.browser.window
 
-class Terminal : Command() {
+class Terminal : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		val pArg = parseArgs(args)

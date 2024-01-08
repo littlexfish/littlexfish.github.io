@@ -2,12 +2,13 @@ package command.cmds.fs
 
 import Translation
 import command.Command
+import command.CommandType
 import fs.FS
 import fs.SettKeys
 import fs.Settings
 import io.*
 
-class Cat : Command() {
+class Cat : Command(CommandType.FS) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		val pArg = parseArgs(args)

@@ -3,11 +3,12 @@ package command.cmds.global
 import Application
 import Translation
 import command.Command
+import command.CommandType
 import fs.SettKeys
 import fs.Settings
 import io.pipeOutText
 
-class Exit : Command() {
+class Exit : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		Application.backWithTimeout(1000, {

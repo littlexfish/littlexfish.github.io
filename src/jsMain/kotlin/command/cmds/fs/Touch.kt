@@ -2,6 +2,7 @@ package command.cmds.fs
 
 import Translation
 import command.Command
+import command.CommandType
 import command.parsePermission
 import fs.FS
 import fs.Permission
@@ -10,7 +11,7 @@ import fs.Settings
 import io.pipeOutErrorTextTr
 import io.pipeOutText
 
-class Touch : Command() {
+class Touch : Command(CommandType.FS) {
 
 	/**
 	 * Usage: touch [-p <permission>] <file>...

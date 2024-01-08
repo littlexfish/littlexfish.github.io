@@ -29,6 +29,7 @@
   "settings.locale.language": "Language",
 
   "command_not_found": "Command not found: {cmd}",
+  "command_no_module": "Modules [{mods}] not found for your command",
   "command_arg.empty": "Argument cannot be empty.",
   "command_arg.invalid": "Invalid argument: {arg}",
   "command_arg.1": "Need at least 1 argument",
@@ -59,6 +60,7 @@
 
   "command.help.text": "Hi, Welcome to the HELP page\n\nUsing `help [command]` to get help for a specific command\nUsing `lscmd` to list all available commands\n",
   "command.help.not_found": "\"Command '{cmd}' not found\"",
+  "command.help.no_module": "No modules [{mods}] found for command '{cmd}'",
   "command.help.no_page": "No help page for command '{cmd}'",
   "command.help.help": "Prints this help page\nUsing `help [command]` to get help for a specific command",
 

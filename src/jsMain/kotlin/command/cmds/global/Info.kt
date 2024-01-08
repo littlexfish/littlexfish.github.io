@@ -2,12 +2,13 @@ package command.cmds.global
 
 import Translation
 import command.Command
+import command.CommandType
 import createElement
 import fs.SettKeys
 import fs.Settings
 import io.pipeOutTag
 
-class Info : Command() {
+class Info : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		tunnel.pipeOut(createElement("span") {

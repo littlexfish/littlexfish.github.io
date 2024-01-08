@@ -2,13 +2,14 @@ package command.cmds.fs
 
 import Translation
 import command.Command
+import command.CommandType
 import fs.FS
 import fs.SettKeys
 import fs.Settings
 import io.pipeOutErrorTextTr
 import io.pipeOutText
 
-class Cd : Command() {
+class Cd : Command(CommandType.FS) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		if(args.isEmpty()) {

@@ -2,9 +2,10 @@ package command.cmds.global
 
 import Translation
 import command.Command
+import command.CommandType
 import io.pipeOutText
 
-class Echo : Command() {
+class Echo : Command(CommandType.COMMON) {
 	override suspend fun execute(args: Array<String>): Int {
 		if(args.isEmpty()) {
 			tunnel.pipeOutText("\n")

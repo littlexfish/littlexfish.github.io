@@ -2,6 +2,7 @@ package command.cmds.fs
 
 import Translation
 import command.Command
+import command.CommandType
 import command.parsePermissionChange
 import fs.FS
 import fs.SettKeys
@@ -9,7 +10,7 @@ import fs.Settings
 import io.pipeOutErrorTextTr
 import io.pipeOutText
 
-class Chmod : Command() {
+class Chmod : Command(CommandType.FS) {
 
 	/**
 	 * Usage: chmod [-p <permission>] <file>...

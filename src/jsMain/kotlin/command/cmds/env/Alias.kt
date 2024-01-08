@@ -2,12 +2,13 @@ package command.cmds.env
 
 import Translation
 import command.Command
+import command.CommandType
 import fs.SettKeys
 import fs.Settings
 import io.pipeOutErrorTextTr
 import io.pipeOutText
 
-class Alias : Command() {
+class Alias : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		if(args.isEmpty()) {

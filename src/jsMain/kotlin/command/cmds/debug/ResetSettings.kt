@@ -2,11 +2,12 @@ package command.cmds.debug
 
 import Application
 import command.Command
+import command.CommandType
 import ext.storage
 import kotlinx.browser.window
 import kotlinx.coroutines.await
 
-class ResetSettings : Command() {
+class ResetSettings : Command(CommandType.DEBUG, CommandType.FS) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		if(!Application.DEBUG) return 1

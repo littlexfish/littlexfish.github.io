@@ -1,9 +1,9 @@
 import app.App
 import app.Terminal
+import command.Commands
 import command.Env
+import command.CommandType
 import fs.FS
-import fs.SettKeys
-import fs.Settings
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.coroutineScope
@@ -38,6 +38,7 @@ suspend fun main() {
 				showInitError("Failed to load translation file.")
 				return@launch
 			}
+			Commands.registerType(CommandType.COMMON)
 			// start file system
 			FS.init()
 			// init applications
@@ -117,12 +118,9 @@ object Application {
 	}
 
 	fun init() {
+		if(DEBUG) Commands.registerType(CommandType.DEBUG)
 		document.head?.append { Style.style()() }
-		document.body?.let {
-			it.append(appElement)
-//			it.style.background = Settings[SettKeys.Theme.BACKGROUND]
-//			it.style.color = Settings[SettKeys.Theme.FOREGROUND]
-		}
+		document.body?.append(appElement)
 		appElement.append {
 			rootFrame()
 		}

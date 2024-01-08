@@ -2,6 +2,7 @@ package command.cmds.env
 
 import Translation
 import command.Command
+import command.CommandType
 import createElement
 import fs.SettKeys
 import fs.Settings
@@ -11,7 +12,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLSpanElement
 
-class Env : Command() {
+class Env : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		if(args.isEmpty()) {

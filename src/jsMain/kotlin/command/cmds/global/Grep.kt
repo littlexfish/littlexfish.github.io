@@ -2,6 +2,7 @@ package command.cmds.global
 
 import Translation
 import command.Command
+import command.CommandType
 import fs.FS
 import fs.SettKeys
 import fs.Settings
@@ -9,7 +10,7 @@ import io.pipeOutErrorTextTr
 import io.pipeOutNewLine
 import io.pipeOutText
 
-class Grep : Command() {
+class Grep : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		val pArg = parseArgs(args, listOf("f"))

@@ -118,10 +118,23 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 		val pipe = defineCommandBatch(input)
 		val errorCmd = checkPipeCommand(pipe)
 		if(errorCmd.isNotEmpty()) {
-			addOutput(createElement("span") {
-				innerText = Translation["command_not_found", "cmd" to errorCmd.joinToString(", ")]
-				style.color = Settings[SettKeys.Theme.COLOR_ERROR]
-			})
+			val noModule = errorCmd.filter { !it.second }.map { it.first }.flatMap { Commands.findModuleExcept(it) }
+			val noCommand = errorCmd.filter { it.second }.map { it.first }
+			var needBreak = false
+			if(noModule.isNotEmpty()) {
+				addOutput(createElement("span") {
+					innerText = Translation["command_no_module", "mods" to noModule.joinToString(", ")]
+					style.color = Settings[SettKeys.Theme.COLOR_ERROR]
+				})
+				needBreak = true
+			}
+			if(noCommand.isNotEmpty()) {
+				if(needBreak) addOutput(createElement("br") {})
+				addOutput(createElement("span") {
+					innerText = Translation["command_not_found", "cmd" to errorCmd.joinToString(", ")]
+					style.color = Settings[SettKeys.Theme.COLOR_ERROR]
+				})
+			}
 			currentEnv["?"] = "-1"
 			return
 		}
@@ -201,7 +214,7 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 	private suspend fun runCommand(split: CommandStore, tunnel: TerminalTunnel = newTerminalTunnel().apply { setTunnelToTerminal(this) }, env: Env = Env(currentEnv)): Boolean {
 		val cmd = split.command
 		val args = split.args
-		val command = Commands.getCommand(cmd)
+		val command = Commands.getCommand(cmd).get()
 		if(command == null) { // this should not happen
 			console.error("command '$cmd' not found after check")
 			return false
@@ -257,13 +270,17 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 	/**
 	 * Check all command can execute
 	 */
-	private fun checkPipeCommand(pipe: Pipe): List<String> {
-		val noCmd = mutableListOf<String>()
+	private fun checkPipeCommand(pipe: Pipe): List<Pair<String, Boolean>> { // true for no command
+		val noCmd = mutableListOf<Pair<String, Boolean>>()
 		var currentPipe: Pipe? = pipe
 		while(currentPipe != null) {
 			val cmd = currentPipe.current.command
-			if(Commands.getCommand(cmd) == null) {
-				noCmd.add(cmd)
+			val c = Commands.getCommand(cmd)
+			if(c.isEmpty()) {
+				noCmd.add(cmd to true)
+			}
+			else if(c.get() == null) {
+				noCmd.add(cmd to false)
 			}
 			currentPipe = currentPipe.getNext()
 		}

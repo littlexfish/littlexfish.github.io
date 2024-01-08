@@ -2,11 +2,12 @@ package command.cmds.env
 
 import Translation
 import command.Command
+import command.CommandType
 import fs.SettKeys
 import fs.Settings
 import io.pipeOutText
 
-class Set : Command() {
+class Set : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		if(args.size < 2) {

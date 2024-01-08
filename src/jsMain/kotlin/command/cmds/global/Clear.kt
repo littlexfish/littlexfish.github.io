@@ -4,8 +4,9 @@ import Application
 import Translation
 import app.Terminal
 import command.Command
+import command.CommandType
 
-class Clear : Command() {
+class Clear : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		Application.sendMessage(Application.findApp(Terminal::class.js), "clear")

@@ -1,5 +1,7 @@
 package fs
 
+import command.CommandType
+import command.Commands
 import ext.*
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
@@ -17,6 +19,7 @@ object FS {
 
 	suspend fun init() {
 		if(fs == null) return
+		Commands.registerType(CommandType.FS)
 		val opfsRoot = fs!!.getDirectory().await()
 		ensureSystemDir(opfsRoot)
 		Settings.init(opfsRoot)

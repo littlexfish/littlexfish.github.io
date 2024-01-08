@@ -2,6 +2,7 @@ package command.cmds.fs
 
 import Translation
 import command.Command
+import command.CommandType
 import command.getStandaloneWithSize
 import fs.FS
 import fs.SettKeys
@@ -9,7 +10,7 @@ import fs.Settings
 import io.pipeOutErrorTextTr
 import io.pipeOutText
 
-class Cp : Command() {
+class Cp : Command(CommandType.FS) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		val pArg = parseArgs(args)

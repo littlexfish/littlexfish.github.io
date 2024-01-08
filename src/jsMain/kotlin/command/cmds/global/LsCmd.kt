@@ -2,12 +2,13 @@ package command.cmds.global
 
 import Translation
 import command.Command
+import command.CommandType
 import command.Commands
 import kotlinx.browser.document
 import kotlinx.html.*
 import kotlinx.html.dom.create
 
-class LsCmd : Command() {
+class LsCmd : Command(CommandType.COMMON) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		val pArg = parseArgs(args, listOf("s"))

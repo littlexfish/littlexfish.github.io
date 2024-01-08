@@ -4,13 +4,14 @@ import Application
 import Translation
 import app.HtmlViewer
 import command.Command
+import command.CommandType
 import fs.FS
 import fs.SettKeys
 import fs.Settings
 import io.pipeOutErrorTextTr
 import io.pipeOutText
 
-class Open : Command() {
+class Open : Command(CommandType.FS) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		val pArg = parseArgs(args)

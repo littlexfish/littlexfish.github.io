@@ -10,8 +10,9 @@ import command.cmds.global.*
 import command.cmds.env.Env as EnvCmd
 import io.TerminalTunnel
 import io.pipeOutErrorTextTr
+import util.Optional
 
-abstract class Command {
+abstract class Command(vararg type: CommandType) {
 
 	companion object {
 		fun parseArgs(args: Array<String>, needValue: List<String> = emptyList()): Argument {
@@ -30,12 +31,17 @@ abstract class Command {
 		}
 	}
 
+	internal val types = setOf(*type)
 	protected lateinit var tunnel: TerminalTunnel
 	protected lateinit var env: Env
 
 	fun init(t: TerminalTunnel, e: Env) {
 		tunnel = t
 		env = e
+	}
+
+	fun hasAllTypeOf(types: List<CommandType>): Boolean {
+		return this.types.all { it in types }
 	}
 
 	/**
@@ -56,6 +62,7 @@ abstract class Command {
 object Commands {
 
 	private val commands = HashMap<String, Command>()
+	private val enabledTypes = HashSet<CommandType>()
 
 	init {
 		commands["help"] = Help()
@@ -86,15 +93,33 @@ object Commands {
 		commands["terminal"] = Terminal()
 		commands["exit"] = Exit()
 		commands["grep"] = Grep()
-
-		if(Application.DEBUG) {
-			commands["debug:rs"] = ResetSettings()
-		}
+		commands["debug:rs"] = ResetSettings()
 
 	}
 
-	fun getCommand(cmd: String): Command? = commands[cmd]
+	fun registerType(type: CommandType) {
+		enabledTypes.add(type)
+	}
 
-	fun availableCommands(): List<String> = commands.keys.toList().sorted()
+	fun getCommand(cmd: String): Optional<Command?> {
+		val c = commands[cmd]
+		return if(c == null) {
+			Optional.empty()
+		}
+		else {
+			Optional.ofNullable(if(c.hasAllTypeOf(enabledTypes.toList())) c else null)
+		}
+	}
+
+	fun findModuleExcept(command: String): List<CommandType> {
+		return enabledTypes.filter {
+			val c = commands[command]
+			if(c != null) it !in c.types else false
+		}
+	}
+
+	fun availableCommands(): List<String> = commands.keys.toList().filter {
+		commands[it]!!.hasAllTypeOf(enabledTypes.toList())
+	}.sorted()
 
 }

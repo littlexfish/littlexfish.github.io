@@ -2,6 +2,7 @@ package command.cmds.fs
 
 import Translation
 import command.Command
+import command.CommandType
 import command.getRmInfo
 import fs.FS
 import fs.SettKeys
@@ -11,7 +12,7 @@ import io.pipeOutText
 import kotlinx.coroutines.await
 import kotlin.js.json
 
-class Rmdir : Command() {
+class Rmdir : Command(CommandType.FS) {
 
 	override suspend fun execute(args: Array<String>): Int {
 		val (pArg, isRecursive, isSilent) = getRmInfo(args, tunnel) ?: return 1
