@@ -2,7 +2,6 @@ package app
 
 import Translation
 import command.*
-import command.CommandType
 import createElement
 import fs.SettKeys
 import fs.Settings
@@ -102,19 +101,7 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 	private fun postInit() {
 		MainScope().launch {
 			// show module message
-			if(Application.DEBUG) {
-				addOutput(createElement("span") {
-					innerText = Translation["command_debug_on"]
-					style.color = Settings[SettKeys.Theme.FOREGROUND_DARK]
-				})
-			}
-			val noModule = CommandType.ALL_NO_DEBUG.filter { it !in Commands.currentModule() }
-			if(noModule.isNotEmpty()) {
-				addOutput(createElement("span") {
-					innerText = Translation["command_module_not_loaded", "mods" to noModule.joinToString(", ")]
-					style.color = Settings[SettKeys.Theme.COLOR_ERROR]
-				})
-			}
+			runCommand(CommandStore("reload-modules", arrayOf()))
 			// show the welcome message
 			runCommand(CommandStore("welcome", arrayOf()))
 		}

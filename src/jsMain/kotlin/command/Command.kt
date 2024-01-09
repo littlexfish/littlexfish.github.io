@@ -94,11 +94,16 @@ object Commands {
 		commands["exit"] = Exit()
 		commands["grep"] = Grep()
 		commands["debug:rs"] = ResetSettings()
+		commands["reload-modules"] = ReloadModule()
 
 	}
 
 	fun registerType(type: CommandType) {
 		enabledTypes.add(type)
+	}
+
+	fun clearType() {
+		enabledTypes.clear()
 	}
 
 	fun getCommand(cmd: String): Optional<Command?> {
@@ -116,10 +121,6 @@ object Commands {
 			val c = commands[command]
 			if(c != null) it !in c.types else false
 		}
-	}
-
-	fun currentModule(): List<CommandType> {
-		return enabledTypes.toList()
 	}
 
 	fun availableCommands(): List<String> = commands.keys.toList().filter {

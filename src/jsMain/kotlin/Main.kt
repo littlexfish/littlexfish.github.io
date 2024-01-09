@@ -1,6 +1,5 @@
 import app.App
 import app.Terminal
-import command.Commands
 import command.Env
 import command.CommandType
 import fs.FS
@@ -13,6 +12,8 @@ import kotlinx.html.*
 import kotlinx.html.dom.append
 import kotlinx.html.dom.create
 import kotlinx.html.js.*
+import module.ModuleRegister
+import module.ModuleRegistry
 import org.w3c.dom.*
 import style.*
 import kotlin.collections.Map
@@ -38,7 +39,7 @@ suspend fun main() {
 				showInitError("Failed to load translation file.")
 				return@launch
 			}
-			Commands.registerType(CommandType.COMMON)
+			ModuleRegistry.register(CommonModule())
 			// start file system
 			FS.init()
 			// init applications
@@ -117,8 +118,8 @@ object Application {
 		appFrameElement.clear()
 	}
 
-	fun init() {
-		if(DEBUG) Commands.registerType(CommandType.DEBUG)
+	suspend fun init() {
+		ModuleRegistry.register(DebugModule())
 		document.head?.append { Style.style()() }
 		document.body?.append(appElement)
 		appElement.append {
@@ -208,4 +209,18 @@ object Application {
 
 }
 
+class DebugModule : ModuleRegister(CommandType.DEBUG) {
 
+	override suspend fun loadModule(): Boolean {
+		return Application.DEBUG
+	}
+
+}
+
+class CommonModule : ModuleRegister(CommandType.COMMON) {
+
+	override suspend fun loadModule(): Boolean {
+		return true
+	}
+
+}

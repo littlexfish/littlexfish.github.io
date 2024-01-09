@@ -1,12 +1,13 @@
 package fs
 
 import command.CommandType
-import command.Commands
 import ext.*
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
+import module.ModuleRegister
+import module.ModuleRegistry
 import org.w3c.files.FileReader
 import kotlin.js.json
 
@@ -18,8 +19,11 @@ object FS {
 	private var home: FileSystemDirectoryHandle? = null
 
 	suspend fun init() {
+		ModuleRegistry.register(FSModule())
+	}
+
+	private suspend fun runInit() {
 		if(fs == null) return
-		Commands.registerType(CommandType.FS)
 		val opfsRoot = fs!!.getDirectory().await()
 		ensureSystemDir(opfsRoot)
 		Settings.init(opfsRoot)
@@ -169,6 +173,17 @@ object FS {
 
 	private fun toGlobalPath(path: String, relativeFrom: String? = null): String {
 		return if(path.startsWith("/")) path else "${relativeFrom!!}/$path"
+	}
+
+	class FSModule : ModuleRegister(CommandType.FS) {
+
+		override suspend fun loadModule(): Boolean {
+			fs = window.navigator.storage
+			if(fs == null) return false
+			runInit()
+			return true
+		}
+
 	}
 
 }

@@ -28,8 +28,6 @@
 
   "settings.locale.language": "Language",
 
-  "command_debug_on": "---Debug mode on---",
-  "command_module_not_loaded": "These modules cannot be loaded: {mods}",
   "command_not_found": "Command not found: {cmd}",
   "command_no_module": "Modules [{mods}] not found for your command",
   "command_arg.empty": "Argument cannot be empty.",
@@ -124,6 +122,9 @@
 
   "command.terminal.help": "Start a new terminal",
 
-  "command.welcome.help": "Print welcome message"
+  "command.welcome.help": "Print welcome message",
 
+  "command.reload_module.debug_on": "---Debug mode on---",
+  "command.reload_module.no_module": "These modules cannot be loaded: {mods}",
+  "command.reload_module.help": "Reload all modules"
 }
