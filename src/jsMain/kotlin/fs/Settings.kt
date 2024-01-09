@@ -10,40 +10,43 @@ import kotlin.js.json
 object Settings {
 
 	private var ready = false
-	private val allSettings = HashMap<String, String>()
+	private val allSettings = HashMap<String, String>().apply { putAll(getDefaultSettings()) }
 	private const val FILENAME = ".config"
-	private lateinit var systemDir: FileSystemDirectoryHandle
+	private var systemDir: FileSystemDirectoryHandle? = null
 
 	internal suspend fun init(opfsRoot: FileSystemDirectoryHandle) {
 		ready = false
 		systemDir = opfsRoot.getDirectoryHandle("system").await()
-		val handle = systemDir.getFileHandle(FILENAME, json("create" to true)).await()
-		FS.readContentAsText(handle) {
-			if(it.isBlank()) {
-				allSettings.putAll(getDefaultSettings())
-				save()
-			}
-			else {
-				val lines = it.split("\n")
-				for(line in lines) {
-					val kv = line.split("=", limit = 2)
-					if(kv.size == 2) {
-						val key = kv[0]
-						val value = kv[1]
-						allSettings[key] = value
+		val handle = systemDir?.getFileHandle(FILENAME, json("create" to true))?.await()
+		handle?.let { f ->
+			FS.readContentAsText(f) {
+				if(it.isBlank()) {
+					allSettings.putAll(getDefaultSettings())
+					save()
+				}
+				else {
+					val lines = it.split("\n")
+					for(line in lines) {
+						val kv = line.split("=", limit = 2)
+						if(kv.size == 2) {
+							val key = kv[0]
+							val value = kv[1]
+							allSettings[key] = value
+						}
 					}
 				}
+				true.let { r -> ready = r }
 			}
-			true.let { r -> ready = r }
 		}
 	}
 
 	private suspend fun save() {
-		val handle = systemDir.getFileHandle(FILENAME, json("create" to true)).await()
-		val writer = handle.createWritable().await()
+		if(systemDir == null) return
+		val handle = systemDir?.getFileHandle(FILENAME, json("create" to true))?.await()
+		val writer = handle?.createWritable()?.await()
 		val text = allSettings.map { "${it.key}=${it.value}" }.joinToString("\n")
-		writer.write(text)
-		writer.close()
+		writer?.write(text)
+		writer?.close()
 	}
 
 	private fun getSettings(key: String): String? {

@@ -12,37 +12,36 @@ object FSPermission {
 	private var ready = false
 	private val allPermissions = HashMap<String, Permission>()
 	private const val FILENAME = "fp.conf"
-	private lateinit var systemDir: FileSystemDirectoryHandle
+	private var systemDir: FileSystemDirectoryHandle? = null
 
 	internal suspend fun init(opfsRoot: FileSystemDirectoryHandle) {
 		ready = false
 		systemDir = opfsRoot.getDirectoryHandle("system").await()
-		val handle = systemDir.getFileHandle(FILENAME, json("create" to true)).await()
-		val file = handle.getFile().await()
-		val reader = FileReader()
-		reader.onload = {
-			val text = reader.result.unsafeCast<String>()
-			val lines = text.split("\n")
-			for(line in lines) {
-				val parts = line.split(";")
-				if(parts.size == 3) {
-					val path = parts[0]
-					val read = parts[1] == "r"
-					val write = parts[2] == "w"
-					allPermissions[path] = Permission(read, write)
+		val handle = systemDir?.getFileHandle(FILENAME, json("create" to true))?.await()
+		handle?.let { f ->
+			FS.readContentAsText(f) {
+				val lines = it.split("\n")
+				for(line in lines) {
+					val parts = line.split(";")
+					if(parts.size == 3) {
+						val path = parts[0]
+						val read = parts[1] == "r"
+						val write = parts[2] == "w"
+						allPermissions[path] = Permission(read, write)
+					}
 				}
+				true.let { r -> ready = r }
 			}
-			true.let { ready = it }
 		}
-		reader.readAsText(file)
 	}
 
 	private suspend fun save() {
-		val handle = systemDir.getFileHandle(FILENAME, json("create" to true)).await()
-		val writer = handle.createWritable().await()
+		if(systemDir == null) return
+		val handle = systemDir?.getFileHandle(FILENAME, json("create" to true))?.await()
+		val writer = handle?.createWritable()?.await()
 		val text = allPermissions.map { "${it.key};${if(it.value.read) "r" else "-"};${if(it.value.write) "w" else "-"}" }.joinToString("\n")
-		writer.write(text)
-		writer.close()
+		writer?.write(text)
+		writer?.close()
 	}
 
 	internal fun getPermission(path: String): Permission {
