@@ -5,6 +5,7 @@ import command.CommandType
 import fs.FS
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.dom.clear
@@ -109,7 +110,7 @@ fun Element.scrollToView() {
 object Application {
 
 	private lateinit var appFrameElement: HTMLElement
-	const val DEBUG = true
+	var DEBUG = true
 	private val appLayer = mutableListOf<Int>()
 	private val openedApp = mutableMapOf<Int, App>()
 	private var nextAppId = 0
@@ -119,6 +120,14 @@ object Application {
 	}
 
 	suspend fun init() {
+		window.asDynamic().debug = {
+			DEBUG = !DEBUG
+			MainScope().launch {
+				if(DEBUG) ModuleRegistry.enable("debug")
+				else ModuleRegistry.disable("debug")
+			}
+			undefined
+		}
 		ModuleRegistry.register(DebugModule())
 		document.head?.append { Style.style()() }
 		document.body?.append(appElement)

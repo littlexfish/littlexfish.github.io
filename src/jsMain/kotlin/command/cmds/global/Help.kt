@@ -9,6 +9,7 @@ import fs.Settings
 import io.pipeOutErrorTextTr
 import io.pipeOutPre
 import io.pipeOutText
+import module.ModuleRegistry
 
 class Help : Command(CommandType.COMMON) {
 
@@ -25,7 +26,8 @@ class Help : Command(CommandType.COMMON) {
 			else {
 				if(command.isPresent()) tunnel.pipeOutPre(command.get()!!.getHelp() ?: Translation["command.help.no_page", "cmd" to cmd])
 				else {
-					val mods = Commands.findModuleExcept(cmd)
+					val mods = Commands.commandNeededModules(cmd).toMutableList()
+					ModuleRegistry.getLoadedModule().forEach { mods.remove(it) }
 					tunnel.pipeOutErrorTextTr("command.help.no_module", "mods" to mods.joinToString(", "), "cmd" to cmd)
 				}
 			}

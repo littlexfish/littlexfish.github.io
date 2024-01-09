@@ -126,5 +126,14 @@
 
   "command.reload_module.debug_on": "---Debug mode on---",
   "command.reload_module.no_module": "These modules cannot be loaded: {mods}",
-  "command.reload_module.help": "Reload all modules"
+  "command.reload_module.help": "Reload all modules",
+
+  "command.disable_module.current": "Current Modules: {mods}",
+  "command.disable_module.help": "Disable modules",
+
+  "command.enable_module.current": "Current Modules: {mods}",
+  "command.enable_module.help": "Enable modules",
+
+  "command.lsmod.current": "Current Modules: {mods}",
+  "command.lsmod.help": "List all modules"
 }

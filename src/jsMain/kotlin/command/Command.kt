@@ -1,12 +1,10 @@
 package command
 
 import command.cmds.debug.*
-import command.cmds.env.Alias
-import command.cmds.env.Set
-import command.cmds.env.UnAlias
-import command.cmds.env.Unset
+import command.cmds.env.*
 import command.cmds.fs.*
 import command.cmds.global.*
+import command.cmds.module.*
 import command.cmds.env.Env as EnvCmd
 import io.TerminalTunnel
 import io.pipeOutErrorTextTr
@@ -95,7 +93,9 @@ object Commands {
 		commands["grep"] = Grep()
 		commands["debug:rs"] = ResetSettings()
 		commands["reload-modules"] = ReloadModule()
-
+		commands["debug:disable"] = DisableModule()
+		commands["debug:enable"] = EnableModule()
+		commands["debug:lsmod"] = ListModule()
 	}
 
 	fun registerType(type: CommandType) {
@@ -104,6 +104,10 @@ object Commands {
 
 	fun clearType() {
 		enabledTypes.clear()
+	}
+
+	fun unregisterType(type: CommandType) {
+		enabledTypes.remove(type)
 	}
 
 	fun getCommand(cmd: String): Optional<Command?> {
@@ -116,11 +120,8 @@ object Commands {
 		}
 	}
 
-	fun findModuleExcept(command: String): List<CommandType> {
-		return enabledTypes.filter {
-			val c = commands[command]
-			if(c != null) it !in c.types else false
-		}
+	fun commandNeededModules(command: String): List<CommandType> {
+		return commands[command]?.types?.toList() ?: emptyList()
 	}
 
 	fun availableCommands(): List<String> = commands.keys.toList().filter {

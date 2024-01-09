@@ -1,4 +1,4 @@
-package command.cmds.global
+package command.cmds.module
 
 import Translation
 import command.Command

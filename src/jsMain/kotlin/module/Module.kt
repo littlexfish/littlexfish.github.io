@@ -22,6 +22,29 @@ object ModuleRegistry {
 		}
 	}
 
+	suspend fun enable(module: String) {
+		if(loadedModules.any { it.bind.name.equals(module, true) }) {
+			return
+		}
+		reload(module)
+	}
+
+	fun disable(module: String) {
+		val m = loadedModules.find { it.bind.name.equals(module, true) }
+		m?.let {
+			loadedModules.remove(it)
+			Commands.unregisterType(it.bind)
+		}
+	}
+
+	private suspend fun reload(module: String) {
+		val m = modules.find { it.bind.name.equals(module, true) }
+		if(m?.loadModule() == true) {
+			loadedModules.add(m)
+			Commands.registerType(m.bind)
+		}
+	}
+
 	suspend fun reloadAll() {
 		loadedModules.clear()
 		Commands.clearType()

@@ -11,6 +11,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.dom.clear
 import kotlinx.html.*
+import module.ModuleRegistry
 import org.w3c.dom.*
 import scrollToView
 
@@ -120,12 +121,14 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 		val pipe = defineCommandBatch(input)
 		val errorCmd = checkPipeCommand(pipe)
 		if(errorCmd.isNotEmpty()) {
-			val noModule = errorCmd.filter { !it.second }.map { it.first }.flatMap { Commands.findModuleExcept(it) }
+			val noModule = errorCmd.filter { !it.second }.map { it.first }.toMutableList()
 			val noCommand = errorCmd.filter { it.second }.map { it.first }
 			var needBreak = false
 			if(noModule.isNotEmpty()) {
+				val mods = noModule.flatMap { Commands.commandNeededModules(it) }.toMutableSet()
+				ModuleRegistry.getLoadedModule().forEach { mods.remove(it) }
 				addOutput(createElement("span") {
-					innerText = Translation["command_no_module", "mods" to noModule.joinToString(", ")]
+					innerText = Translation["command_no_module", "mods" to mods.joinToString(", ")]
 					style.color = Settings[SettKeys.Theme.COLOR_ERROR]
 				})
 				needBreak = true
@@ -133,7 +136,7 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 			if(noCommand.isNotEmpty()) {
 				if(needBreak) addOutput(createElement("br") {})
 				addOutput(createElement("span") {
-					innerText = Translation["command_not_found", "cmd" to errorCmd.joinToString(", ")]
+					innerText = Translation["command_not_found", "cmd" to noCommand.joinToString(", ")]
 					style.color = Settings[SettKeys.Theme.COLOR_ERROR]
 				})
 			}
@@ -281,7 +284,7 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 			if(c.isEmpty()) {
 				noCmd.add(cmd to true)
 			}
-			else if(c.get() == null) {
+			else if(c.getOrNull() == null) {
 				noCmd.add(cmd to false)
 			}
 			currentPipe = currentPipe.getNext()
