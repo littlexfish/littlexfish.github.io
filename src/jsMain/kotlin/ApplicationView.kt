@@ -1,3 +1,4 @@
+import command.CommandType
 import fs.SettKeys
 import fs.Settings
 import kotlinx.browser.document
@@ -5,6 +6,7 @@ import kotlinx.html.*
 import kotlinx.html.js.div
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import module.ModuleRegistry
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.asList
 
@@ -13,32 +15,45 @@ internal fun TagConsumer<HTMLElement>.rootFrame() {
 		id = "frame"
 		// content
 	}
+	val canSettings = ModuleRegistry.getLoadedModule().find { it == CommandType.FS } != null
 	div {
 		id = "setting-btn-outline"
-		style = "background-color: ${Settings[SettKeys.Theme.BACKGROUND]}"
 		div {
 			id = "setting-btn"
 			i {
 				classes = setOf("fa", "fa-xl", "fa-cog")
+				if(!canSettings) {
+					style = "transform: scale(0.8, 0.8);"
+				}
 			}
-			onClickFunction = {
-				document.getElementById("setting-panel-outline")?.classList?.add("open")
+			if(!canSettings) {
+				i {
+					classes = setOf("fa", "fa-xl", "fa-ban")
+					style = "color: #FF0000;z-index: 1"
+				}
+			}
+			if(canSettings) {
+				onClickFunction = {
+					document.getElementById("setting-panel-outline")?.classList?.add("open")
+				}
 			}
 		}
 	}
-	div {
-		id = "setting-panel-outline"
+	if(canSettings) {
 		div {
-			id = "setting-panel"
-			settingPanel()
-		}
-		div {
-			id = "setting-panel-close"
-			i {
-				classes = setOf("fa", "fa-regular", "fa-circle-xmark")
+			id = "setting-panel-outline"
+			div {
+				id = "setting-panel"
+				settingPanel()
 			}
-			onClickFunction = {
-				document.getElementById("setting-panel-outline")?.classList?.remove("open")
+			div {
+				id = "setting-panel-close"
+				i {
+					classes = setOf("fa", "fa-regular", "fa-circle-xmark")
+				}
+				onClickFunction = {
+					document.getElementById("setting-panel-outline")?.classList?.remove("open")
+				}
 			}
 		}
 	}

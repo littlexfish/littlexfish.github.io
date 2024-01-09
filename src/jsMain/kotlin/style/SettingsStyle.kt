@@ -1,7 +1,9 @@
 package style
 
+import command.CommandType
 import fs.SettKeys
 import fs.Settings
+import module.ModuleRegistry
 
 fun settingsStyle(): String = """
 	${settingsButton()}
@@ -25,9 +27,20 @@ private fun settingsButton() = """
 		color: ${Settings[SettKeys.Theme.BUTTON_COLOR]};
 	}
 	#setting-btn {
+		display: grid;
 		${centerElement()}
 	}
-	#setting-btn-outline:hover {
+	#setting-btn > i {
+		grid-column: 1;
+		grid-row: 1;
+	}
+	${settingsBtnHover()}
+""".replace("[\\t\\n\\r]+".toRegex(), "")
+
+private fun settingsBtnHover(): String {
+	if(ModuleRegistry.getLoadedModule().find { it == CommandType.FS } == null) return ""
+	return """
+		#setting-btn-outline:hover {
 		color: ${Settings[SettKeys.Theme.BUTTON_COLOR_HOVER]};
 		border: ${Settings[SettKeys.Theme.BUTTON_COLOR_HOVER]} 1px solid;
 	}
@@ -35,7 +48,8 @@ private fun settingsButton() = """
 		color: ${Settings[SettKeys.Theme.BUTTON_COLOR_ACTIVE]};
 		border: ${Settings[SettKeys.Theme.BUTTON_COLOR_ACTIVE]} 1px solid;
 	}
-""".replace("[\\t\\n\\r]+".toRegex(), "")
+	""".trimIndent()
+}
 
 private fun settingsPanel() = """
 	#setting-panel-outline {
