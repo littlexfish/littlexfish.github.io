@@ -231,7 +231,6 @@ class Editor : App("editor") {
 				reader.onload = {
 					val content = reader.result.unsafeCast<String>()
 					content.also {
-						// FIXME: highlight not working, no any text in code element
 						fileEditorElement.value = it
 						setContent(it)
 					}
