@@ -15,6 +15,8 @@ import kotlinx.html.js.onMouseDownFunction
 import kotlinx.html.js.onMouseUpFunction
 import org.w3c.dom.*
 import org.w3c.files.FileReader
+import style.EditorStyle
+import style.StyleRegister
 
 class Editor : App("editor") {
 
@@ -53,6 +55,8 @@ class Editor : App("editor") {
 		}
 	}
 
+	override fun getStyleRegister(): StyleRegister = EditorStyle
+
 	override fun onInit() {
 	}
 
@@ -66,8 +70,7 @@ class Editor : App("editor") {
 					fileEditorElement.value = fileEditorElement.value.substring(0, start) + "\t" + fileEditorElement.value.substring(end)
 					fileEditorElement.selectionStart = start + 1
 					fileEditorElement.selectionEnd = start + 1
-					editorHighlightElement.innerHTML = fileEditorElement.value
-					refreshHighlight()
+					setContent(fileEditorElement.value)
 				}
 			}
 			else if(it.ctrlKey && it.key == "s") {
@@ -82,8 +85,7 @@ class Editor : App("editor") {
 			}
 		}
 		fileEditorElement.oninput = {
-			editorHighlightElement.innerHTML = fileEditorElement.value
-			refreshHighlight()
+			setContent(fileEditorElement.value)
 			null
 		}
 		setTabSize(4)
@@ -99,6 +101,7 @@ class Editor : App("editor") {
 		softRefreshFileList()
 		if(fileListElement.childElementCount == 0) {
 			fileEditorElement.value = ""
+			editorHighlightElement.clear()
 			fileEditorElement.disabled = true
 		}
 		else {
@@ -228,9 +231,9 @@ class Editor : App("editor") {
 				reader.onload = {
 					val content = reader.result.unsafeCast<String>()
 					content.also {
+						// FIXME: highlight not working, no any text in code element
 						fileEditorElement.value = it
-						editorHighlightElement.innerHTML = fileEditorElement.value
-						refreshHighlight()
+						setContent(it)
 					}
 				}
 				reader.readAsText(file.getFile().await())
@@ -271,6 +274,13 @@ class Editor : App("editor") {
 		val currentLang = classes.asList().filter { it.startsWith("language-") }
 		currentLang.forEach { classes.remove(it) }
 		classes.add("language-$lang")
+	}
+
+	private fun setContent(content: String) {
+		fileEditorElement.value = content
+		editorHighlightElement.clear()
+		editorHighlightElement.innerHTML = content.replace("&", "&amp;").replace("<", "&lt;")
+		refreshHighlight()
 	}
 
 	private fun refreshHighlight() {

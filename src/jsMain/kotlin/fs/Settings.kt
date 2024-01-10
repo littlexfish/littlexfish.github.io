@@ -5,6 +5,7 @@ import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
+import style.StyleRegistry
 import kotlin.js.json
 
 object Settings {
@@ -35,6 +36,7 @@ object Settings {
 						}
 					}
 				}
+				StyleRegistry.loadStyle("settings")
 				true.let { r -> ready = r }
 			}
 		}

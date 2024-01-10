@@ -12,6 +12,8 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLIFrameElement
+import style.HtmlViewerStyle
+import style.StyleRegister
 
 class HtmlViewer : App("html_viewer") {
 
@@ -41,6 +43,8 @@ class HtmlViewer : App("html_viewer") {
 			}
 		}
 	}
+
+	override fun getStyleRegister(): StyleRegister = HtmlViewerStyle
 
 	override fun onInit() {}
 

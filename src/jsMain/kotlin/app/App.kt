@@ -2,10 +2,13 @@ package app
 
 import kotlinx.html.TagConsumer
 import org.w3c.dom.HTMLElement
+import style.StyleRegister
 
 abstract class App(val name: String) {
 
 	abstract fun buildGUI(): TagConsumer<HTMLElement>.() -> Unit
+
+	abstract fun getStyleRegister(): StyleRegister
 
 	protected abstract fun onInit()
 

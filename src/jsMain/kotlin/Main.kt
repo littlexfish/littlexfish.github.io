@@ -29,6 +29,9 @@ private val appElement = document.create.div {}
  */
 suspend fun main() {
 	document.body?.append(appElement)
+	StyleRegistry.register(RootStyle)
+	StyleRegistry.register(ErrorStyle)
+	StyleRegistry.register(SettingsStyle)
 	coroutineScope {
 		launch {
 			// start the translation
@@ -69,16 +72,8 @@ private fun newRootEnv(): Env {
  */
 private fun showInitError(msg: String, title: String? = null, thr: Throwable? = null) {
 	appElement.clear()
-	document.head?.let {
-		it.title = "Error" + if(title != null) ": $title" else ""
-		it.append {
-			style {
-				unsafe {
-					+rootStyle()
-				}
-			}
-		}
-	}
+	StyleRegistry.loadStyle("error")
+	document.head?.title = "Error" + (if(title != null) ": $title" else "")
 	appElement.append {
 		div {
 			id = "error-frame"
@@ -128,8 +123,8 @@ object Application {
 			}
 			undefined
 		}
+		StyleRegistry.loadStyle("root")
 		ModuleRegistry.register(DebugModule())
-		document.head?.append { Style.style()() }
 		document.body?.append(appElement)
 		appElement.append {
 			rootFrame()
@@ -151,6 +146,11 @@ object Application {
 		appLayer.add(nextAppId)
 		openedApp[nextAppId] = app
 		app.init()
+		val style = app.getStyleRegister()
+		if(!StyleRegistry.isRegistered(style.name)) { // register style if not registered
+			StyleRegistry.register(style)
+		}
+		StyleRegistry.loadStyle(style.name)
 		appFrameElement.append {
 			app.buildGUI()()
 		}
@@ -169,7 +169,11 @@ object Application {
 		last?.suspend()
 		cleanBody()
 		appLayer.subList(idx + 1, appLayer.size).forEach {
+			// unload style if no other app use it
+			val app = openedApp[it]!!
+			// remove app
 			openedApp.remove(it)
+			checkAndRemoveStyle(app)
 		}
 		appLayer.removeAll(appLayer.subList(idx + 1, appLayer.size))
 		appFrameElement.append {
@@ -201,6 +205,13 @@ object Application {
 		window.setTimeout({
 			afterBack(back())
 		}, timeout)
+	}
+
+	private fun checkAndRemoveStyle(app: App) {
+		val clazz = app::class.js
+		if(openedApp.values.all { it::class.js != clazz }) {
+			StyleRegistry.unloadStyle(app.getStyleRegister().name)
+		}
 	}
 
 	fun findApp(app: JsClass<out App>): Int? {

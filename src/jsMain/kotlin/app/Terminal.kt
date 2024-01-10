@@ -14,6 +14,7 @@ import kotlinx.html.*
 import module.ModuleRegistry
 import org.w3c.dom.*
 import scrollToView
+import style.*
 
 class Terminal(rootEnv: Env? = null) : App("terminal") {
 
@@ -93,6 +94,8 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 			}
 		}
 	}
+
+	override fun getStyleRegister(): StyleRegister = TerminalStyle
 
 	override fun onInit() {}
 
