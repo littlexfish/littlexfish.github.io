@@ -104,8 +104,8 @@ private fun DIV.settingPanel() {
 		div {
 			id = "setting-content-editor"
 			classes = setOf("setting-content")
-			booleanSelector(Translation["settings.editor.ligatures"], SettKeys.Editor.LIGATURES)
-			booleanSelector(Translation["settings.editor.auto_save"], SettKeys.Editor.AUTO_SAVE)
+//			booleanSelector(Translation["settings.editor.ligatures"], SettKeys.Editor.LIGATURES)
+//			booleanSelector(Translation["settings.editor.auto_save"], SettKeys.Editor.AUTO_SAVE)
 		}
 		div {
 			id = "setting-content-locale"
