@@ -33,7 +33,7 @@ object StyleRegistry {
 			return
 		}
 		val style = styles[name] ?: throw IllegalArgumentException("Style $name not found")
-		val content = style.getStyleContent().replace("[\\t\\n\\r]+".toRegex(), "")
+		val content = style.getStyleContent().replace("[\\t\\n\\r]+".toRegex(), "").replace(": +".toRegex(), ":")
 		val styleElement = document.create.style {
 			id = "style-$name"
 			unsafe {
