@@ -11,12 +11,15 @@ import kotlinx.coroutines.launch
 import kotlinx.dom.clear
 import kotlinx.html.*
 import kotlinx.html.dom.append
+import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.onMouseDownFunction
 import kotlinx.html.js.onMouseUpFunction
 import org.w3c.dom.*
+import org.w3c.dom.events.MouseEvent
 import org.w3c.files.FileReader
 import style.EditorStyle
 import style.StyleRegister
+import util.GlobalState
 
 class Editor : App("editor") {
 
@@ -26,8 +29,12 @@ class Editor : App("editor") {
 		get() = document.getElementById("editor-textarea") as HTMLTextAreaElement
 	private val editorHighlightElement: HTMLElement
 		get() = document.getElementById("editor-code") as HTMLElement
+	private val notSavedFrameElement: HTMLDivElement
+		get() = document.getElementById("editor-not-saved") as HTMLDivElement
 
+	private var currentOpenFile: FileInfo? = null
 	private val openedFiles = mutableListOf<FileInfo>()
+	private val currentContent = mutableMapOf<FileInfo, Pair<String, String>?>()
 
 	override fun buildGUI(): TagConsumer<HTMLElement>.() -> Unit = {
 		div {
@@ -53,6 +60,32 @@ class Editor : App("editor") {
 				}
 			}
 		}
+		div {
+			id = "editor-not-saved"
+			div {
+				+Translation["editor.not_saved"]
+			}
+			div {
+				button {
+					+Translation["editor.yes"]
+					onClickFunction = {
+						tryExit(true)
+					}
+				}
+				button {
+					+Translation["editor.no"]
+					onClickFunction = {
+						tryExit(false)
+					}
+				}
+				button {
+					+Translation["editor.cancel"]
+					onClickFunction = {
+
+					}
+				}
+			}
+		}
 	}
 
 	override fun getStyleRegister(): StyleRegister = EditorStyle
@@ -73,27 +106,62 @@ class Editor : App("editor") {
 					setContent(fileEditorElement.value)
 				}
 			}
-			else if(it.ctrlKey && it.key == "s") {
-				it.preventDefault()
+		}
+		document.onkeydown = { evt ->
+			if(evt.key == "Escape") {
+				Application.backToApp(Terminal::class.js)
+				if(openedFiles.indices.any { !isSameAsSaved(it) }) {
+					setNotSavedFrameVisible(true)
+				}
+			}
+			else if(evt.ctrlKey && evt.key == "s") {
+				evt.preventDefault()
 				val idx = getOpenedFile()
 				if(idx >= 0) onSave(idx)
 			}
 		}
-		document.onkeydown = {
-			if(it.key == "Escape") {
-				Application.backToApp(Terminal::class.js)
-			}
+		val consumeMouseEvent = { evt: MouseEvent ->
+			if(notSavedFrameElement.classList.contains("open")) evt.preventDefault()
+		}
+		document.let {
+			it.onmouseup = consumeMouseEvent
+			it.onmousedown = consumeMouseEvent
+			it.onmousemove = consumeMouseEvent
+			it.onmouseout = consumeMouseEvent
+			it.onmouseover = consumeMouseEvent
+			it.onmouseenter = consumeMouseEvent
+			it.onmouseleave = consumeMouseEvent
 		}
 		fileEditorElement.oninput = {
 			setContent(fileEditorElement.value)
 			null
 		}
+		window.asDynamic().printDebug = {
+			console.log(openedFiles, currentContent)
+		}
 		setTabSize(4)
+		val files = GlobalState.get<List<FileInfo>>("files")
+		if(files != null) {
+			files.forEach(::loadFile)
+			selectFile(openedFiles[0])
+		}
+		else {
+			GlobalState.set("files", mutableListOf<FileInfo>())
+		}
 		refreshEditor()
 	}
 
 	override fun onSuspend() {
 		document.onkeydown = null
+		document.let {
+			it.onmouseup = null
+			it.onmousedown = null
+			it.onmousemove = null
+			it.onmouseout = null
+			it.onmouseover = null
+			it.onmouseenter = null
+			it.onmouseleave = null
+		}
 	}
 
 	private fun refreshEditor() {
@@ -139,14 +207,13 @@ class Editor : App("editor") {
 		return out
 	}
 
-	private fun openFile(path: String): Int {
+	private fun openFile(path: String): FileInfo {
 		for(i in 0..<openedFiles.size) {
 			if(openedFiles[i].path == path) {
-				return i
+				return openedFiles[i]
 			}
 		}
-		openedFiles.add(0, FileInfo(path))
-		return 0
+		return FileInfo(path)
 	}
 
 	private fun softRefreshFileList() {
@@ -171,7 +238,7 @@ class Editor : App("editor") {
 					onCloseFile(idx)
 				}
 				else {
-					onFileOpen(idx)
+					selectFile(openedFiles[idx])
 				}
 			}
 			else if(it.asDynamic().button == 1) {
@@ -181,19 +248,61 @@ class Editor : App("editor") {
 		}
 	}
 
-	private fun onFileOpen(idx: Int) {
-		val open = getOpenedFile()
-		if(idx == open) return
-		for(i in 0..<fileListElement.childElementCount) {
-			if(i == idx) fileListElement.children[i]?.classList?.add("opened")
-			else fileListElement.children[i]?.classList?.remove("opened")
+	private fun selectFile(fi: FileInfo) {
+		if(currentOpenFile == fi) return
+		loadFile(fi) {
+			val content = currentContent[fi]?.second
+			currentOpenFile = fi
+			if(content == null) {
+				fileEditorElement.classList.add("no-perm")
+				fileEditorElement.value = Translation["editor.no_permission_read"]
+				fileEditorElement.disabled = true
+			}
+			else {
+				fileEditorElement.classList.remove("no-perm")
+				fileEditorElement.disabled = false
+				fileEditorElement.readOnly = !FS.canWrite(fi.path)
+				fileEditorElement.value = content
+				setContent(content)
+			}
+			val idx = openedFiles.indexOf(fi)
+			for(i in 0..<fileListElement.childElementCount) {
+				if(i == idx) fileListElement.children[i]?.classList?.add("opened")
+				else fileListElement.children[i]?.classList?.remove("opened")
+			}
 		}
-		val path = openedFiles[idx].path
-		loadFile(path)
+	}
+
+	private fun loadFile(fi: FileInfo, afterLoad: (() -> Unit)? = null) {
+		if(fi !in openedFiles) {
+			openedFiles.add(0, fi)
+			GlobalState.get<MutableList<FileInfo>>("files")?.add(0, fi)
+		}
+		if(fi !in currentContent) {
+			MainScope().launch {
+				if(FS.canRead(fi.path)) {
+					val file = FS.getFile(fi.path)
+					FS.readContentAsText(file) {
+						currentContent[fi] = it to it
+						afterLoad?.invoke()
+					}
+				}
+				else {
+					currentContent[fi] = null
+					afterLoad?.invoke()
+				}
+			}
+		}
+		else {
+			afterLoad?.invoke()
+		}
 	}
 
 	private fun onCloseFile(idx: Int, closeEmpty: Boolean = true) {
+		val fi = currentOpenFile
 		openedFiles.removeAt(idx)
+		currentContent.remove(fi)
+		GlobalState.get<MutableList<FileInfo>>("files")?.removeAt(idx)
 		refreshEditor()
 		if(openedFiles.isEmpty() && closeEmpty) {
 			Application.back()
@@ -202,58 +311,33 @@ class Editor : App("editor") {
 		if(openedFiles.isNotEmpty()) {
 			val open = getOpenedFile()
 			if(idx >= openedFiles.size) {
-				onFileOpen(openedFiles.size - 1)
+				selectFile(openedFiles.last())
 			}
 			else if(idx == getOpenedFile()) {
-				onFileOpen(idx)
+				selectFile(openedFiles[idx])
 			}
 			else {
-				onFileOpen(open + (if(idx < open) 0 else -1))
+				selectFile(openedFiles[open + (if(idx < open) 0 else -1)])
 			}
 		}
 	}
 
 	private fun getOpenedFile(): Int {
-		for(i in 0..<fileListElement.childElementCount) {
-			if(fileListElement.children[i]?.classList?.contains("opened") == true) return i
-		}
-		return -1
-	}
-
-	private fun loadFile(path: String) {
-		MainScope().launch {
-			if(FS.canRead(path)) {
-				fileEditorElement.classList.remove("no-perm")
-				fileEditorElement.disabled = false
-				fileEditorElement.readOnly = !FS.canWrite(path)
-				val file = FS.getFile(path)
-				val reader = FileReader()
-				reader.onload = {
-					val content = reader.result.unsafeCast<String>()
-					content.also {
-						fileEditorElement.value = it
-						setContent(it)
-					}
-				}
-				reader.readAsText(file.getFile().await())
-			}
-			else {
-				fileEditorElement.classList.add("no-perm")
-				fileEditorElement.value = Translation["editor.no_permission_read"]
-				fileEditorElement.disabled = true
-			}
-		}
+		return openedFiles.indexOf(currentOpenFile)
 	}
 
 	private fun onSave(idx: Int) {
-		val path = openedFiles[idx].path
+		val fi = openedFiles[idx]
+		val path = fi.path
 		if(!FS.canWrite(path)) return
 		if(fileEditorElement.readOnly) return
 		MainScope().launch {
 			val file = FS.getFile(path)
 			val writer = file.createWritable().await()
-			writer.write(fileEditorElement.value)
+			writer.write(currentContent[fi]!!.second)
 			writer.close()
+			currentContent[fi] = currentContent[fi]!!.second to currentContent[fi]!!.second
+			refreshSavedStatus()
 		}
 	}
 
@@ -261,9 +345,9 @@ class Editor : App("editor") {
 		if(extra != null) {
 			val file = extra["file"]
 			if(file != null) {
-				val idx = openFile(file)
+				val fi = openFile(file)
+				selectFile(fi)
 				refreshEditor()
-				onFileOpen(idx)
 			}
 		}
 	}
@@ -275,18 +359,60 @@ class Editor : App("editor") {
 		classes.add("language-$lang")
 	}
 
-	private fun setContent(content: String) {
-		fileEditorElement.value = content
+	private fun setContent(content: String?) {
+		fileEditorElement.value = content ?: ""
 		editorHighlightElement.clear()
-		editorHighlightElement.innerHTML = content.replace("&", "&amp;").replace("<", "&lt;")
-		refreshHighlight()
+		if(content != null) {
+			currentOpenFile?.let {
+				currentContent[it] = currentContent[it]!!.first to content
+			}
+			editorHighlightElement.innerHTML = content.replace("&", "&amp;").replace("<", "&lt;")
+			refreshHighlight()
+		}
+		else {
+			editorHighlightElement.innerHTML = ""
+		}
+		refreshSavedStatus()
 	}
 
 	private fun refreshHighlight() {
-		setCurrentLanguage(openedFiles[getOpenedFile()].getExtension())
+		setCurrentLanguage(currentOpenFile?.getExtension() ?: "plaintext")
 		editorHighlightElement.removeAttribute("data-highlighted")
 		val hljs = js("hljs")
 		hljs.highlightAll()
+	}
+
+	private fun refreshSavedStatus() {
+		for(i in 0..<openedFiles.size) {
+			if(isSameAsSaved(i)) {
+				fileListElement.children[i]?.classList?.remove("not-saved")
+			}
+			else {
+				fileListElement.children[i]?.classList?.add("not-saved")
+			}
+		}
+	}
+
+	private fun isSameAsSaved(idx: Int): Boolean {
+		val fi = openedFiles[idx]
+		if(currentContent[fi] == null) return true
+		return currentContent[fi]!!.first == currentContent[fi]!!.second
+	}
+
+	private fun tryExit(withSave: Boolean) {
+		if(withSave) {
+			for(i in 0..<openedFiles.size) {
+				if(!isSameAsSaved(i)) {
+					setNotSavedFrameVisible(true)
+				}
+			}
+		}
+		Application.backToApp(Terminal::class.js)
+	}
+
+	private fun setNotSavedFrameVisible(vis: Boolean) {
+		if(vis) notSavedFrameElement.classList.add("open")
+		else notSavedFrameElement.classList.remove("open")
 	}
 
 	private data class FileInfo(val path: String) {

@@ -23,8 +23,38 @@
   "settings.theme.button.hover": "Button (Hover)",
   "settings.theme.button.active": "Button (Active)",
 
+  "settings.editor_group.editor_normal": "Normal",
   "settings.editor.ligatures":  "Enable Ligatures",
   "settings.editor.auto_save": "Enable Auto Save",
+  "settings.editor.file_frame": "File List",
+  "settings.editor.file_not_save": "File List (Not Saved)",
+
+  "settings.editor_group.editor_highlight": "Editor Highlight",
+  "settings.editor.highlight_background": "Background",
+  "settings.editor.highlight_foreground": "Foreground",
+  "settings.editor.highlight_keyword": "Keyword",
+  "settings.editor.highlight_variable": "Variable",
+  "settings.editor.highlight_string": "String",
+  "settings.editor.highlight_number": "Number",
+  "settings.editor.highlight_literal": "Literal",
+  "settings.editor.highlight_symbol": "Symbol",
+  "settings.editor.highlight_bullet": "Bullet",
+  "settings.editor.highlight_comment": "Comment",
+  "settings.editor.highlight_quote": "Quote",
+  "settings.editor.highlight_attribute": "Attribute",
+  "settings.editor.highlight_section": "Section",
+  "settings.editor.highlight_title": "Title",
+  "settings.editor.highlight_type": "Type",
+  "settings.editor.highlight_name": "Name",
+  "settings.editor.highlight_template_variable": "Template Variable",
+  "settings.editor.highlight_selector_tag": "Selector Tag",
+  "settings.editor.highlight_selector_id": "Selector ID",
+  "settings.editor.highlight_selector_class": "Selector Class",
+  "settings.editor.highlight_deletion": "Deletion",
+  "settings.editor.highlight_link": "Link",
+  "settings.editor.highlight_meta": "Meta",
+  "settings.editor.highlight_addition": "Addition",
+
 
   "settings.locale.language": "Language",
 
@@ -85,8 +115,6 @@
   "command.cat.no_permission": "No permission to read the file: {path}",
   "command.cat.help": "Prints the content of a file\nUsing `cat [path1] ([path2] ([path3] (...)))` to print the content of a file",
 
-  "editor.no_permission_read": "No permission to read this file",
-
   "command.chmod.perm_error": "Invalid permission setter: {perm}",
   "command.chmod.help": "Change permission by using `chmod [perm] [path1] ([path2] ([path3] (...)))`\nperm: 'r' for read, 'w' for write,\n    use '#' as prefix to set the specific permission\n    use '^' as prefix to remove the specific permission",
 
@@ -135,5 +163,11 @@
   "command.enable_module.help": "Enable modules",
 
   "command.lsmod.current": "Current Modules: {mods}",
-  "command.lsmod.help": "List all modules"
+  "command.lsmod.help": "List all modules",
+
+  "editor.no_permission_read": "No permission to read this file",
+  "editor.not_saved": "Are you sure to exit without saving?",
+  "editor.not_saved.yes": "Yes",
+  "editor.not_saved.no": "No",
+  "editor.not_saved.cancel": "Cancel"
 }

@@ -93,6 +93,32 @@ object Settings {
 
 			SettKeys.Editor.LIGATURES to "false",
 			SettKeys.Editor.AUTO_SAVE to "false",
+			SettKeys.Editor.FILE_FRAME to "#ffffff", // white
+			SettKeys.Editor.FILE_NOT_SAVE to "#ff7f50", // coral
+			SettKeys.Editor.HIGHLIGHT_BACKGROUND to "#282b2e",
+			SettKeys.Editor.HIGHLIGHT_FOREGROUND to "#a9b7c6",
+			SettKeys.Editor.HIGHLIGHT_KEYWORD to "#cc7832",
+			SettKeys.Editor.HIGHLIGHT_VARIABLE to "#629755",
+			SettKeys.Editor.HIGHLIGHT_STRING to "#6A8759",
+			SettKeys.Editor.HIGHLIGHT_NUMBER to "#6897BB",
+			SettKeys.Editor.HIGHLIGHT_LITERAL to "#6897BB",
+			SettKeys.Editor.HIGHLIGHT_SYMBOL to "#6897BB",
+			SettKeys.Editor.HIGHLIGHT_BULLET to "#6897BB",
+			SettKeys.Editor.HIGHLIGHT_COMMENT to "#808080",
+			SettKeys.Editor.HIGHLIGHT_QUOTE to "#808080",
+			SettKeys.Editor.HIGHLIGHT_ATTRIBUTE to "#6A8759",
+			SettKeys.Editor.HIGHLIGHT_SECTION to "#ffc66d",
+			SettKeys.Editor.HIGHLIGHT_TITLE to "#ffc66d",
+			SettKeys.Editor.HIGHLIGHT_TYPE to "#ffc66d",
+			SettKeys.Editor.HIGHLIGHT_NAME to "#e8bf6a",
+			SettKeys.Editor.HIGHLIGHT_TEMPLATE_VARIABLE to "#629755",
+			SettKeys.Editor.HIGHLIGHT_SELECTOR_TAG to "#cc7832",
+			SettKeys.Editor.HIGHLIGHT_SELECTOR_ID to "#e8bf6a",
+			SettKeys.Editor.HIGHLIGHT_SELECTOR_CLASS to "#e8bf6a",
+			SettKeys.Editor.HIGHLIGHT_DELETION to "#cc7832",
+			SettKeys.Editor.HIGHLIGHT_LINK to "#629755",
+			SettKeys.Editor.HIGHLIGHT_META to "#bbb529",
+			SettKeys.Editor.HIGHLIGHT_ADDITION to "#6A8759",
 
 			SettKeys.Locale.LANGUAGE to if(window.navigator.language in Translation.allLanguage) window.navigator.language else Translation.DEFAULT_LANG
 		)
@@ -129,6 +155,33 @@ object SettKeys {
 	object Editor {
 		const val LIGATURES = "editor.ligatures"
 		const val AUTO_SAVE = "editor.auto_save"
+		const val FILE_NOT_SAVE = "editor.file_not_save"
+		const val FILE_FRAME = "editor.file_frame"
+
+		const val HIGHLIGHT_BACKGROUND = "editor.highlight.background"
+		const val HIGHLIGHT_FOREGROUND = "editor.highlight.foreground"
+		const val HIGHLIGHT_KEYWORD = "editor.highlight.keyword"
+		const val HIGHLIGHT_VARIABLE = "editor.highlight.variable"
+		const val HIGHLIGHT_STRING = "editor.highlight.string"
+		const val HIGHLIGHT_NUMBER = "editor.highlight.number"
+		const val HIGHLIGHT_LITERAL = "editor.highlight.literal"
+		const val HIGHLIGHT_SYMBOL = "editor.highlight.symbol"
+		const val HIGHLIGHT_BULLET = "editor.highlight.bullet"
+		const val HIGHLIGHT_COMMENT = "editor.highlight.comment"
+		const val HIGHLIGHT_QUOTE = "editor.highlight.quote"
+		const val HIGHLIGHT_ATTRIBUTE = "editor.highlight.attribute"
+		const val HIGHLIGHT_SECTION = "editor.highlight.section"
+		const val HIGHLIGHT_TITLE = "editor.highlight.title"
+		const val HIGHLIGHT_TYPE = "editor.highlight.type"
+		const val HIGHLIGHT_NAME = "editor.highlight.name"
+		const val HIGHLIGHT_TEMPLATE_VARIABLE = "editor.highlight.template_variable"
+		const val HIGHLIGHT_SELECTOR_TAG = "editor.highlight.selector_tag"
+		const val HIGHLIGHT_SELECTOR_ID = "editor.highlight.selector_id"
+		const val HIGHLIGHT_SELECTOR_CLASS = "editor.highlight.selector_class"
+		const val HIGHLIGHT_DELETION = "editor.highlight.deletion"
+		const val HIGHLIGHT_LINK = "editor.highlight.link"
+		const val HIGHLIGHT_META = "editor.highlight.meta"
+		const val HIGHLIGHT_ADDITION = "editor.highlight.addition"
 	}
 
 	object Locale {

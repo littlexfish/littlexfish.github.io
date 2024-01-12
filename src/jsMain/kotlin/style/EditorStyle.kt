@@ -12,7 +12,8 @@ object EditorStyle : StyleRegister("editor") {
 		}
 		$editorFileList
 		$editor
-		$CODE_HIGHLIGHT
+		$codeHighlight
+		$NOT_SAVED_FRAME
 	"""
 
 	private val editorFileList = """
@@ -33,7 +34,7 @@ object EditorStyle : StyleRegister("editor") {
 			width: auto;
 			max-width: 300px;
 			padding: 5px;
-			border: ${Settings[SettKeys.Theme.FRAME]} 1px dashed;
+			border: ${Settings[SettKeys.Editor.FILE_FRAME]} 1px dashed;
 			cursor: pointer;
 			text-overflow: ellipsis;
 			margin: 5px;
@@ -41,7 +42,10 @@ object EditorStyle : StyleRegister("editor") {
 			$NO_SELECTION
 		}
 		#editor-files > div.opened {
-			border: ${Settings[SettKeys.Theme.FRAME_LIGHT]} 1px solid;
+			border-style: solid;
+		}
+		#editor-files > div.not-saved {
+			border-color: ${Settings[SettKeys.Editor.FILE_NOT_SAVE]};
 		}
 	"""
 
@@ -80,20 +84,36 @@ object EditorStyle : StyleRegister("editor") {
 		#editor-textarea:focus {
 			outline: none;
 		}
-		#editor:focus {
-			border: ${Settings[SettKeys.Theme.FRAME_LIGHT]} 1px solid;
-		}
-		#editor.nowrap {
+		#editor-textarea.nowrap {
 			white-space: pre;
 		}
-		#editor.no-perm {
+		#editor-textarea.no-perm {
 			color: ${Settings[SettKeys.Theme.COLOR_ERROR]};
+		}
+	"""
+
+	private const val NOT_SAVED_FRAME = """
+		#editor-not-saved {
+			display: none;
+			$CENTER_ELEMENT
+			padding: 20px;
+		}
+		#editor-not-saved.open {
+			display: block;
+		}
+		#editor-not-saved > div:nth-child(2) {
+			display: flex;
+		}
+		#editor-not-saved > div:nth-child(2) > button {
+			position: relative;
+			display: block;
+			right: 10px;
 		}
 	"""
 
 	// FIXME: in editor, the first line always has a margin at left
 	// official style: https://github.com/highlightjs/highlight.js/tree/main/src/styles
-	private const val CODE_HIGHLIGHT = """
+	private val codeHighlight = """
 		.hljs > span {
 			white-space: pre;
 		}
@@ -101,43 +121,71 @@ object EditorStyle : StyleRegister("editor") {
 			color: #a9b7c6;
 			background: #282b2e;
 		}
-		.hljs-number,
-		.hljs-literal,
-		.hljs-symbol,
+		.hljs-number {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_NUMBER]}
+		}
+		.hljs-literal {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_LITERAL]}
+		}
+		.hljs-symbol {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_SYMBOL]}
+		}
 		.hljs-bullet {
-			color: #6897BB;
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_BULLET]}
 		}
-		.hljs-keyword,
-		.hljs-selector-tag,
+		.hljs-keyword {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_KEYWORD]}
+		}
+		.hljs-selector-tag {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_SELECTOR_TAG]}
+		}
 		.hljs-deletion {
-			color: #cc7832;
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_DELETION]}
 		}
-		.hljs-variable,
-		.hljs-template-variable,
+		.hljs-variable {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_VARIABLE]}
+		}
+		.hljs-template-variable {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_TEMPLATE_VARIABLE]}
+		}
 		.hljs-link {
-			color: #629755;
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_LINK]}
 		}
-		.hljs-comment,
+		.hljs-comment {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_COMMENT]}
+		}
 		.hljs-quote {
-			color: #808080;
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_QUOTE]}
 		}
 		.hljs-meta {
-			color: #bbb529;
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_META]}
 		}
-		.hljs-string,
-		.hljs-attribute,
+		.hljs-string {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_STRING]}
+		}
+		.hljs-attribute {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_ATTRIBUTE]}
+		}
 		.hljs-addition {
-			color: #6A8759;
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_ADDITION]}
 		}
-		.hljs-section,
-		.hljs-title,
+		.hljs-section {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_SECTION]}
+		}
+		.hljs-title {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_TITLE]}
+		}
 		.hljs-type {
-			color: #ffc66d;
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_TYPE]}
 		}
-		.hljs-name,
-		.hljs-selector-id,
+		.hljs-name {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_NAME]}
+		}
+		.hljs-selector-id {
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_SELECTOR_ID]}
+		}
 		.hljs-selector-class {
-			color: #e8bf6a;
+			color: ${Settings[SettKeys.Editor.HIGHLIGHT_SELECTOR_CLASS]}
 		}
 		.hljs-emphasis {
 			font-style: italic;

@@ -104,8 +104,39 @@ private fun DIV.settingPanel() {
 		div {
 			id = "setting-content-editor"
 			classes = setOf("setting-content")
+
+			subGroup(Translation["settings.editor_group.editor_normal"])
 //			booleanSelector(Translation["settings.editor.ligatures"], SettKeys.Editor.LIGATURES)
 //			booleanSelector(Translation["settings.editor.auto_save"], SettKeys.Editor.AUTO_SAVE)
+			colorSelector(Translation["settings.editor.file_frame"], SettKeys.Editor.FILE_FRAME)
+			colorSelector(Translation["settings.editor.file_not_save"], SettKeys.Editor.FILE_NOT_SAVE)
+
+			subGroup(Translation["settings.editor_group.editor_highlight"])
+			colorSelector(Translation["settings.editor.highlight_background"], SettKeys.Editor.HIGHLIGHT_BACKGROUND)
+			colorSelector(Translation["settings.editor.highlight_foreground"], SettKeys.Editor.HIGHLIGHT_FOREGROUND)
+			colorSelector(Translation["settings.editor.highlight_keyword"], SettKeys.Editor.HIGHLIGHT_KEYWORD)
+			colorSelector(Translation["settings.editor.highlight_variable"], SettKeys.Editor.HIGHLIGHT_VARIABLE)
+			colorSelector(Translation["settings.editor.highlight_string"], SettKeys.Editor.HIGHLIGHT_STRING)
+			colorSelector(Translation["settings.editor.highlight_number"], SettKeys.Editor.HIGHLIGHT_NUMBER)
+			colorSelector(Translation["settings.editor.highlight_literal"], SettKeys.Editor.HIGHLIGHT_LITERAL)
+			colorSelector(Translation["settings.editor.highlight_symbol"], SettKeys.Editor.HIGHLIGHT_SYMBOL)
+			colorSelector(Translation["settings.editor.highlight_bullet"], SettKeys.Editor.HIGHLIGHT_BULLET)
+			colorSelector(Translation["settings.editor.highlight_comment"], SettKeys.Editor.HIGHLIGHT_COMMENT)
+			colorSelector(Translation["settings.editor.highlight_quote"], SettKeys.Editor.HIGHLIGHT_QUOTE)
+			colorSelector(Translation["settings.editor.highlight_attribute"], SettKeys.Editor.HIGHLIGHT_ATTRIBUTE)
+			colorSelector(Translation["settings.editor.highlight_section"], SettKeys.Editor.HIGHLIGHT_SECTION)
+			colorSelector(Translation["settings.editor.highlight_title"], SettKeys.Editor.HIGHLIGHT_TITLE)
+			colorSelector(Translation["settings.editor.highlight_type"], SettKeys.Editor.HIGHLIGHT_TYPE)
+			colorSelector(Translation["settings.editor.highlight_name"], SettKeys.Editor.HIGHLIGHT_NAME)
+			colorSelector(Translation["settings.editor.highlight_template_variable"], SettKeys.Editor.HIGHLIGHT_TEMPLATE_VARIABLE)
+			colorSelector(Translation["settings.editor.highlight_selector_tag"], SettKeys.Editor.HIGHLIGHT_SELECTOR_TAG)
+			colorSelector(Translation["settings.editor.highlight_selector_id"], SettKeys.Editor.HIGHLIGHT_SELECTOR_ID)
+			colorSelector(Translation["settings.editor.highlight_selector_class"], SettKeys.Editor.HIGHLIGHT_SELECTOR_CLASS)
+			colorSelector(Translation["settings.editor.highlight_deletion"], SettKeys.Editor.HIGHLIGHT_DELETION)
+			colorSelector(Translation["settings.editor.highlight_link"], SettKeys.Editor.HIGHLIGHT_LINK)
+			colorSelector(Translation["settings.editor.highlight_meta"], SettKeys.Editor.HIGHLIGHT_META)
+			colorSelector(Translation["settings.editor.highlight_addition"], SettKeys.Editor.HIGHLIGHT_ADDITION)
+
 		}
 		div {
 			id = "setting-content-locale"
