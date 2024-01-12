@@ -11,10 +11,10 @@ class Env(val baseEnv: Env? = null) {
 
 	private companion object {
 		const val OS_NAME = "LF OS"
-		const val VERSION = "beta-0.2.0"
+		const val VERSION = "beta-0.3.0"
 		const val ENGINE = "Kotlin/JS"
 		const val ENGINE_VERSION = "1.9.21"
-		const val ENGINE_LIB = "kotlinx-html-js:0.8.0;stdlib-js:1.9.21"
+		const val ENGINE_LIB = "kotlinx-html-js:0.8.0;stdlib-js:1.9.21;kotlinx-coroutines-core:1.8.0-RC;font-awesome:6.5.1;highlight.js:11.9.0"
 		const val CREATOR = "LF"
 	}
 
