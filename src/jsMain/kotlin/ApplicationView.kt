@@ -106,8 +106,8 @@ private fun DIV.settingPanel() {
 			classes = setOf("setting-content")
 
 			subGroup(Translation["settings.editor_group.editor_normal"])
-//			booleanSelector(Translation["settings.editor.ligatures"], SettKeys.Editor.LIGATURES)
-//			booleanSelector(Translation["settings.editor.auto_save"], SettKeys.Editor.AUTO_SAVE)
+			booleanSelector(Translation["settings.editor.ligatures"], SettKeys.Editor.LIGATURES)
+			booleanSelector(Translation["settings.editor.auto_save"], SettKeys.Editor.AUTO_SAVE)
 			colorSelector(Translation["settings.editor.file_frame"], SettKeys.Editor.FILE_FRAME)
 			colorSelector(Translation["settings.editor.file_not_save"], SettKeys.Editor.FILE_NOT_SAVE)
 

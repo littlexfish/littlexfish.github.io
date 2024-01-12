@@ -3,6 +3,8 @@ package app
 import Application
 import Translation
 import fs.FS
+import fs.SettKeys
+import fs.Settings
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
@@ -108,7 +110,10 @@ class Editor : App("editor") {
 		}
 		document.onkeydown = { evt ->
 			if(evt.key == "Escape") {
-				if(openedFiles.indices.any { !isSameAsSaved(it) }) {
+				if(Settings[SettKeys.Editor.AUTO_SAVE].toBoolean()) {
+					tryExit(true)
+				}
+				else if(openedFiles.indices.any { !isSameAsSaved(it) }) {
 					setNotSavedFrameVisible(true)
 				}
 				else {
@@ -141,6 +146,7 @@ class Editor : App("editor") {
 			console.log(openedFiles, currentContent)
 		}
 		setTabSize(4)
+		setLigaturesEnabled(Settings[SettKeys.Editor.LIGATURES].toBoolean())
 		val files = GlobalState.get<List<FileInfo>>("files")
 		if(files != null) {
 			files.forEach(::loadFile)
@@ -162,6 +168,15 @@ class Editor : App("editor") {
 			it.onmouseover = null
 			it.onmouseenter = null
 			it.onmouseleave = null
+		}
+	}
+
+	private fun setLigaturesEnabled(enabled: Boolean) {
+		if(enabled) {
+			editorHighlightElement.classList.add("ligatures")
+		}
+		else {
+			editorHighlightElement.classList.remove("ligatures")
 		}
 	}
 
@@ -251,26 +266,35 @@ class Editor : App("editor") {
 
 	private fun selectFile(fi: FileInfo) {
 		if(currentOpenFile == fi) return
-		loadFile(fi) {
-			val content = currentContent[fi]?.second
-			currentOpenFile = fi
-			if(content == null) {
-				fileEditorElement.classList.add("no-perm")
-				fileEditorElement.value = Translation["editor.no_permission_read"]
-				fileEditorElement.disabled = true
+		val loadFileFunc = {
+			loadFile(fi) {
+				val content = currentContent[fi]?.second
+				currentOpenFile = fi
+				if(content == null) {
+					fileEditorElement.classList.add("no-perm")
+					fileEditorElement.value = Translation["editor.no_permission_read"]
+					fileEditorElement.disabled = true
+				}
+				else {
+					fileEditorElement.classList.remove("no-perm")
+					fileEditorElement.disabled = false
+					fileEditorElement.readOnly = !FS.canWrite(fi.path)
+					fileEditorElement.value = content
+					setContent(content)
+				}
+				val idx = openedFiles.indexOf(fi)
+				for(i in 0..<fileListElement.childElementCount) {
+					if(i == idx) fileListElement.children[i]?.classList?.add("opened")
+					else fileListElement.children[i]?.classList?.remove("opened")
+				}
 			}
-			else {
-				fileEditorElement.classList.remove("no-perm")
-				fileEditorElement.disabled = false
-				fileEditorElement.readOnly = !FS.canWrite(fi.path)
-				fileEditorElement.value = content
-				setContent(content)
-			}
-			val idx = openedFiles.indexOf(fi)
-			for(i in 0..<fileListElement.childElementCount) {
-				if(i == idx) fileListElement.children[i]?.classList?.add("opened")
-				else fileListElement.children[i]?.classList?.remove("opened")
-			}
+		}
+		val idx = openedFiles.indexOf(currentOpenFile)
+		if(idx >= 0 && Settings[SettKeys.Editor.AUTO_SAVE].toBoolean()) {
+			onSave(idx, loadFileFunc)
+		}
+		else {
+			loadFileFunc()
 		}
 	}
 
