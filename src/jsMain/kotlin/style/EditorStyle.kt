@@ -13,7 +13,7 @@ object EditorStyle : StyleRegister("editor") {
 		$editorFileList
 		$editor
 		$codeHighlight
-		$NOT_SAVED_FRAME
+		$notSavedFrame
 	"""
 
 	private val editorFileList = """
@@ -92,11 +92,16 @@ object EditorStyle : StyleRegister("editor") {
 		}
 	"""
 
-	private const val NOT_SAVED_FRAME = """
+	private val notSavedFrame = """
 		#editor-not-saved {
 			display: none;
 			$CENTER_ELEMENT
 			padding: 20px;
+			border: ${Settings[SettKeys.Theme.FRAME]} 1px solid;
+			border-right: 3px;
+			border-bottom: 3px;
+			border-radius: 5px;
+			background: ${Settings[SettKeys.Theme.BACKGROUND]};
 		}
 		#editor-not-saved.open {
 			display: block;

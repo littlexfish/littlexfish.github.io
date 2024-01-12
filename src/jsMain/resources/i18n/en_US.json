@@ -167,7 +167,7 @@
 
   "editor.no_permission_read": "No permission to read this file",
   "editor.not_saved": "Are you sure to exit without saving?",
-  "editor.not_saved.yes": "Yes",
-  "editor.not_saved.no": "No",
+  "editor.not_saved.save": "Save",
+  "editor.not_saved.dont_save": "Don't Save",
   "editor.not_saved.cancel": "Cancel"
 }

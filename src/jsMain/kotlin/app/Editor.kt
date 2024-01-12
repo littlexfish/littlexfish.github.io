@@ -16,7 +16,6 @@ import kotlinx.html.js.onMouseDownFunction
 import kotlinx.html.js.onMouseUpFunction
 import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
-import org.w3c.files.FileReader
 import style.EditorStyle
 import style.StyleRegister
 import util.GlobalState
@@ -67,21 +66,21 @@ class Editor : App("editor") {
 			}
 			div {
 				button {
-					+Translation["editor.yes"]
+					+Translation["editor.not_saved.save"]
 					onClickFunction = {
 						tryExit(true)
 					}
 				}
 				button {
-					+Translation["editor.no"]
+					+Translation["editor.not_saved.dont_save"]
 					onClickFunction = {
 						tryExit(false)
 					}
 				}
 				button {
-					+Translation["editor.cancel"]
+					+Translation["editor.not_saved.cancel"]
 					onClickFunction = {
-
+						setNotSavedFrameVisible(false)
 					}
 				}
 			}
@@ -109,9 +108,11 @@ class Editor : App("editor") {
 		}
 		document.onkeydown = { evt ->
 			if(evt.key == "Escape") {
-				Application.backToApp(Terminal::class.js)
 				if(openedFiles.indices.any { !isSameAsSaved(it) }) {
 					setNotSavedFrameVisible(true)
+				}
+				else {
+					tryExit(false)
 				}
 			}
 			else if(evt.ctrlKey && evt.key == "s") {
@@ -326,7 +327,7 @@ class Editor : App("editor") {
 		return openedFiles.indexOf(currentOpenFile)
 	}
 
-	private fun onSave(idx: Int) {
+	private fun onSave(idx: Int, onSaveEnd: (() -> Unit)? = null) {
 		val fi = openedFiles[idx]
 		val path = fi.path
 		if(!FS.canWrite(path)) return
@@ -338,6 +339,7 @@ class Editor : App("editor") {
 			writer.close()
 			currentContent[fi] = currentContent[fi]!!.second to currentContent[fi]!!.second
 			refreshSavedStatus()
+			onSaveEnd?.invoke()
 		}
 	}
 
@@ -401,13 +403,27 @@ class Editor : App("editor") {
 
 	private fun tryExit(withSave: Boolean) {
 		if(withSave) {
-			for(i in 0..<openedFiles.size) {
-				if(!isSameAsSaved(i)) {
-					setNotSavedFrameVisible(true)
+			val needSave = openedFiles.indices.filter { !isSameAsSaved(it) }
+			var currentIdx = 0
+			var endOfSave: (() -> Unit)? = null
+			endOfSave = {
+				if(currentIdx < needSave.size) {
+					onSave(needSave[currentIdx++], endOfSave)
+				}
+				else {
+					Application.backToApp(Terminal::class.js)
 				}
 			}
+			if(needSave.isEmpty()) {
+				endOfSave()
+			}
+			else {
+				onSave(needSave[currentIdx++], endOfSave)
+			}
 		}
-		Application.backToApp(Terminal::class.js)
+		else {
+			Application.backToApp(Terminal::class.js)
+		}
 	}
 
 	private fun setNotSavedFrameVisible(vis: Boolean) {
