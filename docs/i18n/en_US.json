@@ -1,11 +1,69 @@
 {
+  "settings.category.theme": "Theme",
+  "settings.category.editor": "Editor",
+  "settings.category.locale": "Locale",
+
+  "settings.theme_group.frame": "Frame",
+  "settings.theme.frame": "Frame",
+  "settings.theme.frame_light": "Frame (Light)",
+  "settings.theme_group.color": "Colors",
+  "settings.theme.background": "Background",
+  "settings.theme.foreground": "Foreground",
+  "settings.theme.foreground_dark":  "Foreground (Dark)",
+  "settings.theme.color_error": "Error",
+  "settings.theme.color_cmd_input":  "Command Input",
+  "settings.theme.color_1": "Primary Color",
+  "settings.theme.color_1_dark":  "Primary Color (Dark)",
+  "settings.theme.color_2": "Secondary Color",
+  "settings.theme.color_2_dark":  "Secondary Color (Dark)",
+  "settings.theme.color_3": "Tertiary Color",
+  "settings.theme.color_3_dark":  "Tertiary Color (Dark)",
+  "settings.theme_group.button": "Buttons",
+  "settings.theme.button.color": "Button",
+  "settings.theme.button.hover": "Button (Hover)",
+  "settings.theme.button.active": "Button (Active)",
+
+  "settings.editor_group.editor_normal": "Normal",
+  "settings.editor.ligatures":  "Enable Ligatures",
+  "settings.editor.auto_save": "Enable Auto Save",
+  "settings.editor.file_frame": "File List",
+  "settings.editor.file_not_save": "File List (Not Saved)",
+
+  "settings.editor_group.editor_highlight": "Editor Highlight",
+  "settings.editor.highlight_background": "Background",
+  "settings.editor.highlight_foreground": "Foreground",
+  "settings.editor.highlight_keyword": "Keyword",
+  "settings.editor.highlight_variable": "Variable",
+  "settings.editor.highlight_string": "String",
+  "settings.editor.highlight_number": "Number",
+  "settings.editor.highlight_literal": "Literal",
+  "settings.editor.highlight_symbol": "Symbol",
+  "settings.editor.highlight_bullet": "Bullet",
+  "settings.editor.highlight_comment": "Comment",
+  "settings.editor.highlight_quote": "Quote",
+  "settings.editor.highlight_attribute": "Attribute",
+  "settings.editor.highlight_section": "Section",
+  "settings.editor.highlight_title": "Title",
+  "settings.editor.highlight_type": "Type",
+  "settings.editor.highlight_name": "Name",
+  "settings.editor.highlight_template_variable": "Template Variable",
+  "settings.editor.highlight_selector_tag": "Selector Tag",
+  "settings.editor.highlight_selector_id": "Selector ID",
+  "settings.editor.highlight_selector_class": "Selector Class",
+  "settings.editor.highlight_deletion": "Deletion",
+  "settings.editor.highlight_link": "Link",
+  "settings.editor.highlight_meta": "Meta",
+  "settings.editor.highlight_addition": "Addition",
+
+
+  "settings.locale.language": "Language",
+
   "command_not_found": "Command not found: {cmd}",
+  "command_no_module": "Modules [{mods}] not found for your command",
   "command_arg.empty": "Argument cannot be empty.",
   "command_arg.invalid": "Invalid argument: {arg}",
-  "command_arg.1": "Need at least one argument",
-  "command_arg.2": "Need at least two arguments",
-  "command_arg.3": "Need at least three arguments",
-  "command_arg.4": "Need at least four arguments",
+  "command_arg.1": "Need at least 1 argument",
+  "command_arg.2+": "Need at least {num} arguments",
 
   "command.about.0": "Hi,",
   "command.about.1": "This is the LF OS created by myself.",
@@ -17,9 +75,13 @@
   "command.about.5_1": "Github",
   "command.about.6": "Best regards,",
   "command.about.7": "LF",
+  "command.about.help": "Prints some information about me",
 
   "command.alias.invalid_setter": "Invalid alias setter: {setter}",
   "command.alias.invalid_name": "Invalid alias name: {name}",
+  "command.alias.help": "Set alias by using `alias [name]=[command]`",
+
+  "command.unalias.help": "Remove alias by using `unalias [name1] ([name2] ([name3] (...)))`",
 
   "command.clear.help": "Clear the terminal",
 
@@ -28,32 +90,84 @@
 
   "command.help.text": "Hi, Welcome to the HELP page\n\nUsing `help [command]` to get help for a specific command\nUsing `lscmd` to list all available commands\n",
   "command.help.not_found": "\"Command '{cmd}' not found\"",
+  "command.help.no_module": "No modules [{mods}] found for command '{cmd}'",
   "command.help.no_page": "No help page for command '{cmd}'",
   "command.help.help": "Prints this help page\nUsing `help [command]` to get help for a specific command",
 
   "command.set.invalid_name": "Invalid variable name: {name}",
+  "command.set.help": "Set variable by using `set [name] [value]`",
+
+  "command.unset.help": "Remove variable by using `unset [name1] ([name2] ([name3] (...)))`",
 
   "command.welcome.0": "Welcome to the LF OS",
   "command.welcome.1": "Type 'help' to see the help page",
 
   "command.rm.not_found": "File not found: {path}",
+  "command.rm.help": "Remove file by using `rm [path1] ([path2] ([path3] (...)))`",
 
   "command.rmdir.not_found": "Directory not found: {path}",
+  "command.rmdir.help": "Remove directory by using `rm [path1] ([path2] ([path3] (...)))`",
 
   "command.edit.not_found": "File not found: {path}",
+  "command.edit.help": "Edit a file\nUsing `edit ([path1] ([path2] ([path3] (...))))` to open editor and edit files",
 
   "command.cat.not_found": "File not found: {path}",
-
-  "editor.no_permission_read": "No permission to read this file",
+  "command.cat.no_permission": "No permission to read the file: {path}",
+  "command.cat.help": "Prints the content of a file\nUsing `cat [path1] ([path2] ([path3] (...)))` to print the content of a file",
 
   "command.chmod.perm_error": "Invalid permission setter: {perm}",
+  "command.chmod.help": "Change permission by using `chmod [perm] [path1] ([path2] ([path3] (...)))`\nperm: 'r' for read, 'w' for write,\n    use '#' as prefix to set the specific permission\n    use '^' as prefix to remove the specific permission",
 
   "command.ls.not_found": "No such directory: {path}",
+  "command.ls.help": "List files in a directory\nUsing `ls [path]` to list files in a directory",
 
   "command.cd.not_found": "No such directory: {path}",
+  "command.cd.help": "Change current directory by using `cd [path]`,\nor `cd` to change to the home directory",
 
   "command.terminal.start": "Start new terminal ({id})",
   "command.exit.back_error": "Error occurred when backing to the previous app",
-  "command.exit.bye": "Bye!"
+  "command.exit.bye": "Bye!",
 
+  "command.cp.help": "Copy file by using `cp [src] [dest]`",
+
+  "command.mv.help": "Move file by using `mv [src] [dest]`",
+
+  "command.mkdir.help": "Create directory by using `mkdir [path1] ([path2] ([path3] (...)))`",
+
+  "command.open.help": "Open file as html by using `open [path]`",
+
+  "command.pwd.help": "Print current directory",
+
+  "command.touch.help": "Create file by using `touch [path1] ([path2] ([path3] (...)))`\nArguments:\n    -p [perm]: set permission to the files\n        'r' for read, 'w' for write, default is none",
+
+  "command.echo.help": "Print text by using `echo [text]`",
+
+  "command.exit.help": "Exit the current app",
+
+  "command.info.help": "Print information about the current app",
+
+  "command.lscmd.help": "List all available commands",
+
+  "command.terminal.help": "Start a new terminal",
+
+  "command.welcome.help": "Print welcome message",
+
+  "command.reload_module.debug_on": "---Debug mode on---",
+  "command.reload_module.no_module": "These modules cannot be loaded: {mods}",
+  "command.reload_module.help": "Reload all modules",
+
+  "command.disable_module.current": "Current Modules: {mods}",
+  "command.disable_module.help": "Disable modules",
+
+  "command.enable_module.current": "Current Modules: {mods}",
+  "command.enable_module.help": "Enable modules",
+
+  "command.lsmod.current": "Current Modules: {mods}",
+  "command.lsmod.help": "List all modules",
+
+  "editor.no_permission_read": "No permission to read this file",
+  "editor.not_saved": "Are you sure to exit without saving?",
+  "editor.not_saved.save": "Save",
+  "editor.not_saved.dont_save": "Don't Save",
+  "editor.not_saved.cancel": "Cancel"
 }
