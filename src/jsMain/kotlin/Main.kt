@@ -105,7 +105,7 @@ fun Element.scrollToView() {
 object Application {
 
 	private lateinit var appFrameElement: HTMLElement
-	var DEBUG = true
+	var DEBUG = false
 	private val appLayer = mutableListOf<Int>()
 	private val openedApp = mutableMapOf<Int, App>()
 	private var nextAppId = 0
@@ -115,7 +115,7 @@ object Application {
 	}
 
 	suspend fun init() {
-		window.asDynamic().debug = {
+		window.asDynamic().$export_0b8e9e_debug = {
 			DEBUG = !DEBUG
 			MainScope().launch {
 				if(DEBUG) ModuleRegistry.enable("debug")
