@@ -53,7 +53,7 @@ internal object FSMapper {
 		if(!parent.second.hasChild(name)) {
 			parent.second.add(FSTreeNode(name, false))
 		}
-		if(permission != null) FSPermission.setPermission("/$path/$name", permission)
+		if(permission != null) FSPermission.setPermission("$path/$name", permission)
 		return parent.first.getFileHandle(name, json("create" to true)).await()
 	}
 
