@@ -98,8 +98,8 @@ object EditorStyle : StyleRegister("editor") {
 			$CENTER_ELEMENT
 			padding: 20px;
 			border: ${Settings[SettKeys.Theme.FRAME]} 1px solid;
-			border-right: 3px;
-			border-bottom: 3px;
+			border-right-width: 3px;
+			border-bottom-width: 3px;
 			border-radius: 5px;
 			background: ${Settings[SettKeys.Theme.BACKGROUND]};
 		}
@@ -108,11 +108,9 @@ object EditorStyle : StyleRegister("editor") {
 		}
 		#editor-not-saved > div:nth-child(2) {
 			display: flex;
-		}
-		#editor-not-saved > div:nth-child(2) > button {
-			position: relative;
-			display: block;
-			right: 10px;
+			margin-top: 10px;
+			justify-content: flex-end;
+			gap: 5px;
 		}
 	"""
 
