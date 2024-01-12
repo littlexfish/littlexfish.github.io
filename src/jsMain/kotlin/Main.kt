@@ -115,7 +115,7 @@ object Application {
 	}
 
 	suspend fun init() {
-		window.asDynamic().$export_0b8e9e_debug = {
+		window.asDynamic().export_0b8e9e_debug = {
 			DEBUG = !DEBUG
 			MainScope().launch {
 				if(DEBUG) ModuleRegistry.enable("debug")
