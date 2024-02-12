@@ -6,3 +6,8 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# ignore .name for other device
+.name
+# ignore other ide project settings
+misc.xml
+vcs.xml
