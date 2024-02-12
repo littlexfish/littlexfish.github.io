@@ -3,7 +3,7 @@ package style
 import fs.SettKeys
 import fs.Settings
 
-object HtmlViewerStyle : StyleRegister("html-viewer") {
+object FileViewerStyle : StyleRegister("file-viewer") {
 	override fun getStyleContent(): String = """
 		#html-viewer {
 			display: block;
@@ -24,11 +24,23 @@ object HtmlViewerStyle : StyleRegister("html-viewer") {
 			margin-bottom: 5px;
 		}
 		#title-bar > #title {
-			display: block;
+			display: flex;
 			width: 100%;
 			height: fit-content;
 			margin: auto;
+		}
+		#title-bar > #title > #title-content {
+			display: block;
+			flex: none;
 			white-space: pre;
+			$NO_SELECTION
+		}
+		#title-bar > #title > #open-type {
+			display: block;
+			flex: none;
+			margin-left: 0.5em;
+			white-space: pre;
+			color: ${Settings[SettKeys.Theme.FOREGROUND_DARK]};
 			$NO_SELECTION
 		}
 		#title-bar > #close {

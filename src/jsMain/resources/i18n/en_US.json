@@ -134,6 +134,7 @@
 
   "command.mkdir.help": "Create directory by using `mkdir [path1] ([path2] ([path3] (...)))`",
 
+  "command.open.not_found": "File Not Found: {file}",
   "command.open.help": "Open file as html by using `open [path]`",
 
   "command.pwd.help": "Print current directory",
@@ -169,5 +170,8 @@
   "editor.not_saved": "Are you sure to exit without saving?",
   "editor.not_saved.save": "Save",
   "editor.not_saved.dont_save": "Don't Save",
-  "editor.not_saved.cancel": "Cancel"
+  "editor.not_saved.cancel": "Cancel",
+
+  "file_viewer.mode.html": "HTML Mode",
+  "file_viewer.mode.text": "Text Mode"
 }

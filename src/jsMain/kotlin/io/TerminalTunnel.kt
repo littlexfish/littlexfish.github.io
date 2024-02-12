@@ -11,47 +11,46 @@ import org.w3c.dom.HTMLPreElement
 import org.w3c.dom.css.CSSStyleDeclaration
 
 class TerminalTunnel {
-
+	
 	private var onPipeOut: ((Element) -> Unit)? = null
-
+	
 	private val pipeOutBuffer = ArrayList<Element>()
 	private val pipeInBuffer = ArrayList<Element>()
-
+	
 	fun pipeIn(ele: Element) {
 		pipeInBuffer.add(ele)
 	}
-
+	
 	fun pipeOut(ele: Element) {
-		if(onPipeOut != null) {
+		if (onPipeOut != null) {
 			onPipeOut!!(ele)
-		}
-		else {
+		} else {
 			pipeOutBuffer.add(ele)
 		}
 	}
-
+	
 	fun registerPipeOut(onPipeOut: (Element) -> Unit) {
 		this.onPipeOut = onPipeOut
-		for(text in pipeOutBuffer) {
+		for (text in pipeOutBuffer) {
 			onPipeOut(text)
 		}
 		pipeOutBuffer.clear()
 	}
-
+	
 	fun readFromPipeIn(): Element? {
 		return pipeInBuffer.removeFirstOrNull()
 	}
-
+	
 	fun hasNextRead(): Boolean {
 		return pipeInBuffer.isNotEmpty()
 	}
-
+	
 }
 
 fun TerminalTunnel.pipeOutPre(content: String, style: (CSSStyleDeclaration.() -> Unit)? = null) {
 	val pre = document.createElement("pre") as HTMLPreElement
 	pre.innerText = content
-	if(style != null) {
+	if (style != null) {
 		pre.style.style()
 	}
 	pipeOut(pre)
@@ -59,7 +58,7 @@ fun TerminalTunnel.pipeOutPre(content: String, style: (CSSStyleDeclaration.() ->
 
 fun TerminalTunnel.pipeOutTag(tag: String, build: (HTMLElement.() -> Unit)? = null) {
 	val ele = document.createElement(tag) as HTMLElement
-	if(build != null) {
+	if (build != null) {
 		ele.build()
 	}
 	pipeOut(ele)
