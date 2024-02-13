@@ -7,6 +7,8 @@ import command.Command
 import command.CommandType
 import fs.FS
 import io.pipeOutErrorTextTr
+import io.pipeOutTextLn
+import kotlinx.browser.window
 
 class Open : Command(CommandType.FS) {
 
@@ -24,6 +26,11 @@ class Open : Command(CommandType.FS) {
 		}
 		else if(pArg.has("t") || pArg.has("text")) {
 			"text"
+		}
+		else if(pArg.has("u") || pArg.has("url")) {
+			tunnel.pipeOutTextLn("command.open.new")
+			window.open(open, "_blank")
+			return 0
 		}
 		else if(open.matches("https?://([\\w.]+)(:\\d{1,5})?(/.*)?".toRegex())) {
 			"url"
