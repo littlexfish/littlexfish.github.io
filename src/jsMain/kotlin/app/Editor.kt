@@ -150,7 +150,9 @@ class Editor : App("editor") {
 		val files = GlobalState.get<List<FileInfo>>("files")
 		if(files != null) {
 			files.forEach(::loadFile)
-			selectFile(openedFiles[0])
+			if(files.isNotEmpty()) {
+				selectFile(openedFiles[0])
+			}
 		}
 		else {
 			GlobalState.set("files", mutableListOf<FileInfo>())
@@ -246,6 +248,9 @@ class Editor : App("editor") {
 	private fun DIV.displayElement(idx: Int, name: String) {
 		+name
 		title = openedFiles[idx].path
+		if(currentOpenFile == openedFiles[idx]) {
+			classes = setOf("opened")
+		}
 		onMouseDownFunction = { it.preventDefault() }
 		onMouseUpFunction = {
 			if(it.asDynamic().button == 0) {
@@ -265,7 +270,10 @@ class Editor : App("editor") {
 	}
 
 	private fun selectFile(fi: FileInfo) {
-		if(currentOpenFile == fi) return
+		if(currentOpenFile == fi) {
+			softRefreshFileList()
+			return
+		}
 		val loadFileFunc = {
 			loadFile(fi) {
 				val content = currentContent[fi]?.second
@@ -282,11 +290,7 @@ class Editor : App("editor") {
 					fileEditorElement.value = content
 					setContent(content)
 				}
-				val idx = openedFiles.indexOf(fi)
-				for(i in 0..<fileListElement.childElementCount) {
-					if(i == idx) fileListElement.children[i]?.classList?.add("opened")
-					else fileListElement.children[i]?.classList?.remove("opened")
-				}
+				softRefreshFileList()
 			}
 		}
 		val idx = openedFiles.indexOf(currentOpenFile)
@@ -301,7 +305,10 @@ class Editor : App("editor") {
 	private fun loadFile(fi: FileInfo, afterLoad: (() -> Unit)? = null) {
 		if(fi !in openedFiles) {
 			openedFiles.add(0, fi)
-			GlobalState.get<MutableList<FileInfo>>("files")?.add(0, fi)
+		}
+		val globalState = GlobalState.get<MutableList<FileInfo>>("files")
+		if(globalState?.contains(fi) != true) {
+			globalState?.add(0, fi)
 		}
 		if(fi !in currentContent) {
 			MainScope().launch {
@@ -324,26 +331,26 @@ class Editor : App("editor") {
 	}
 
 	private fun onCloseFile(idx: Int, closeEmpty: Boolean = true) {
-		val fi = currentOpenFile
-		openedFiles.removeAt(idx)
+		val fi = openedFiles.removeAt(idx)
 		currentContent.remove(fi)
-		GlobalState.get<MutableList<FileInfo>>("files")?.removeAt(idx)
+		GlobalState.get<MutableList<FileInfo>>("files")?.remove(fi)
 		refreshEditor()
 		if(openedFiles.isEmpty() && closeEmpty) {
 			Application.back()
 			return
 		}
-		if(openedFiles.isNotEmpty()) {
-			val open = getOpenedFile()
-			if(idx >= openedFiles.size) {
-				selectFile(openedFiles.last())
+		if(fi == currentOpenFile) {
+			if (openedFiles.isNotEmpty()) {
+				if (idx >= openedFiles.size) {
+					selectFile(openedFiles.last())
+				}
+				else {
+					selectFile(openedFiles[idx])
+				}
 			}
-			else if(idx == getOpenedFile()) {
-				selectFile(openedFiles[idx])
-			}
-			else {
-				selectFile(openedFiles[open + (if(idx < open) 0 else -1)])
-			}
+		}
+		else if(currentOpenFile != null) {
+			selectFile(currentOpenFile!!)
 		}
 	}
 
