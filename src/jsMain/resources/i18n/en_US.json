@@ -135,6 +135,7 @@
   "command.mkdir.help": "Create directory by using `mkdir [path1] ([path2] ([path3] (...)))`",
 
   "command.open.not_found": "File Not Found: {file}",
+  "command.open.new": "Open URL in new tab(window)",
   "command.open.help": "Open file as html by using `open [path]`",
 
   "command.pwd.help": "Print current directory",

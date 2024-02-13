@@ -91,6 +91,7 @@ class Terminal(rootEnv: Env? = null) : App("terminal") {
 			input {
 				id = "terminal-input"
 				autoFocus = true
+				autoComplete = false
 			}
 		}
 	}
