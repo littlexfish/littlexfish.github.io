@@ -73,7 +73,7 @@ private fun newRootEnv(): Env {
 private fun showInitError(msg: String, title: String? = null, thr: Throwable? = null) {
 	appElement.clear()
 	StyleRegistry.loadStyle("error")
-	document.head?.title = "Error" + (if(title != null) ": $title" else "")
+	document.title = "Error" + (if(title != null) ": $title" else "")
 	appElement.append {
 		div {
 			id = "error-frame"

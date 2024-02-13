@@ -10,10 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.dom.clear
 import kotlinx.html.*
 import kotlinx.html.js.onClickFunction
-import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLIFrameElement
-import org.w3c.dom.HTMLPreElement
+import org.w3c.dom.*
 import style.FileViewerStyle
 import style.StyleRegister
 
@@ -62,6 +59,20 @@ class FileViewer : App("file_viewer") {
 
 	override fun onReceiveMessage(msg: String, extra: Map<String, String>?) {
 		if(extra == null) return
+		if(msg == "url") {
+			val url = extra["url"] ?: return
+			containerElement.clear()
+			val frame = document.createElement("iframe") as HTMLIFrameElement
+			frame.onload = {
+				val titleList = frame.contentDocument?.getElementsByTagName("title")
+				val title = if(titleList?.asList()?.isNotEmpty() == true) titleList[0]!!.textContent ?: url else url
+				document.getElementById("title-content")?.textContent = title
+				undefined
+			}
+			frame.src = url
+			containerElement.append(frame)
+			document.getElementById("open-type")?.textContent = "(${Translation["file_viewer.mode.url"]})"
+		}
 		val file = extra["file"] ?: return
 		val fileType = if(file.endsWith(".html") || file.endsWith(".htm")) "html" else "text"
 		val forceType = if(extra["type"]?.isBlank() != true) extra["type"]!! else fileType

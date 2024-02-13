@@ -173,5 +173,6 @@
   "editor.not_saved.cancel": "Cancel",
 
   "file_viewer.mode.html": "HTML Mode",
-  "file_viewer.mode.text": "Text Mode"
+  "file_viewer.mode.text": "Text Mode",
+  "file_viewer.mode.url": "URL Mode"
 }
