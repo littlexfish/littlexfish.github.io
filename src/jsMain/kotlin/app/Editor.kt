@@ -45,11 +45,9 @@ class Editor : App("editor") {
 			}
 			div {
 				id = "editor"
-				pre {
-					code {
-						id = "editor-code"
-						classes = setOf("editor")
-					}
+				div {
+					id = "editor-code"
+					classes = setOf("editor")
 				}
 				textArea {
 					id = "editor-textarea"
@@ -412,7 +410,7 @@ class Editor : App("editor") {
 		setCurrentLanguage(currentOpenFile?.getExtension() ?: "plaintext")
 		editorHighlightElement.removeAttribute("data-highlighted")
 		val hljs = js("hljs")
-		hljs.highlightAll()
+		hljs.highlightElement(editorHighlightElement)
 	}
 
 	private fun refreshSavedStatus() {

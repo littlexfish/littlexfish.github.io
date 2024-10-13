@@ -72,6 +72,7 @@ object EditorStyle : StyleRegister("editor") {
 		#editor-code {
 			white-space: pre;
 			font-family: 'Iosevka Term SS14 Web', monospace;
+			padding: 0;
 			$NO_SELECTION
 		}
 		#editor-textarea {
